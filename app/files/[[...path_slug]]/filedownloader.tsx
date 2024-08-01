@@ -18,21 +18,14 @@ function download(){
 }
 
 
-export default function Home() {
+export default function FileDownloader() {
   
-  // download();
 
   useEffect(() => {
-    // download();
+    download();
   }, []);
   
-
-
-
-
   return <div>
-    <span className="font-bold">file manager</span><br/>
-    {/* <a href={blob_url} download="testfile.txt">下载文件</a> */}
-    {/* <span>blob_url:{blob_url}</span>  */}
+    1
   </div>
 }

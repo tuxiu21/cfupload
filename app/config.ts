@@ -1,0 +1,1 @@
+export const BASE_PATH = `C:/Users/Rin/Documents/work`;
