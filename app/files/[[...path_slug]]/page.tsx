@@ -1,14 +1,15 @@
 import Image from "next/image";
 import fs, { Dirent } from "fs";
 import Link from "next/link";
-import { BASE_PATH } from "../../config";
+// import { BASE_PATH } from "../../config";
 import path from "path";
 import { redirect, RedirectType } from "next/navigation";
 import Uploader from "./uploader";
 
 import { randomUUID, UUID } from "crypto";
-
+const BASE_PATH = process.env.BASE_PATH!;
 async function getFiles(pathname: string): Promise<Dirent[]> {
+
   return new Promise((resolve, reject) => {
     const callback = (err: NodeJS.ErrnoException | null, files: Dirent[]) => {
       if (err) {
@@ -54,10 +55,6 @@ export default async function Files({
   }
   const view_files = await getFiles(pathname);
 
-  // console.log(randomUUID());
-  
-
-
 
   return (
     <>
@@ -66,39 +63,36 @@ export default async function Files({
 
       <br />
 
-      <span className="text-sky-600">pathname:{pathname}</span><br />
-      
+      <span className="text-sky-600">pathname:{pathname}</span>
+      <br />
+
       {/* <form action={toUpload}>
         <input type="file" name="file"/>
         <button type="submit">upload</button>
       </form> */}
       <Uploader pathname={pathname}></Uploader>
 
-
       <br />
       <Link href={path.join("/files/", path.dirname(pathname))}>..</Link>
       <br />
       {view_files.map((file) => {
         return (
-          <div key={file.name+file.isFile}>
+          <div key={file.name + file.isFile}>
             {file.isFile() ? (
               <a
                 href={path.join("/files/", pathname, file.name)}
-                // key={file.name + file.isFile}
                 download
               >
                 {file.name}
               </a>
             ) : (
               <Link
-                // href={path.join("/", pathname, file.name)}
                 href={path.join("/files/", pathname, file.name)}
-                // key={file.name + file.isFile}
               >
                 {file.name}/
               </Link>
             )}
-            <br/>
+            <br />
           </div>
         );
       })}

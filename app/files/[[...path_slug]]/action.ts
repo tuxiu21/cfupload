@@ -1,39 +1,11 @@
 'use server'
-import { BASE_PATH } from "@/app/config";
+// import { BASE_PATH } from "@/app/config";
 import fs from "fs";
 import path from "path";
 import os from "os";
-// export async function toUpload(formData:FormData) {
 
-//   // formData.forEach((value, key) => {
-//   //   console.log(key, value);
-//   // });
-//   const file= formData.get("file")as File;
-
-//   if(!file){
-//     return
-//   }
-//   const fixedFilename=Buffer.from(file.name, 'latin1').toString('utf8');
-//   const filePath=path.join(BASE_PATH, pathname,fixedFilename);
-//   const writeStream=fs.createWriteStream(filePath); 
-//   const readStream=file.stream()
-//   console.log(file);
-
-
-//   const reader = readStream.getReader();
-//   while (true) {
-//     const { done, value } = await reader.read();
-//     if (done) {
-//       break;
-//     }
-//     writeStream.write(value);
-
-//   }
-//   writeStream.end();
-
-
-// }
 const tmp_path = os.tmpdir();
+const BASE_PATH = process.env.BASE_PATH!;
 export async function chunkUpload(chunkFormData: FormData) {
   // 取得表单参数
   const file = chunkFormData.get("file") as File;
@@ -69,26 +41,8 @@ export async function chunkUpload(chunkFormData: FormData) {
 
 
   if (index + 1 === chunks) {
-    // const fixedFilename=Buffer.from(filename, 'latin1').toString('utf8');
     const destPath = path.join(BASE_PATH, pathname, filename);
     fs.renameSync(filePath,destPath);
-    // const stat = await fs.promises.stat(filePath)
-    // console.log(stat);
-
-    // setTimeout(async () => {
-    //   const stat=await fs.promises.stat(filePath)
-    //   console.log(stat);
-    // }, 1000);
-
-
   }
 }
 
-
-export async function TestUpload(testNum: number, formData: FormData) {
-
-  formData.forEach((value, key) => {
-    console.log(key, value);
-  });
-
-}

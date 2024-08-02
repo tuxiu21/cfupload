@@ -1,8 +1,10 @@
 "use client";
 
-import { CHUNK_SIZE } from "@/app/config";
-import { chunkUpload, TestUpload } from "./action";
+// import { CHUNK_SIZE } from "@/app/config";
+import { chunkUpload, } from "./action";
 import { v4 as uuidv4 } from "uuid";
+
+const CHUNK_SIZE = 1024 * 1024 * Number(process.env.NEXT_PUBLIC_CHUNK_SIZE_MB);
 
 export default function Uploader(props: { pathname: string }) {
   const { pathname } = props;

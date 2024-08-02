@@ -13,8 +13,10 @@ export async function GET(request: Request) {
   }
   // const filename=path.basename(filepath)
   const stat = await fs.promises.stat(filepath)
+
   const fileSize = stat.size
-  const filename = path.basename(filepath)
+  const filename = encodeURIComponent(path.basename(filepath))
+
 
   // 这里不设置为any的话会报错
   const readableStream: any = fs.createReadStream(filepath)
