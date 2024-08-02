@@ -1,7 +1,46 @@
-'use clinet'
+"use client";
 
-export default function Uploader(){
-  return <form>
-    <input type="file"  />
-  </form>
+import { CHUNK_SIZE } from "@/app/config";
+import { chunkUpload, TestUpload } from "./action";
+import { v4 as uuidv4 } from "uuid";
+
+export default function Uploader(props: { pathname: string }) {
+  const { pathname } = props;
+  async function handleUpload(formData: FormData) {
+    const file = formData.get("file") as File;
+    console.log(file);
+    if (!file) {
+      return;
+    }
+    const chunks = Math.ceil(file.size / CHUNK_SIZE);
+    const uuid = uuidv4();
+    for (let index = 0; (file.size+CHUNK_SIZE) >= (index + 1) * CHUNK_SIZE; index++) {
+      const start = index * CHUNK_SIZE;
+      // const end=Math.min(file.size,(index+1)*CHUNK_SIZE);
+      const end = (index + 1) * CHUNK_SIZE;
+      const blob = file.slice(start, end);
+      const chunkFormData = new FormData();
+      chunkFormData.append("file", blob);
+      chunkFormData.append("filename", file.name);
+      
+      chunkFormData.append("uuid", uuid);
+      chunkFormData.append("index", index.toString());
+      chunkFormData.append("chunks", chunks.toString());
+      chunkFormData.append("pathname", pathname);
+      console.log(chunkFormData);
+      chunkFormData.forEach((value, key) => {
+        console.log(key, value);
+      });
+      await chunkUpload(chunkFormData);
+      
+      
+    }
+  }
+
+  return (
+    <form action={handleUpload}>
+      <input type="file" name="file" />
+      <button type="submit">upload</button>
+    </form>
+  );
 }

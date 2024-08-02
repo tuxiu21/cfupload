@@ -4,6 +4,10 @@ import Link from "next/link";
 import { BASE_PATH } from "../../config";
 import path from "path";
 import { redirect, RedirectType } from "next/navigation";
+import Uploader from "./uploader";
+
+import { randomUUID, UUID } from "crypto";
+
 async function getFiles(pathname: string): Promise<Dirent[]> {
   return new Promise((resolve, reject) => {
     const callback = (err: NodeJS.ErrnoException | null, files: Dirent[]) => {
@@ -50,37 +54,10 @@ export default async function Files({
   }
   const view_files = await getFiles(pathname);
 
-
-  async function toUpload(formData:FormData) {
-    'use server'
-    // formData.forEach((value, key) => {
-    //   console.log(key, value);
-    // });
-    const file= formData.get("file")as File;
-
-    if(!file){
-      return
-    }
-    const fixedFilename=Buffer.from(file.name, 'latin1').toString('utf8');
-    const filePath=path.join(BASE_PATH, pathname,fixedFilename);
-    const writeStream=fs.createWriteStream(filePath); 
-    const readStream=file.stream()
-    console.log(file);
+  // console.log(randomUUID());
+  
 
 
-    const reader = readStream.getReader();
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) {
-        break;
-      }
-      writeStream.write(value);
-
-    }
-    writeStream.end();
-
-
-  }
 
   return (
     <>
@@ -91,10 +68,11 @@ export default async function Files({
 
       <span className="text-sky-600">pathname:{pathname}</span><br />
       
-      <form action={toUpload}>
+      {/* <form action={toUpload}>
         <input type="file" name="file"/>
         <button type="submit">upload</button>
-      </form>
+      </form> */}
+      <Uploader pathname={pathname}></Uploader>
 
 
       <br />
@@ -102,11 +80,11 @@ export default async function Files({
       <br />
       {view_files.map((file) => {
         return (
-          <>
+          <div key={file.name+file.isFile}>
             {file.isFile() ? (
               <a
                 href={path.join("/files/", pathname, file.name)}
-                key={file.name + file.isFile}
+                // key={file.name + file.isFile}
                 download
               >
                 {file.name}
@@ -115,13 +93,13 @@ export default async function Files({
               <Link
                 // href={path.join("/", pathname, file.name)}
                 href={path.join("/files/", pathname, file.name)}
-                key={file.name + file.isFile}
+                // key={file.name + file.isFile}
               >
                 {file.name}/
               </Link>
             )}
-            <br />
-          </>
+            <br/>
+          </div>
         );
       })}
     </>
