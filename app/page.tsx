@@ -1,38 +1,50 @@
-'use client'
+"use client";
 
-import { useEffect } from "react";
-
-
-function download(){
-    // let blob_url = "";
-  // 发现这是文件 下载该文件
-  const blob = new Blob(["testfile!!"], { type: "text/plain" });
-  const blob_url = URL.createObjectURL(blob);
-  console.log(blob_url);
-  const a = document.createElement('a');
-  a.style.display = 'none';
-  a.href = blob_url;
-  a.download = 'testfile.txt'; // 替换为实际的文件名
-  document.body.appendChild(a);
-  a.click();
-}
-
+import { useEffect, useState } from "react";
 
 export default function Home() {
-  
-  // download();
+
+  const [now,SetNow]=useState(0)
+  const [total,SetTotal]=useState(0)
+
 
   useEffect(() => {
     // download();
-  }, []);
-  
+    console.log('total-effect:'+total);
+    
+  }, [total]);
 
+   const handleClick=async()=>{
+    const a=10
+    SetTotal(a)
+    // console.log('total:'+total);
+    
+    for (let index = 0; index <= a; index++) {
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(null)
+        }, 500);
+      })
+      SetNow(index)
+      console.log('total:'+total);
+      console.log('now:'+now);
+      
+      console.log(index);
+      
+      
+    }
+  }
 
-
-
-  return <div>
-    <span className="font-bold">file manager</span><br/>
-    {/* <a href={blob_url} download="testfile.txt">下载文件</a> */}
-    {/* <span>blob_url:{blob_url}</span>  */}
-  </div>
+  return (
+    <div>
+      <span className="font-bold">file manager</span>
+      <br />
+      {/* <button onClick={handleClick}>点击</button> */}
+      {/* <form action={handleClick}>
+        <input type="file" name="file" />
+        <button type="submit">upload</button>
+      </form>
+      <span>{now}/{total}</span> */}
+    </div>
+  );
 }
