@@ -9,7 +9,6 @@ import Uploader from "./uploader";
 import { randomUUID, UUID } from "crypto";
 const BASE_PATH = process.env.BASE_PATH!;
 async function getFiles(pathname: string): Promise<Dirent[]> {
-
   return new Promise((resolve, reject) => {
     const callback = (err: NodeJS.ErrnoException | null, files: Dirent[]) => {
       if (err) {
@@ -55,26 +54,27 @@ export default async function Files({
   }
   const view_files = await getFiles(pathname);
 
-
   return (
-    <>
-      <span className="font-bold">file manager</span>
-      <br />
+    <main className="flex flex-row h-full">
+      <div className="w-72 bg-yellow-100">
+        <details className="dropdown">
+          <summary className="btn m-1">open or close</summary>
+          <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+            <li>
+              <a>Item 1</a>
+            </li>
+            <li>
+              <a>Item 2</a>
+            </li>
+          </ul>
+        </details>
 
-      <br />
+      </div>
+      <div className="flex-grow"></div>
 
-      <span className="text-sky-600">pathname:{pathname}</span>
-      <br />
-
-      {/* <form action={toUpload}>
-        <input type="file" name="file"/>
-        <button type="submit">upload</button>
-      </form> */}
+      {/* <span className="text-sky-600">Pathname:&nbsp;{pathname==""?'/':pathname}</span>
       <Uploader pathname={pathname}></Uploader>
-
-      <br />
       <Link href={path.join("/files/", path.dirname(pathname))}>..</Link>
-      <br />
       {view_files.map((file) => {
         return (
           <div key={file.name + file.isFile}>
@@ -92,10 +92,9 @@ export default async function Files({
                 {file.name}/
               </Link>
             )}
-            <br />
           </div>
         );
-      })}
-    </>
+      })} */}
+    </main>
   );
 }
