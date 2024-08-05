@@ -1,9 +1,3 @@
-<svg width="100" height="100" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect x="2" y="12" width="4" height="10" fill="#00FFFF" />
-  <rect x="7" y="8" width="4" height="14" fill="#FF00FF" />
-  <rect x="12" y="4" width="4" height="18" fill="#FFFF00" />
-  <rect x="17" y="10" width="4" height="12" fill="#FF0000" />
-  <line x1="0" y1="22" x2="24" y2="22" stroke="#00FFFF" stroke-width="0.5" />
-  <circle cx="12" cy="3" r="1" fill="#FF00FF" />
-  <circle cx="4" cy="16" r="0.5" fill="#FFFF00" />
-</svg>
+<svg fill="white" height="24" viewBox="0 -960 960 960" width="24" color="white">
+  <path d="m734-556-56-58 86-84 56 56-86 86ZM80-160v-80h800v80H80Zm360-520v-120h80v120h-80ZM226-558l-84-86 56-56 86 86-58 56Zm71 158h366q-23-54-72-87t-111-33q-62 0-111 33t-72 87Zm-97 80q0-117 81.5-198.5T480-600q117 0 198.5 81.5T760-320H200Zm280-80Z"/>
+  </svg>

@@ -1,33 +1,19 @@
 "use client";
 
-import { SunsetIcon } from "@/components/irons";
-import ThemeSwitch from "../components/theme-switch";
-import { renderToStaticMarkup } from "react-dom/server";
-import { createElement } from "react";
-import { IconSvgProps } from "@/types";
-
 export default function Home() {
-  const reactSvgComponentToMarkupString = (
-    Component: React.FC,
-    props: IconSvgProps
-  ) =>
-    `data:image/svg+xml,${encodeURIComponent(
-      renderToStaticMarkup(createElement(Component, props))
-    )}`;
-  const url = reactSvgComponentToMarkupString(SunsetIcon, {
-    size: 24,
-    color: "white",
-  });
-  console.log(url);
-
   return (
     <div>
-      <input
-        type="radio"
-        name="theme-dropdown"
-        aria-label={`System ()`}
-        value="system"
-      />
+      <div
+        tabIndex={0}
+        className="collapse collapse-arrow border-base-300 bg-base-200 border"
+      >
+        <div className="collapse-title text-xl font-medium">
+          Focus me to see content
+        </div>
+        <div className="collapse-content">
+          <p>tabindex={0} attribute is necessary to make the div focusable</p>
+        </div>
+      </div>
     </div>
   );
 }
