@@ -13,7 +13,10 @@ import {
   InfoIcon,
   PlusIcon,
 } from "@/components/icons";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import path from "path";
+import { useTheme } from "next-themes";
 function formatSize(bytes: number) {
   if (bytes < 1024) return `${bytes} bytes`;
   const kb = bytes / 1024;
@@ -32,17 +35,74 @@ export default function TableView({ view_files }: { view_files: View_Files }) {
 
   const [selectedFiles, setSelectedFiles] = useState<SelectedFileType[]>([]);
 
+  const themeProps = useTheme();
+
+  const [showInfoModal, setShowInfoModal] = useState(false);
+  
+  const linkRef = useRef<HTMLAnchorElement>(null);
+
 
   useEffect(() => {
-    // console.log(view_files);
     // 等挂载好再显示 不然会出现水合问题
     setMounted(true);
   }, []);
 
+  
+
+  const handleDownload = () => {
+    console.log(selectedFiles);
+
+    if(!linkRef.current) return;
+    const parentPath = view_files[0].parentPath
+    // 这里直接把需要下载的对象传过去
+    
+  };
+  const handleShowInfo = () => {
+    console.log(selectedFiles);
+
+    if (selectedFiles.length >= 1) {
+      setShowInfoModal(true);
+    } 
+  };
+
+  // 重新渲染时候会进行执行 所以不必将其设为state
+  let singleInfo: undefined | View_Files[number];
+  if (selectedFiles.length === 1) {
+    singleInfo = view_files.find((file) => {
+      return (
+        file.name === selectedFiles[0].name &&
+        file.isFile === selectedFiles[0].isFile
+      );
+    });
+  }
+  let multipleInfo:
+    | undefined
+    | { fileCount: number; folderCount: number; size: number };
+  if (selectedFiles.length > 1) {
+    multipleInfo = selectedFiles.reduce(
+      (prev, current) => {
+        const file = view_files.find((file) => {
+          return file.name === current.name && file.isFile === current.isFile;
+        });
+        if (file) {
+          if (file.isFile) {
+            prev.size += file.size;
+            prev.fileCount++;
+          } else {
+            prev.folderCount++;
+          }
+        }
+        return prev;
+      },
+      { fileCount: 0, folderCount: 0, size: 0 }
+    );
+  }
+
   return (
     <>
       {mounted && (
-        <div className="flex-grow  relative overflow-x-hidden">
+        <div className="basis-4 grow  relative overflow-x-hidden">
+          {/* 表格主体 */}
           <div className="h-full overflow-y-scroll">
             {/* 表格的样式只加了table和checkbox */}
             <table className="table table-fixed">
@@ -67,7 +127,6 @@ export default function TableView({ view_files }: { view_files: View_Files }) {
                           } else {
                             setSelectedFiles([]);
                           }
-
                         }}
                       />
                     </label>
@@ -87,16 +146,13 @@ export default function TableView({ view_files }: { view_files: View_Files }) {
                           <input
                             type="checkbox"
                             className="checkbox"
-                            checked={
-                              selectedFiles.some(
-                                (file) =>
-                                  file.name === view_file.name &&
-                                  file.isFile === view_file.isFile
-                              )
-                            }
+                            checked={selectedFiles.some(
+                              (file) =>
+                                file.name === view_file.name &&
+                                file.isFile === view_file.isFile
+                            )}
                             onChange={(e) => {
                               const checkbox = e.target as HTMLInputElement;
-
 
                               setSelectedFiles((prev) => {
                                 if (checkbox.checked) {
@@ -125,11 +181,25 @@ export default function TableView({ view_files }: { view_files: View_Files }) {
                       <td>
                         <div className="flex flex-row items-center gap-2">
                           {view_file.isFile ? (
-                            <FileIcon className="min-w-5  h-5" />
+                            <>
+                              <FileIcon className="min-w-5  h-5" />{" "}
+                              <span className="truncate">{view_file.name}</span>
+                            </>
                           ) : (
-                            <FolderIcon className="min-w-5 h-5" />
+                            <>
+                              <FolderIcon className="min-w-5 h-5" />
+                              <Link
+                                href={path.join(
+                                  "/files/",
+                                  view_file.parentPath,
+                                  view_file.name
+                                )}
+                                className="truncate"
+                              >
+                                {view_file.name}
+                              </Link>
+                            </>
                           )}
-                          <span className="truncate">{view_file.name}</span>
                         </div>
                       </td>
                       <td className="max-sm:hidden">
@@ -155,34 +225,165 @@ export default function TableView({ view_files }: { view_files: View_Files }) {
               </tbody>
             </table>
           </div>
-          <div 
-          className="absolute  top-1/4 right-0 "
-          // className="absolute  top-1/4 left-full "
-          // className="fixed  top-1/4 left-full "
-          >
+          {/* 右侧菜单 */}
+          <div className="absolute w-full h-full top-0 left-0 overflow-y-scroll pointer-events-none overflow-x-hidden">
+            <div
+              // transition必须要有初始值
+              className={
+                "transition-all ease-in  absolute left-full top-1/4 pointer-events-auto " +
+                (selectedFiles.length > 0
+                  ? "-translate-x-full"
+                  : "translate-x-0")
+              }
+            >
+              <ul
+                className={
+                  "menu bg-base-200 shadow-xl " +
+                  (themeProps.resolvedTheme == "cyberpunk"
+                    ? ""
+                    : "rounded-l-xl ")
+                }
+              >
+                <li>
+                  <a
+                    className="tooltip tooltip-left"
+                    data-tip="Download"
+                    onClick={handleDownload}
+                  >
+                    <DownloadIcon className="h-5 w-5" />
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="tooltip tooltip-left"
+                    data-tip="Info"
+                    onClick={handleShowInfo}
+                  >
+                    <InfoIcon className="h-5 w-5" />
+                  </a>
+                </li>
+                <li>
+                  <a className="tooltip tooltip-left" data-tip="Cut">
+                    <CutIcon className="h-5 w-5" />
+                  </a>
+                </li>
+                <li>
+                  <a className="tooltip tooltip-left" data-tip="Copy">
+                    <CopyIcon className="h-5 w-5" />
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <a ref={linkRef} className="hidden" download></a>
+          </div>
+          {/* 菜单对话框 */}
+          <div>
+            <dialog className={" modal " + (showInfoModal ? "modal-open" : "")}>
+              <div className="modal-box">
+                <form method="dialog">
+                  <button
+                    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                    onClick={() => setShowInfoModal(false)}
+                  >
+                    ✕
+                  </button>
+                </form>
+                <h3 className="font-bold text-lg">Details</h3>
+                {singleInfo ? (
+                  <>
+                    <div className="grid grid-cols-2 gap-2 py-4">
+                      <div className="flex flex-col">
+                        <small className="text-default-500">Name</small>
+                        <p>{singleInfo.name}</p>
+                      </div>
+                      <div className="flex flex-col">
+                        <small className="text-default-500">Type</small>
+                        {/* <p>{singleInfo.isFile ? "文件" : "文件夹"}</p> */}
+                        <p>{singleInfo.isFile ? "File" : "Folder"}</p>
+                      </div>
+                      <div className="flex flex-col">
+                        <small className="text-default-500">Size</small>
+                        <p>
+                          {singleInfo.isFile
+                            ? formatSize(singleInfo.size)
+                            : "-"}
+                        </p>
+                      </div>
+                      <div className="flex flex-col">
+                        <small className="text-default-500">Path</small>
+                        <p>{singleInfo.parentPath}</p>
+                      </div>
 
-            <ul className="menu bg-base-200 rounded-l-xl shadow-xl">
-              <li>
-                <a className="tooltip tooltip-left" data-tip="Download">
-                  <DownloadIcon className="h-5 w-5" />
-                </a>
-              </li>
-              <li>
-                <a className="tooltip tooltip-left" data-tip="Info">
-                  <InfoIcon className="h-5 w-5" />
-                </a>
-              </li>
-              <li>
-                <a className="tooltip tooltip-left" data-tip="Cut">
-                  <CutIcon className="h-5 w-5" />
-                </a>
-              </li>
-              <li>
-                <a className="tooltip tooltip-left" data-tip="Copy">
-                  <CopyIcon className="h-5 w-5" />
-                </a>
-              </li>
-            </ul>
+                      <div className="flex flex-col">
+                        <small className="text-default-500">Create Time</small>
+                        {/* <p>{singleInfo.birthtimeMs}</p> */}
+                        <p>
+                          {new Date(singleInfo.birthtimeMs).toLocaleDateString(
+                            "en-US",
+                            {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                              hour: "numeric",
+                              minute: "numeric",
+                            }
+                          )}
+                        </p>
+                      </div>
+                      <div className="flex flex-col">
+                        <small className="text-default-500">Modify Time</small>
+                        <p>
+                          {new Date(singleInfo.mtimeMs).toLocaleDateString(
+                            "en-US",
+                            {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                              hour: "numeric",
+                              minute: "numeric",
+                            }
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <></>
+                )}
+                {multipleInfo ? (
+                  <>
+                    <div className="grid grid-cols-2 gap-2 py-4">
+                      <div className="flex flex-col">
+                        <small className="text-default-500">
+                          Number of files
+                        </small>
+                        <p>{multipleInfo.fileCount}</p>
+                      </div>
+                      <div className="flex flex-col">
+                        <small className="text-default-500">
+                          Number of folders
+                        </small>
+                        <p>{multipleInfo.folderCount}</p>
+                      </div>
+                      <div className="flex flex-col">
+                        <small className="text-default-500">Total</small>
+                        {multipleInfo.fileCount+multipleInfo.folderCount}
+                      </div>
+                      <div className="flex flex-col">
+                        <small className="text-default-500">Size</small>
+                        {multipleInfo.folderCount > 0 ? (
+                          "-"
+                        ) : (
+                          <p>{formatSize(multipleInfo.size)}</p>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <></>
+                )}
+              </div>
+            </dialog>
           </div>
         </div>
       )}

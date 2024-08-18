@@ -2,3 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* modal会出现右侧滚动条 */
+html {
+  scrollbar-gutter: auto !important;
+}
