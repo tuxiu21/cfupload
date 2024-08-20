@@ -13,3 +13,7 @@ export type View_Files =   {
   isFile: boolean;
   birthtimeMs: number;
 }[]
+export type SelectedFileType = {
+  name: string;
+  isFile: boolean;
+};

@@ -17,6 +17,10 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import path from "path";
 import { useTheme } from "next-themes";
+import { SelectedFileType } from "@/types";
+import { processDownload } from "@/app/files/[[...path_slug]]/action";
+import { getSingleFileUrl } from "@/utils";
+import { Readable } from "stream";
 function formatSize(bytes: number) {
   if (bytes < 1024) return `${bytes} bytes`;
   const kb = bytes / 1024;
@@ -26,10 +30,7 @@ function formatSize(bytes: number) {
   const gb = mb / 1024;
   return `${gb.toFixed(2)} GB`;
 }
-type SelectedFileType = {
-  name: string;
-  isFile: boolean;
-};
+
 export default function TableView({ view_files }: { view_files: View_Files }) {
   const [mounted, setMounted] = useState(false);
 
@@ -38,23 +39,42 @@ export default function TableView({ view_files }: { view_files: View_Files }) {
   const themeProps = useTheme();
 
   const [showInfoModal, setShowInfoModal] = useState(false);
-  
-  const linkRef = useRef<HTMLAnchorElement>(null);
 
+  const linkRef = useRef<HTMLAnchorElement>(null);
 
   useEffect(() => {
     // 等挂载好再显示 不然会出现水合问题
     setMounted(true);
   }, []);
 
-  
-
-  const handleDownload = () => {
+  const handleDownload = async () => {
     console.log(selectedFiles);
 
-    if(!linkRef.current) return;
-    const parentPath = view_files[0].parentPath
+    if (!linkRef.current) return;
+    const parentPath = view_files[0].parentPath;
+
+    // 如果选中单个并且是文件
+    if(selectedFiles.length===1 && selectedFiles[0].isFile){
+      linkRef.current.href = '/files/'+path.join(parentPath,selectedFiles[0].name);
+      linkRef.current.click()
+      return
+    }
+    
     // 这里直接把需要下载的对象传过去
+    const res=await fetch('/api/download/processed',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({
+        parentPath,
+        selectedFiles
+      })
+    })
+    const uuid=await res.text()
+    const params=new URLSearchParams({uuid:uuid})
+    linkRef.current.href='/api/download/processed?'+params
+    linkRef.current.click()
     
   };
   const handleShowInfo = () => {
@@ -62,7 +82,7 @@ export default function TableView({ view_files }: { view_files: View_Files }) {
 
     if (selectedFiles.length >= 1) {
       setShowInfoModal(true);
-    } 
+    }
   };
 
   // 重新渲染时候会进行执行 所以不必将其设为state
@@ -367,7 +387,7 @@ export default function TableView({ view_files }: { view_files: View_Files }) {
                       </div>
                       <div className="flex flex-col">
                         <small className="text-default-500">Total</small>
-                        {multipleInfo.fileCount+multipleInfo.folderCount}
+                        {multipleInfo.fileCount + multipleInfo.folderCount}
                       </div>
                       <div className="flex flex-col">
                         <small className="text-default-500">Size</small>

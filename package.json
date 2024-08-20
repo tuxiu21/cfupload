@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "archiver": "^7.0.1",
     "next": "14.2.5",
     "next-themes": "^0.3.0",
     "react": "^18",
@@ -16,6 +17,7 @@
     "uuid": "^10.0.0"
   },
   "devDependencies": {
+    "@types/archiver": "^6.0.2",
     "@types/node": "^20.14.13",
     "@types/react": "^18",
     "@types/react-dom": "^18",

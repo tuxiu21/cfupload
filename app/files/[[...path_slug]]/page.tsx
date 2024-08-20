@@ -17,6 +17,7 @@ import {
 } from "@/components/icons";
 import LeftBar from "@/components/leftbar";
 import TableView from "@/components/tableview";
+import { getSingleFileUrl } from "@/utils";
 const BASE_PATH = process.env.BASE_PATH!;
 
 async function getFiles(pathname: string): Promise<Dirent[]> {
@@ -37,12 +38,7 @@ async function getFiles(pathname: string): Promise<Dirent[]> {
   });
 }
 
-function getFileApiUrl(filepath: string) {
-  const params = new URLSearchParams({
-    filepath: path.join(BASE_PATH, filepath),
-  });
-  return "/api?" + params;
-}
+
 
 export default async function Files({
   params,
@@ -61,7 +57,7 @@ export default async function Files({
   if (stat.isFile()) {
     // 发现这是文件 下载该文件
     // 在这里我们可以实现wget的下载
-    const filepath = getFileApiUrl(pathname);
+    const filepath = getSingleFileUrl(pathname);
     redirect(filepath);
   }
   const filesDirent = await getFiles(pathname);
