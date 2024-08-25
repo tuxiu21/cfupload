@@ -18,6 +18,7 @@ import {
 import LeftBar from "@/components/leftbar";
 import TableView from "@/components/tableview";
 import { getSingleFileUrl } from "@/utils";
+import TestClient from "@/components/testclient";
 const BASE_PATH = process.env.BASE_PATH!;
 
 async function getFiles(pathname: string): Promise<Dirent[]> {
@@ -38,8 +39,6 @@ async function getFiles(pathname: string): Promise<Dirent[]> {
   });
 }
 
-
-
 export default async function Files({
   params,
 }: {
@@ -50,10 +49,12 @@ export default async function Files({
     pathname = path.join(...params.path_slug);
     pathname = decodeURIComponent(pathname);
   }
+  console.log('发生了重新渲染！！！！');
+  
 
   // 判断这个路径是文件还是目录
   const stat = await fs.promises.stat(path.join(BASE_PATH, pathname));
-  console.log(stat);
+  // console.log(stat);
   if (stat.isFile()) {
     // 发现这是文件 下载该文件
     // 在这里我们可以实现wget的下载
@@ -61,6 +62,7 @@ export default async function Files({
     redirect(filepath);
   }
   const filesDirent = await getFiles(pathname);
+
   const view_files = await Promise.all(
     filesDirent.map(async (file) => {
       const stat = await fs.promises.stat(
@@ -81,8 +83,16 @@ export default async function Files({
 
   return (
     <main className="flex flex-row basis-24 grow min-h-0 ">
-      <LeftBar />
-      <div className="grow flex flex-col">
+      <div>
+        111
+        <Link href="/files?a=1" className="btn">
+          route
+        </Link>
+        {/* current params:{props.searchParams.a} */}
+        <TestClient />
+      </div>
+      <LeftBar pathname={pathname} />
+      <div className="grow flex flex-col min-w-0">
         <div className="mx-6 breadcrumbs text-sm">
           <ul>
             <li>
@@ -92,24 +102,15 @@ export default async function Files({
               // array（可选）：调用 map 方法的原数组。
               const href = path.join("/files", ...arr.slice(0, index + 1));
               return (
-                // <li key={name}>
-                //   {index != arr.length - 1 ? (
-                //     <Link href={href}>{name}</Link>
-                //   ) : (
-                //     <span>{name}</span>
-                //   )}
-                // </li>
                 <li key={href}>
                   <Link href={href}>{name}</Link>
                 </li>
               );
             })}
-
           </ul>
         </div>
         <TableView view_files={view_files} />
       </div>
-      {/* <TableView view_files={view_files}/> */}
     </main>
   );
 }

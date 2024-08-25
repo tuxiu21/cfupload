@@ -24,7 +24,7 @@ export async function GET(request:Request) {
   //这个命令执行后 archive会作为一个可读流 开始产生数据 所以不需要await
   archive.finalize()
 
-
+  
 
   return new Response(archive, {
     headers: {

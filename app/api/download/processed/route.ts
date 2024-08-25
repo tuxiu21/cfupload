@@ -22,24 +22,29 @@ export async function GET(request: Request) {
   const selectedFiles: SelectedFileType[] = resObj.selectedFiles;
   fileListMap.delete(uuid);
 
-  if (selectedFiles.length === 1 && !selectedFiles[0].isFile) {
-    const selectedFile = selectedFiles[0]
-    const folderPath = path.join(BASE_PATH, parentPath, selectedFile.name);
-    const archive = archiver('zip', { zlib: { level: 4 } })
-    console.log(folderPath);
 
-    archive.directory(folderPath, selectedFile.name)
-    archive.finalize()
-    // 这里的archive是一个可读流
-    return new Response((archive as any), {
-      headers: {
-        "Content-Type": "application/octet-stream",
-        "Content-Disposition": `attachment; filename=${selectedFile.name}.zip`,
-        // "Content-Length": fileSize.toString(),
-      },
-    })
+  const archive = archiver('zip', { zlib: { level: 4 } })
+  selectedFiles.forEach((selectedFile) => {
+    console.log(selectedFile);
+    const fullPath = path.join(BASE_PATH, parentPath, selectedFile.name);
+    if (selectedFile.isFile) {
+      archive.file(fullPath, { name: selectedFile.name });
+    } else {
+      archive.directory(fullPath, selectedFile.name);
+    }
+  });
+  const zipname = (selectedFiles.length === 1 ? selectedFiles[0].name : ("download-" + new Date().getTime()))+".zip";
 
-  }
+  archive.finalize()
+  // 此时 这里的archive是一个可读流
+
+  return new Response((archive as any), {
+    headers: {
+      "Content-Type": "application/octet-stream",
+      "Content-Disposition": `attachment; filename=${zipname}`,
+    },
+  })
+
 
 
 }
