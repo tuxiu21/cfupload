@@ -49,8 +49,7 @@ export default async function Files({
     pathname = path.join(...params.path_slug);
     pathname = decodeURIComponent(pathname);
   }
-  console.log('发生了重新渲染！！！！');
-  
+  console.log("发生了重新渲染！！！！");
 
   // 判断这个路径是文件还是目录
   const stat = await fs.promises.stat(path.join(BASE_PATH, pathname));
@@ -82,57 +81,25 @@ export default async function Files({
   // console.log(view_files);
 
   return (
-    <main className="flex flex-row basis-24 grow min-h-0 ">
-      <div>
-        111
-        <Link href="/files?a=1" className="btn">
-          route
-        </Link>
-        {/* current params:{props.searchParams.a} */}
-        <TestClient />
+    <div className="grow flex flex-col min-w-0">
+      <div className="mx-6 breadcrumbs text-sm">
+        <ul>
+          <li>
+            <Link href={"/files"}>My Files</Link>
+          </li>
+          {pathname.split(path.sep).map((name, index, arr) => {
+            // array（可选）：调用 map 方法的原数组。
+            const href = path.join("/files", ...arr.slice(0, index + 1));
+            return (
+              <li key={href}>
+                <Link href={href}>{name}</Link>
+              </li>
+            );
+          })}
+        </ul>
       </div>
-      <LeftBar pathname={pathname} />
-      <div className="grow flex flex-col min-w-0">
-        <div className="mx-6 breadcrumbs text-sm">
-          <ul>
-            <li>
-              <Link href={"/files"}>My Files</Link>
-            </li>
-            {pathname.split(path.sep).map((name, index, arr) => {
-              // array（可选）：调用 map 方法的原数组。
-              const href = path.join("/files", ...arr.slice(0, index + 1));
-              return (
-                <li key={href}>
-                  <Link href={href}>{name}</Link>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-        <TableView view_files={view_files} />
-      </div>
-    </main>
+      <TableView view_files={view_files} />
+    </div>
   );
 }
-{
-  /* <span className="text-sky-600">
-Pathname:&nbsp;{pathname == "" ? "/" : pathname}
-</span>
-<Uploader pathname={pathname}></Uploader>
-<Link href={path.join("/files/", path.dirname(pathname))}>..</Link>
-{view_files.map((file) => {
-return (
-  <div key={file.name + file.isFile}>
-    {file.isFile() ? (
-      <a href={path.join("/files/", pathname, file.name)} download>
-        {file.name}
-      </a>
-    ) : (
-      <Link href={path.join("/files/", pathname, file.name)}>
-        {file.name}/
-      </Link>
-    )}
-  </div>
-);
-})} */
-}
+

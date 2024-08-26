@@ -5,6 +5,7 @@ import {
   CopyIcon,
   CreateFileIcon,
   CutIcon,
+  DeleteIcon,
   DownloadIcon,
   FileIcon,
   FileUploadIcon,
@@ -20,7 +21,9 @@ import { useTheme } from "next-themes";
 import { SelectedFileType } from "@/types";
 import { formatSize, getSingleFileUrl } from "@/utils";
 import { Readable } from "stream";
-
+import Toast from "./toast";
+import { deleteFile } from "@/app/files/[[...path_slug]]/action";
+import { useRouter } from "next/navigation";
 
 export default function TableView({ view_files }: { view_files: View_Files }) {
   const [mounted, setMounted] = useState(false);
@@ -30,6 +33,14 @@ export default function TableView({ view_files }: { view_files: View_Files }) {
   const themeProps = useTheme();
 
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showDeleteToast, setShowDeleteToast] = useState(false);
+  const [deleteFileRes, setDeleteFileRes] = useState({
+    success: false,
+    message: "",
+  });
+
+  const router = useRouter();
 
   const linkRef = useRef<HTMLAnchorElement>(null);
 
@@ -45,28 +56,28 @@ export default function TableView({ view_files }: { view_files: View_Files }) {
     const parentPath = view_files[0].parentPath;
 
     // 如果选中单个并且是文件
-    if(selectedFiles.length===1 && selectedFiles[0].isFile){
-      linkRef.current.href = '/files/'+path.join(parentPath,selectedFiles[0].name);
-      linkRef.current.click()
-      return
+    if (selectedFiles.length === 1 && selectedFiles[0].isFile) {
+      linkRef.current.href =
+        "/files/" + path.join(parentPath, selectedFiles[0].name);
+      linkRef.current.click();
+      return;
     }
-    
+
     // 这里直接把需要下载的对象传过去
-    const res=await fetch('/api/download/processed',{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json'
+    const res = await fetch("/api/download/processed", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-      body:JSON.stringify({
+      body: JSON.stringify({
         parentPath,
-        selectedFiles
-      })
-    })
-    const uuid=await res.text()
-    const params=new URLSearchParams({uuid:uuid})
-    linkRef.current.href='/api/download/processed?'+params
-    linkRef.current.click()
-    
+        selectedFiles,
+      }),
+    });
+    const uuid = await res.text();
+    const params = new URLSearchParams({ uuid: uuid });
+    linkRef.current.href = "/api/download/processed?" + params;
+    linkRef.current.click();
   };
   const handleShowInfo = () => {
     console.log(selectedFiles);
@@ -74,6 +85,34 @@ export default function TableView({ view_files }: { view_files: View_Files }) {
     if (selectedFiles.length >= 1) {
       setShowInfoModal(true);
     }
+  };
+  const handleDelete = () => {
+    console.log(selectedFiles);
+
+    if (selectedFiles.length >= 1) {
+      setShowDeleteModal(true);
+    }
+  };
+  const toDeleteFile = async () => {
+    const res = await deleteFile(selectedFiles, view_files[0].parentPath);
+    setDeleteFileRes(res);
+    setShowDeleteToast(true);
+
+    if (res.success) {
+      setTimeout(() => {
+        setShowDeleteToast(false);
+        setShowDeleteModal(false);
+      }, 1000);
+      setSelectedFiles([]);
+
+      router.refresh();
+    } else {
+      setTimeout(() => {
+        setShowDeleteToast(false);
+      }, 5000);
+      // console.log(res.message);
+    }
+
   };
 
   // 重新渲染时候会进行执行 所以不必将其设为state
@@ -283,6 +322,15 @@ export default function TableView({ view_files }: { view_files: View_Files }) {
                     <CopyIcon className="h-5 w-5" />
                   </a>
                 </li>
+                <li>
+                  <a
+                    className="tooltip tooltip-left"
+                    data-tip="Delete"
+                    onClick={handleDelete}
+                  >
+                    <DeleteIcon className="h-5 w-5" />
+                  </a>
+                </li>
               </ul>
             </div>
             <a ref={linkRef} className="hidden" download></a>
@@ -394,6 +442,43 @@ export default function TableView({ view_files }: { view_files: View_Files }) {
                   <></>
                 )}
               </div>
+            </dialog>
+            <dialog
+              className={" modal " + (showDeleteModal ? "modal-open" : "")}
+            >
+              <div className="modal-box">
+                <form method="dialog">
+                  <button
+                    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                    onClick={() => setShowDeleteModal(false)}
+                  >
+                    ✕
+                  </button>
+                </form>
+                <h3 className="font-bold text-lg">Delete</h3>
+                <p className="my-4">
+                  Are you sure you want to delete the selected files?
+                </p>
+                <div className="flex flex-row gap-2 justify-end">
+                  <button
+                    className="btn btn-sm btn-ghost"
+                    onClick={() => setShowDeleteModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="btn btn-sm btn-error"
+                    onClick={toDeleteFile}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+              <Toast
+                show={showDeleteToast}
+                success={deleteFileRes.success}
+                message={deleteFileRes.message}
+              />
             </dialog>
           </div>
         </div>

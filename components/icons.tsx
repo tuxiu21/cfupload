@@ -2,6 +2,40 @@ import * as React from "react";
 
 import { IconSvgProps } from "@/types";
 
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="1em"
+  height="1em"
+  viewBox="0 0 24 24"
+>
+  <path
+    fill="currentColor"
+    d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"
+  />
+</svg>;
+
+export const DeleteIcon: React.FC<IconSvgProps> = ({
+  size = 12,
+  width,
+  height,
+  ...props
+}) => (
+  <svg
+    // fill={props.color}
+    fill="none"
+    stroke="currentColor"
+    height={size || height}
+    viewBox="0 0 24 24"
+    width={size || width}
+    strokeWidth={0.1}
+    {...props}
+  >
+    <path
+      fill="currentColor"
+      d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"
+    />
+  </svg>
+);
 
 export const ErrorIcon: React.FC<IconSvgProps> = ({
   size = 12,
@@ -22,10 +56,10 @@ export const ErrorIcon: React.FC<IconSvgProps> = ({
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth="2"
-      d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+    />
   </svg>
 );
-
 
 export const CheckMarkIcon: React.FC<IconSvgProps> = ({
   size = 12,
@@ -41,11 +75,12 @@ export const CheckMarkIcon: React.FC<IconSvgProps> = ({
     width={size || width}
     {...props}
   >
-<path
-  strokeLinecap="round"
-  strokeLinejoin="round"
-  strokeWidth="2"
-  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+    />
   </svg>
 );
 

@@ -12,9 +12,10 @@ import {
   PlusIcon,
 } from "@/components/icons";
 import { formatSize } from "@/utils";
-import { useRouter } from "next/navigation";
-import { useRef, useState,useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useRef, useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
+import Toast from "./toast";
 enum ModalType {
   None,
   Folder,
@@ -34,7 +35,12 @@ type TaskStatus = {
 
 const CHUNK_SIZE = 1024 * 1024 * Number(process.env.NEXT_PUBLIC_CHUNK_SIZE_MB);
 
-export default function LeftBar(props: { pathname: string }) {
+export default function LeftBar() {
+  // 这个获取的是完整的路径
+  let pathname = usePathname();
+  console.log("pathname:", pathname);
+  pathname = pathname.replace("/files", "");
+
   const [modalStatus, setModalStatus] = useState(ModalType.None);
   const [addFileName, setAddFileName] = useState("");
 
@@ -51,20 +57,11 @@ export default function LeftBar(props: { pathname: string }) {
 
   const router = useRouter();
 
-  useEffect(() => {
-    console.log('leftbar组件挂载');
-    
-    return () => {
-      console.log('leftbar 组件卸载');
-      
-    };
-  }, []);
-
   const handleAddFile = async () => {
     const res = await addFile(
       addFileName,
       modalStatus === ModalType.CreateFile,
-      props.pathname
+      pathname
     );
     setAddFileRes(res);
     setShowToast(true);
@@ -85,7 +82,7 @@ export default function LeftBar(props: { pathname: string }) {
     setShowTaskBar(true);
 
     // 因为用户可能会切换目录 所以这里需要用const来确定这次上传的目录 而不是直接用props.pathname
-    const uploadParentPath = props.pathname;
+    const uploadParentPath = pathname;
 
     const upload = async (file: File) => {
       const chunks = Math.ceil(file.size / CHUNK_SIZE);
@@ -118,7 +115,7 @@ export default function LeftBar(props: { pathname: string }) {
         chunkFormData.append("uuid", uuid);
         chunkFormData.append("index", index.toString());
         chunkFormData.append("chunks", chunks.toString());
-        chunkFormData.append("pathname", props.pathname);
+        chunkFormData.append("pathname", uploadParentPath);
         console.log(chunkFormData);
         chunkFormData.forEach((value, key) => {
           console.log(key, value);
@@ -296,24 +293,11 @@ export default function LeftBar(props: { pathname: string }) {
               </div>
             </div>
           </div>
-          <div
-            className={`toast transition-all duration-500 ease-out ${
-              showToast ? " opacity-100" : "invisible opacity-0"
-            }`}
-          >
-            <div
-              className={`alert ${
-                addFileRes.success ? "alert-success" : "alert-error"
-              } flex flex-row`}
-            >
-              {addFileRes.success ? (
-                <CheckMarkIcon className="h-5 w-5" />
-              ) : (
-                <ErrorIcon className="h-5 w-5" />
-              )}
-              <span>{addFileRes.message}</span>
-            </div>
-          </div>
+          <Toast
+            show={showToast}
+            success={addFileRes.success}
+            message={addFileRes.message}
+          />
         </dialog>
       </div>
 
@@ -335,6 +319,8 @@ export default function LeftBar(props: { pathname: string }) {
               <label className="btn btn-ghost swap swap-rotate ">
                 <input
                   type="checkbox"
+                  // value={showTaskBar ? "on" : "off"}
+                  checked={showTaskBar}
                   onChange={(e) => {
                     setShowTaskBar(e.target.checked);
                   }}
@@ -345,43 +331,46 @@ export default function LeftBar(props: { pathname: string }) {
             </div>
             <div className="card-body h-48 p-6 pt-0">
               <div className="overflow-y-scroll">
-              {tasks
-                .slice()
-                .reverse()
-                .map((task, index) => {
-                  return (
-                    <div key={task.filename + index} className="flex flex-row gap-2 w-full">
-                      <div className="flex flex-col min-w-0 grow">
-                        <div className="flex flex-row">
-                          <span className="truncate">{task.filename}</span>
+                {tasks
+                  .slice()
+                  .reverse()
+                  .map((task, index) => {
+                    return (
+                      <div
+                        key={task.filename + index}
+                        className="flex flex-row gap-2 w-full"
+                      >
+                        <div className="flex flex-col min-w-0 grow">
+                          <div className="flex flex-row">
+                            <span className="truncate">{task.filename}</span>
+                          </div>
+                          <progress
+                            className="progress progress-primary"
+                            value={task.chunkUploaded}
+                            max={task.chunkTotal}
+                          ></progress>
+                          <div className="flex flex-row justify-between">
+                            <span>{formatSize(task.size)}</span>
+                            <span>
+                              Chunks:{task.chunkUploaded}/{task.chunkTotal}
+                            </span>
+                          </div>
                         </div>
-                        <progress
-                          className="progress progress-primary"
-                          value={task.chunkUploaded}
-                          max={task.chunkTotal}
-                        ></progress>
-                        <div className="flex flex-row justify-between">
-                          <span>{formatSize(task.size)}</span>
-                          <span>
-                            Chunks:{task.chunkUploaded}/{task.chunkTotal}
-                          </span>
-                        </div>
-                      </div>
 
-                      {/* 任务状态 以及操作 */}
-                      <div className="">
-                        {/* <CheckMarkIcon/> */}
-                        <div
-                          tabIndex={0}
-                          role="button"
-                          className="btn btn-ghost btn-square m-1"
-                        >
-                          <CheckMarkIcon  className="h-6 w-6 text-green-600" />
+                        {/* 任务状态 以及操作 */}
+                        <div className="">
+                          {/* <CheckMarkIcon/> */}
+                          <div
+                            tabIndex={0}
+                            role="button"
+                            className="btn btn-ghost btn-square m-1"
+                          >
+                            <CheckMarkIcon className="h-6 w-6 text-green-600" />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
               </div>
               {/* <div></div> */}
             </div>
