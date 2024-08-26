@@ -1,5 +1,5 @@
 "use client";
-import { addFile, chunkUpload } from "@/app/files/[[...path_slug]]/action";
+import { addFile, chunkUpload } from "@/app/files/action";
 import {
   CheckMarkIcon,
   CreateFileIcon,
@@ -12,6 +12,7 @@ import {
   PlusIcon,
 } from "@/components/icons";
 import { formatSize } from "@/utils";
+import { useParentPath } from "@/hooks";
 import { usePathname, useRouter } from "next/navigation";
 import { useRef, useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -37,9 +38,7 @@ const CHUNK_SIZE = 1024 * 1024 * Number(process.env.NEXT_PUBLIC_CHUNK_SIZE_MB);
 
 export default function LeftBar() {
   // 这个获取的是完整的路径
-  let pathname = usePathname();
-  console.log("pathname:", pathname);
-  pathname = pathname.replace("/files", "");
+  const parentPath=useParentPath()
 
   const [modalStatus, setModalStatus] = useState(ModalType.None);
   const [addFileName, setAddFileName] = useState("");
@@ -61,7 +60,7 @@ export default function LeftBar() {
     const res = await addFile(
       addFileName,
       modalStatus === ModalType.CreateFile,
-      pathname
+      parentPath
     );
     setAddFileRes(res);
     setShowToast(true);
@@ -81,8 +80,8 @@ export default function LeftBar() {
   const handleUploadFile = async (files: FileList) => {
     setShowTaskBar(true);
 
-    // 因为用户可能会切换目录 所以这里需要用const来确定这次上传的目录 而不是直接用props.pathname
-    const uploadParentPath = pathname;
+    // 因为用户可能会切换目录 所以这里需要保存一下
+    const uploadParentPath = parentPath;
 
     const upload = async (file: File) => {
       const chunks = Math.ceil(file.size / CHUNK_SIZE);

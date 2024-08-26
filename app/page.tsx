@@ -1,3 +1,5 @@
+'use client'
+
 // import { PageProps } from '@/.next/types/app/page'
 import TestClient from '@/components/testclient'
 import Link from 'next/link'
@@ -7,6 +9,12 @@ export default function Home(props:any){
   
   // console.log(props.params);
   // console.log(props.searchParams);
+  // const parentPath = "";
+  // const view_files = await fetch(`/api/viewfiles?parentPath=${parentPath}`).then((res) =>
+  //   res.json()
+  // );
+  // fetch("/api/test")
+
   
   return (
     <div>

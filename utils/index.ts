@@ -1,3 +1,4 @@
+import { usePathname } from "next/navigation";
 import path from "path";
 const BASE_PATH = process.env.BASE_PATH!;
 export function getSingleFileUrl(filepath: string) {
