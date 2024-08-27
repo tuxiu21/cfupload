@@ -10,7 +10,7 @@ export default function Home(props:any){
   // console.log(props.params);
   // console.log(props.searchParams);
   // const parentPath = "";
-  // const view_files = await fetch(`/api/viewfiles?parentPath=${parentPath}`).then((res) =>
+  // const viewFiles = await fetch(`/api/viewfiles?parentPath=${parentPath}`).then((res) =>
   //   res.json()
   // );
   // fetch("/api/test")

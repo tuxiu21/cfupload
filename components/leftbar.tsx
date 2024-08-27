@@ -161,13 +161,13 @@ export default function LeftBar() {
   };
 
   return (
-    <div className="sm:min-w-72">
+    <div className="sm:min-w-72 p-2">
       {/* new 按钮 */}
       <div className="dropdown">
         <div
           tabIndex={0}
           role="button"
-          className="btn btn-primary max-sm:btn-square m-1"
+          className="btn btn-primary max-sm:btn-square"
         >
           <PlusIcon className="h-5 w-5" />
           <span className="max-sm:hidden">New</span>

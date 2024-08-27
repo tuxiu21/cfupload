@@ -1,6 +1,6 @@
 "use client";
 
-import { View_Files } from "@/types";
+import { viewFiles } from "@/types";
 import {
   CopyIcon,
   CreateFileIcon,
@@ -24,11 +24,16 @@ import { Readable } from "stream";
 import Toast from "./toast";
 
 import { useRouter } from "next/navigation";
+import { useSelectedFiles, useViewFiles } from "@/app/files/providers";
 
-export default function TableView({ view_files }: { view_files: View_Files }) {
+export default function TableView({ viewFiles }: { viewFiles: viewFiles }) {
   const [mounted, setMounted] = useState(false);
 
-  const [selectedFiles, setSelectedFiles] = useState<SelectedFileType[]>([]);
+  // const [selectedFiles, setSelectedFiles] = useState<SelectedFileType[]>([]);
+  const { selectedFiles, setSelectedFiles } = useSelectedFiles();
+  const { setViewFiles} = useViewFiles();
+
+  setViewFiles(viewFiles);
 
 
   useEffect(() => {
@@ -39,7 +44,7 @@ export default function TableView({ view_files }: { view_files: View_Files }) {
   return (
     <>
       {mounted && (
-        <div className="basis-4 grow  relative overflow-x-hidden">
+        <div className="basis-4 grow   overflow-x-hidden">
           {/* 表格主体 */}
           <div className="h-full overflow-y-scroll">
             {/* 表格的样式只加了table和checkbox */}
@@ -55,7 +60,7 @@ export default function TableView({ view_files }: { view_files: View_Files }) {
                           const checkbox = e.target as HTMLInputElement;
                           if (checkbox.checked) {
                             setSelectedFiles(
-                              view_files.map((file) => {
+                              viewFiles.map((file) => {
                                 return {
                                   name: file.name,
                                   isFile: file.isFile,
@@ -76,7 +81,7 @@ export default function TableView({ view_files }: { view_files: View_Files }) {
                 </tr>
               </thead>
               <tbody>
-                {view_files.map((view_file) => {
+                {viewFiles.map((view_file) => {
                   return (
                     <tr key={view_file.name + view_file.isFile}>
                       <th>

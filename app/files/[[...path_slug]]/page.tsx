@@ -4,7 +4,7 @@ import Link from "next/link";
 // import { BASE_PATH } from "../../config";
 import path from "path";
 import { redirect, RedirectType } from "next/navigation";
-import Uploader from "../../../components/uploader";
+// import Uploader from "../../../components/uploader";
 
 import { randomUUID, UUID } from "crypto";
 import {
@@ -21,6 +21,23 @@ import { getSingleFileUrl } from "@/utils";
 import TestClient from "@/components/testclient";
 const BASE_PATH = process.env.BASE_PATH!;
 
+async function getFiles(parentPath: string): Promise<Dirent[]> {
+  return new Promise((resolve, reject) => {
+    const callback = (err: NodeJS.ErrnoException | null, files: Dirent[]) => {
+      if (err) {
+        reject(err);
+      } else {
+        // 这里的reject和resolve是从Promise((resolve, reject)）中来的 所以 即使它在callback中 也是传进来的 对应的是Promise的resolve和reject
+        resolve(files);
+      }
+    };
+    fs.readdir(
+      path.join(BASE_PATH, parentPath),
+      { withFileTypes: true },
+      callback
+    );
+  });
+}
 
 
 export default async function Files({
@@ -43,12 +60,27 @@ export default async function Files({
     redirect(filepath);
   }
 
-  // const view_files = await fetch(`/api/viewfiles?parentPath=${parentPath}`).then((res) =>
-  //   res.json()
-  // );
+  const filesDirent = await getFiles(parentPath);
+
+  const viewFiles = await Promise.all(
+    filesDirent.map(async (file) => {
+      const stat = await fs.promises.stat(
+        path.join(BASE_PATH, parentPath, file.name)
+      );
+
+      return {
+        name: file.name,
+        parentPath: parentPath,
+        isFile: file.isFile(),
+        size: stat.size,
+        mtimeMs: stat.mtimeMs,
+        birthtimeMs: stat.birthtimeMs,
+      };
+    })
+  );
 
   return (
-    <div>
+    <>
       <div className="mx-6 breadcrumbs text-sm">
         <ul>
           <li>
@@ -65,8 +97,8 @@ export default async function Files({
           })}
         </ul>
       </div>
-      <TableView view_files={view_files} />
-    </div>
+      <TableView viewFiles={viewFiles} />
+    </>
   );
 }
 

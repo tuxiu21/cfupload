@@ -12,9 +12,11 @@ export default function FilesLayout({
       <LeftBar />
       {/* provider 不会占用div */}
       <FilesProvider>
-        <div className="grow flex flex-col min-w-0">
-          {/* <RightMenu /> */}
+        <div className="grow flex flex-col min-w-0 relative">
+          {/* children要放在前面 z-index小 */}
           {children}
+          <RightMenu />
+          
         </div>
       </FilesProvider>
     </main>

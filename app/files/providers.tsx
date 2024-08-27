@@ -1,15 +1,14 @@
 'use client';
 
-import { SelectedFileType, View_Files } from "@/types";
-import { createContext, useContext, useState } from "react";
+import { SelectedFileType, viewFiles } from "@/types";
+import { createContext, Dispatch, SetStateAction, useContext, useState } from "react";
 
 type SelectedFilesContextType = {
   selectedFiles: SelectedFileType[];
-  setSelectedFiles: (files: SelectedFileType[]) => void;
-};
+  setSelectedFiles: Dispatch<SetStateAction<SelectedFileType[]>>}
 type ViewFilesContextType = {
-  viewFiles: View_Files;
-  setViewFiles: (files: View_Files) => void;
+  viewFiles: viewFiles;
+  setViewFiles: Dispatch<SetStateAction<viewFiles>>
 };
 
 const SelectedFilesContext = createContext<SelectedFilesContextType | null>(null);
@@ -19,7 +18,7 @@ export default function FilesProvider({ children }: Readonly<{ children: React.R
 
 
   const [selectedFiles, setSelectedFiles] = useState<SelectedFileType[]>([]);
-  const [viewFiles, setViewFiles] = useState<View_Files>([]);
+  const [viewFiles, setViewFiles] = useState<viewFiles>([]);
 
   return (
     <SelectedFilesContext.Provider value={{selectedFiles,setSelectedFiles}}>

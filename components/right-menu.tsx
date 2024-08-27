@@ -1,5 +1,5 @@
 "use client";
-import { View_Files } from "@/types";
+import { viewFiles } from "@/types";
 import {
   CopyIcon,
   CreateFileIcon,
@@ -14,7 +14,7 @@ import {
   PlusIcon,
 } from "@/components/icons";
 import { deleteFile } from "@/app/files/action";
-import { useFiles } from "@/app/files/providers";
+// import { useFiles } from "@/app/files/providers";
 import { useParentPath } from "@/hooks";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
@@ -22,9 +22,11 @@ import path from "path";
 import { useRef, useState } from "react";
 import Toast from "./toast";
 import { formatSize } from "@/utils";
+import { useSelectedFiles, useViewFiles } from "@/app/files/providers";
 
 export default function RightMenu() {
-  const { selectedFiles, setSelectedFiles } = useFiles();
+  const { selectedFiles, setSelectedFiles } = useSelectedFiles()
+  const {viewFiles} = useViewFiles()
   const parentPath = useParentPath();
   const themeProps = useTheme();
 
@@ -109,51 +111,48 @@ export default function RightMenu() {
     }
   };
 
-  // const view_files = await fetch(`/api/viewfiles?path=${parentPath}`).then((res) =>
-  //   res.json()
-  // );
 
-  // // 重新渲染时候会进行执行 所以不必将其设为state
-  // let singleInfo: undefined | View_Files[number];
-  // if (selectedFiles.length === 1) {
-  //   singleInfo = view_files.find((file) => {
-  //     return (
-  //       file.name === selectedFiles[0].name &&
-  //       file.isFile === selectedFiles[0].isFile
-  //     );
-  //   });
-  // }
-  // let multipleInfo:
-  //   | undefined
-  //   | { fileCount: number; folderCount: number; size: number };
-  // if (selectedFiles.length > 1) {
-  //   multipleInfo = selectedFiles.reduce(
-  //     (prev, current) => {
-  //       const file = view_files.find((file) => {
-  //         return file.name === current.name && file.isFile === current.isFile;
-  //       });
-  //       if (file) {
-  //         if (file.isFile) {
-  //           prev.size += file.size;
-  //           prev.fileCount++;
-  //         } else {
-  //           prev.folderCount++;
-  //         }
-  //       }
-  //       return prev;
-  //     },
-  //     { fileCount: 0, folderCount: 0, size: 0 }
-  //   );
-  // }
+  // 重新渲染时候会进行执行 所以不必将其设为state
+  let singleInfo: undefined | viewFiles[number];
+  if (selectedFiles.length === 1) {
+    singleInfo = viewFiles.find((file) => {
+      return (
+        file.name === selectedFiles[0].name &&
+        file.isFile === selectedFiles[0].isFile
+      );
+    });
+  }
+  let multipleInfo:
+    | undefined
+    | { fileCount: number; folderCount: number; size: number };
+  if (selectedFiles.length > 1) {
+    multipleInfo = selectedFiles.reduce(
+      (prev, current) => {
+        const file = viewFiles.find((file) => {
+          return file.name === current.name && file.isFile === current.isFile;
+        });
+        if (file) {
+          if (file.isFile) {
+            prev.size += file.size;
+            prev.fileCount++;
+          } else {
+            prev.folderCount++;
+          }
+        }
+        return prev;
+      },
+      { fileCount: 0, folderCount: 0, size: 0 }
+    );
+  }
 
   return (
-    <div>
+    <>
       {/* 右侧菜单 */}
-      <div className="absolute w-full h-full top-0 left-0 overflow-y-scroll pointer-events-none overflow-x-hidden">
+      <div className="absolute w-full h-full top-0 left-0 overflow-y-scroll pointer-events-none overflow-x-hidden invisible">
         <div
           // transition必须要有初始值
           className={
-            "transition-all ease-in  absolute left-full top-1/4 pointer-events-auto " +
+            "transition-all ease-in  absolute left-full top-1/4 pointer-events-auto visible " +
             (selectedFiles.length > 0 ? "-translate-x-full" : "translate-x-0")
           }
         >
@@ -217,7 +216,7 @@ export default function RightMenu() {
               </button>
             </form>
             <h3 className="font-bold text-lg">Details</h3>
-            {/* {singleInfo ? (
+            {singleInfo ? (
               <>
                 <div className="grid grid-cols-2 gap-2 py-4">
                   <div className="flex flex-col">
@@ -303,7 +302,7 @@ export default function RightMenu() {
               </>
             ) : (
               <></>
-            )} */}
+            )}
           </div>
         </dialog>
         <dialog className={" modal " + (showDeleteModal ? "modal-open" : "")}>
@@ -339,6 +338,6 @@ export default function RightMenu() {
           />
         </dialog>
       </div>
-    </div>
+    </>
   );
 }

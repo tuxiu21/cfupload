@@ -4,7 +4,7 @@ export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
 };
 
-export type View_Files =   {
+export type viewFiles =   {
   size: number;
   mtimeMs: number;
   name: string;
