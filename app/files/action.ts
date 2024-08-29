@@ -10,6 +10,44 @@ import { Readable } from "stream";
 const tmp_path = os.tmpdir();
 const BASE_PATH = process.env.BASE_PATH!;
 
+export async function pasteFiles(
+  selectedFiles: SelectedFileType[],
+  originParentPath: string,
+  parentPath: string,
+  action: "copy" | "cut"
+) {
+  const actionFunc = action === "copy" ? fs.promises.cp : fs.promises.rename;
+  for (const { name, isFile } of selectedFiles) {
+    const src = path.join(BASE_PATH, originParentPath, name);
+    const dest = path.join(BASE_PATH, parentPath, name);
+
+    console.log('copy files：');
+    console.log(src, dest);
+
+    try {
+
+      await actionFunc(src, dest,{recursive:true});
+
+
+    } catch (e) {
+      console.log(e);
+      
+      return {
+        success: false,
+        message: "Error pasting file"
+      }
+    }
+
+  }
+  return {
+    success: true,
+    message: "File pasted successfully"
+  }
+
+}
+
+
+
 export async function deleteFile(selectedFiles: SelectedFileType[], parentPath: string) {
 
   for (const { name, isFile } of selectedFiles) {

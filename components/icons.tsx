@@ -8,11 +8,129 @@ import { IconSvgProps } from "@/types";
   height="1em"
   viewBox="0 0 24 24"
 >
-  <path
-    fill="currentColor"
-    d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"
-  />
+  <g
+    fill="none"
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    strokeWidth="2"
+  >
+    <path
+      strokeDasharray="20"
+      strokeDashoffset="20"
+      d="M12 15h2v-6h2.5l-4.5 -4.5M12 15h-2v-6h-2.5l4.5 -4.5"
+    >
+      <animate
+        fill="freeze"
+        attributeName="stroke-dashoffset"
+        dur="0.4s"
+        values="20;0"
+      />
+    </path>
+    <path strokeDasharray="16" strokeDashoffset="16" d="M6 19h12">
+      <animate
+        fill="freeze"
+        attributeName="stroke-dashoffset"
+        begin="0.5s"
+        dur="0.2s"
+        values="16;0"
+      />
+    </path>
+  </g>
 </svg>;
+export const UploadingIcon: React.FC<IconSvgProps> = ({
+  size = 12,
+  width,
+  height,
+  ...props
+}) => (
+  <svg
+    // fill={props.color}
+    // fill="none"
+    stroke="currentColor"
+    // strokeWidth={0.5}
+    height={size || height}
+    viewBox="0 0 24 24"
+    width={size || width}
+    {...props}
+  >
+      <g
+    fill="none"
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    strokeWidth="2"
+  >
+    <path
+      strokeDasharray="20"
+      strokeDashoffset="20"
+      d="M12 15h2v-6h2.5l-4.5 -4.5M12 15h-2v-6h-2.5l4.5 -4.5"
+    >
+      <animate
+        fill="freeze"
+        attributeName="stroke-dashoffset"
+        dur="1.5s"
+        values="20;0"
+        repeatCount="indefinite"
+      />
+    </path>
+    <path strokeDasharray="16" strokeDashoffset="16" d="M6 19h12">
+      <animate
+        fill="freeze"
+        attributeName="stroke-dashoffset"
+        begin="0.5s"
+        dur="1s"
+        values="16;0"
+        // repeatCount="indefinite"
+      />
+    </path>
+  </g>
+  </svg>
+);
+
+export const PasteIcon: React.FC<IconSvgProps> = ({
+  size = 12,
+  width,
+  height,
+  ...props
+}) => (
+  <svg
+    // fill={props.color}
+    // fill="none"
+    stroke="currentColor"
+    strokeWidth={0.5}
+    height={size || height}
+    viewBox="0 0 16 16"
+    width={size || width}
+    {...props}
+  >
+    <path
+      fill="currentColor"
+      d="M4.085 2H3.5A1.5 1.5 0 0 0 2 3.5v10A1.5 1.5 0 0 0 3.5 15h2.612v-1H3.5a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h.585A1.5 1.5 0 0 0 5.5 4h3a1.5 1.5 0 0 0 1.415-1h.585a.5.5 0 0 1 .5.5V5h1V3.5A1.5 1.5 0 0 0 10.5 2h-.585A1.5 1.5 0 0 0 8.5 1h-3a1.5 1.5 0 0 0-1.415 1M5 2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5M8.5 6A1.5 1.5 0 0 0 7 7.5v6A1.5 1.5 0 0 0 8.5 15h4a1.5 1.5 0 0 0 1.5-1.5v-6A1.5 1.5 0 0 0 12.5 6zM8 7.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5z"
+    />
+  </svg>
+);
+export const CancelIcon: React.FC<IconSvgProps> = ({
+  size = 12,
+  width,
+  height,
+  ...props
+}) => (
+  <svg
+    // fill={props.color}
+    // fill="none"
+    stroke="currentColor"
+    height={size || height}
+    viewBox="0 -960 960 960"
+    width={size || width}
+    {...props}
+  >
+    <path
+      fill="currentColor"
+      d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"
+    />
+  </svg>
+);
 
 export const DeleteIcon: React.FC<IconSvgProps> = ({
   size = 12,

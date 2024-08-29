@@ -25,6 +25,7 @@ import Toast from "./toast";
 
 import { useRouter } from "next/navigation";
 import { useSelectedFiles, useViewFiles } from "@/app/files/providers";
+import { useParentPath } from "@/hooks";
 
 export default function TableView({ viewFiles }: { viewFiles: viewFiles }) {
   const [mounted, setMounted] = useState(false);
@@ -33,13 +34,20 @@ export default function TableView({ viewFiles }: { viewFiles: viewFiles }) {
   const { selectedFiles, setSelectedFiles } = useSelectedFiles();
   const { setViewFiles} = useViewFiles();
 
-  setViewFiles(viewFiles);
+  // setViewFiles(viewFiles);
+  const parentPath=useParentPath()
 
 
   useEffect(() => {
     // 等挂载好再显示 不然会出现水合问题
     setMounted(true);
+    setViewFiles(viewFiles);
   }, []);
+
+  useEffect(() => {
+    // 每次切换目录都清空选中的文件
+    setSelectedFiles([]);
+  }, [parentPath]);
 
   return (
     <>
@@ -74,7 +82,7 @@ export default function TableView({ viewFiles }: { viewFiles: viewFiles }) {
                       />
                     </label>
                   </th>
-                  <th className="w-1/2">Filename</th>
+                  <th className="">Filename</th>
                   <th className="max-sm:hidden">Modify Date</th>
                   <th className="w-16">Size</th>
                   <th></th>
@@ -145,7 +153,7 @@ export default function TableView({ viewFiles }: { viewFiles: viewFiles }) {
                           )}
                         </div>
                       </td>
-                      <td className="max-sm:hidden">
+                      <td className="max-sm:hidden truncate">
                         {new Date(view_file.mtimeMs).toLocaleDateString(
                           "en-US",
                           {

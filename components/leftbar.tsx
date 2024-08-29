@@ -10,13 +10,15 @@ import {
   FolderIcon,
   FolderUploadIcon,
   PlusIcon,
+  UploadingIcon,
 } from "@/components/icons";
 import { formatSize } from "@/utils";
 import { useParentPath } from "@/hooks";
-import { usePathname, useRouter } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
 import { useRef, useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import Toast from "./toast";
+import path from "path";
 enum ModalType {
   None,
   Folder,
@@ -38,7 +40,7 @@ const CHUNK_SIZE = 1024 * 1024 * Number(process.env.NEXT_PUBLIC_CHUNK_SIZE_MB);
 
 export default function LeftBar() {
   // 这个获取的是完整的路径
-  const parentPath=useParentPath()
+  const parentPath = useParentPath();
 
   const [modalStatus, setModalStatus] = useState(ModalType.None);
   const [addFileName, setAddFileName] = useState("");
@@ -66,14 +68,13 @@ export default function LeftBar() {
     setShowToast(true);
     setTimeout(() => {
       setShowToast(false);
-    }, 5000);
+    }, 2000);
+
     if (res.success) {
       // 重新获取文件列表
-      router.refresh();
 
-      setTimeout(() => {
-        setModalStatus(ModalType.None);
-      }, 500);
+      router.refresh();
+      setModalStatus(ModalType.None);
     }
   };
 
@@ -161,7 +162,7 @@ export default function LeftBar() {
   };
 
   return (
-    <div className="sm:min-w-72 p-2">
+    <div className="sm:min-w-60 p-2">
       {/* new 按钮 */}
       <div className="dropdown">
         <div
@@ -292,11 +293,6 @@ export default function LeftBar() {
               </div>
             </div>
           </div>
-          <Toast
-            show={showToast}
-            success={addFileRes.success}
-            message={addFileRes.message}
-          />
         </dialog>
       </div>
 
@@ -358,24 +354,45 @@ export default function LeftBar() {
 
                         {/* 任务状态 以及操作 */}
                         <div className="">
-                          {/* <CheckMarkIcon/> */}
-                          <div
-                            tabIndex={0}
-                            role="button"
-                            className="btn btn-ghost btn-square m-1"
-                          >
-                            <CheckMarkIcon className="h-6 w-6 text-green-600" />
-                          </div>
+                          {task.chunkUploaded === task.chunkTotal ? (
+                            <>
+                              <div
+                                tabIndex={0}
+                                role="button"
+                                className="btn btn-ghost btn-square m-1 swap  hover:swap-active"
+                                onClick={() => {
+                                  const dstPath=path.join('/files',task.destination)
+                                  router.push(dstPath)
+                                  setShowTaskBar(false)
+                                }}
+                              >
+                                <FolderIcon className="h-6 w-6 text-secondary swap-on" />
+                                < CheckMarkIcon className="h-6 w-6 text-green-600 swap-off" />
+                              </div>
+                            </>
+                          ) : (
+                            <div
+                              tabIndex={0}
+                              role="button"
+                              className="btn btn-ghost btn-square m-1"
+                            >
+                              <UploadingIcon className=" h-6 w-6 text-secondary" />
+                            </div>
+                          )}
                         </div>
                       </div>
                     );
                   })}
               </div>
-              {/* <div></div> */}
             </div>
           </div>
         </div>
       </div>
+      <Toast
+        show={showToast}
+        success={addFileRes.success}
+        message={addFileRes.message}
+      />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
-import { viewFiles } from "@/types";
+import { SelectedFileType, viewFiles } from "@/types";
 import {
+  CancelIcon,
   CopyIcon,
   CreateFileIcon,
   CutIcon,
@@ -11,29 +12,40 @@ import {
   FolderIcon,
   FolderUploadIcon,
   InfoIcon,
+  PasteIcon,
   PlusIcon,
 } from "@/components/icons";
-import { deleteFile } from "@/app/files/action";
+import { deleteFile, pasteFiles } from "@/app/files/action";
 // import { useFiles } from "@/app/files/providers";
 import { useParentPath } from "@/hooks";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import path from "path";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Toast from "./toast";
 import { formatSize } from "@/utils";
 import { useSelectedFiles, useViewFiles } from "@/app/files/providers";
 
+
+enum ClipboardStatus {
+  None,
+  Copy,
+  Cut,
+}
+
 export default function RightMenu() {
-  const { selectedFiles, setSelectedFiles } = useSelectedFiles()
-  const {viewFiles} = useViewFiles()
+  const { selectedFiles, setSelectedFiles } = useSelectedFiles();
+  const { viewFiles } = useViewFiles();
   const parentPath = useParentPath();
   const themeProps = useTheme();
 
+  const [clipboardStatus, setClipboardStatus] = useState(ClipboardStatus.None);
+
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showDeleteToast, setShowDeleteToast] = useState(false);
-  const [deleteFileRes, setDeleteFileRes] = useState({
+
+  const [showToast, setShowToast] = useState(false);
+  const [toastRes, setToastRes] = useState({
     success: false,
     message: "",
   });
@@ -42,10 +54,10 @@ export default function RightMenu() {
 
   const linkRef = useRef<HTMLAnchorElement>(null);
 
-  // useEffect(() => {
-  //   // 等挂载好再显示 不然会出现水合问题
-  //   setMounted(true);
-  // }, []);
+  const clipboardRef = useRef({
+    files: [] as SelectedFileType[],
+    parentPath: "",
+  });
 
   const handleDownload = async () => {
     console.log(selectedFiles);
@@ -92,25 +104,49 @@ export default function RightMenu() {
   };
   const toDeleteFile = async () => {
     const res = await deleteFile(selectedFiles, parentPath);
-    setDeleteFileRes(res);
-    setShowDeleteToast(true);
+    setToastRes(res);
+    setShowToast(true);
 
     if (res.success) {
+      setShowDeleteModal(false);
       setTimeout(() => {
-        setShowDeleteToast(false);
-        setShowDeleteModal(false);
-      }, 1000);
+        setShowToast(false);
+      }, 2000);
       setSelectedFiles([]);
 
       router.refresh();
     } else {
       setTimeout(() => {
-        setShowDeleteToast(false);
+        setShowToast(false);
       }, 5000);
       // console.log(res.message);
     }
   };
-
+  const handleClipAction = (status: ClipboardStatus) => {
+    setClipboardStatus(status);
+    clipboardRef.current = {
+      files: selectedFiles,
+      parentPath,
+    };
+    setSelectedFiles([]);
+  };
+  const handlePaste = async () => {
+    const res = await pasteFiles(
+      clipboardRef.current.files,
+      clipboardRef.current.parentPath,
+      parentPath,
+      clipboardStatus === ClipboardStatus.Copy ? "copy" : "cut"
+    );
+    setToastRes(res);
+    setShowToast(true);
+    setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
+    if (res.success) {
+      setClipboardStatus(ClipboardStatus.None);
+      router.refresh();
+    }
+  };
 
   // 重新渲染时候会进行执行 所以不必将其设为state
   let singleInfo: undefined | viewFiles[number];
@@ -145,6 +181,28 @@ export default function RightMenu() {
     );
   }
 
+  console.log("right-menu渲染");
+
+  let menuExtraClass = "";
+  let menuClipboardExtraClass = "";
+  // 为了防止tooltip还在显示 要再往右移动一点
+  if (selectedFiles.length == 0 && clipboardStatus === ClipboardStatus.None) {
+    menuExtraClass = " translate-x-full ";
+    menuClipboardExtraClass = " translate-x-full ";
+  }
+
+  if (selectedFiles.length >= 1 && clipboardStatus === ClipboardStatus.None) {
+    menuExtraClass = " -translate-x-full ";
+    menuClipboardExtraClass = " translate-x-full ";
+  }
+  if (
+    clipboardStatus === ClipboardStatus.Cut ||
+    clipboardStatus === ClipboardStatus.Copy
+  ) {
+    menuExtraClass = " translate-x-full ";
+    menuClipboardExtraClass = " -translate-x-full ";
+  }
+
   return (
     <>
       {/* 右侧菜单 */}
@@ -153,7 +211,7 @@ export default function RightMenu() {
           // transition必须要有初始值
           className={
             "transition-all ease-in  absolute left-full top-1/4 pointer-events-auto visible " +
-            (selectedFiles.length > 0 ? "-translate-x-full" : "translate-x-0")
+            menuExtraClass
           }
         >
           <ul
@@ -181,12 +239,24 @@ export default function RightMenu() {
               </a>
             </li>
             <li>
-              <a className="tooltip tooltip-left" data-tip="Cut">
+              <a
+                className="tooltip tooltip-left"
+                data-tip="Cut"
+                onClick={() => {
+                  handleClipAction(ClipboardStatus.Cut);
+                }}
+              >
                 <CutIcon className="h-5 w-5" />
               </a>
             </li>
             <li>
-              <a className="tooltip tooltip-left" data-tip="Copy">
+              <a
+                className="tooltip tooltip-left"
+                data-tip="Copy"
+                onClick={() => {
+                  handleClipAction(ClipboardStatus.Copy);
+                }}
+              >
                 <CopyIcon className="h-5 w-5" />
               </a>
             </li>
@@ -201,7 +271,46 @@ export default function RightMenu() {
             </li>
           </ul>
         </div>
+        <div
+          className={
+            "transition-all ease-in  absolute left-full top-1/4 pointer-events-auto visible " +
+            menuClipboardExtraClass
+          }
+        >
+          <ul
+            className={
+              "menu bg-base-200 shadow-xl " +
+              (themeProps.resolvedTheme == "cyberpunk" ? "" : "rounded-l-xl ")
+            }
+          >
+            <li>
+              <a
+                className="tooltip tooltip-left"
+                data-tip="Paste"
+                onClick={handlePaste}
+              >
+                <PasteIcon className="h-5 w-5" />
+              </a>
+            </li>
+            <li>
+              <a
+                className="tooltip tooltip-left"
+                data-tip="Cancel"
+                onClick={() => {
+                  setClipboardStatus(ClipboardStatus.None);
+                }}
+              >
+                <CancelIcon className="h-5 w-5" />
+              </a>
+            </li>
+          </ul>
+        </div>
         <a ref={linkRef} className="hidden" download></a>
+        <Toast
+          show={showToast}
+          success={toastRes.success}
+          message={toastRes.message}
+        />
       </div>
       {/* 菜单对话框 */}
       <div>
@@ -221,7 +330,7 @@ export default function RightMenu() {
                 <div className="grid grid-cols-2 gap-2 py-4">
                   <div className="flex flex-col">
                     <small className="text-default-500">Name</small>
-                    <p>{singleInfo.name}</p>
+                    <p className="text-wrap break-words">{singleInfo.name}</p>
                   </div>
                   <div className="flex flex-col">
                     <small className="text-default-500">Type</small>
@@ -331,11 +440,7 @@ export default function RightMenu() {
               </button>
             </div>
           </div>
-          <Toast
-            show={showDeleteToast}
-            success={deleteFileRes.success}
-            message={deleteFileRes.message}
-          />
+
         </dialog>
       </div>
     </>

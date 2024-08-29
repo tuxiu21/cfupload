@@ -11,8 +11,8 @@ export default function Toast({
 }) {
   return (
     <div
-      className={`toast transition-all duration-500 ease-out ${
-        show ? " opacity-100" : "invisible opacity-0"
+      className={`z-[9999] toast transition-all duration-500 ease-out ${
+        show ? " visible opacity-100 " : "invisible opacity-0 "
       }`}
     >
       <div
