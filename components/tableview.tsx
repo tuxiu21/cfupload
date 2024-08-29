@@ -56,10 +56,10 @@ export default function TableView({ viewFiles }: { viewFiles: viewFiles }) {
           {/* 表格主体 */}
           <div className="h-full overflow-y-scroll">
             {/* 表格的样式只加了table和checkbox */}
-            <table className="table table-fixed">
+            <table className="table">
               <thead>
                 <tr>
-                  <th className="w-10">
+                  <th>
                     <label>
                       <input
                         type="checkbox"
@@ -84,8 +84,8 @@ export default function TableView({ viewFiles }: { viewFiles: viewFiles }) {
                   </th>
                   <th className="">Filename</th>
                   <th className="max-sm:hidden">Modify Date</th>
-                  <th className="w-16">Size</th>
-                  <th></th>
+                  <th className="">Size</th>
+                  {/* <th></th> */}
                 </tr>
               </thead>
               <tbody>
@@ -130,7 +130,7 @@ export default function TableView({ viewFiles }: { viewFiles: viewFiles }) {
                         </label>
                       </th>
                       <td>
-                        <div className="flex flex-row items-center gap-2">
+                        <div className="flex flex-row items-center gap-2 w-20">
                           {view_file.isFile ? (
                             <>
                               <FileIcon className="min-w-5  h-5" />{" "}
