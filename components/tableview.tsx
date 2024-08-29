@@ -59,7 +59,7 @@ export default function TableView({ viewFiles }: { viewFiles: viewFiles }) {
             <table className="table">
               <thead>
                 <tr>
-                  <th>
+                  <th className="pr-0">
                     <label>
                       <input
                         type="checkbox"
@@ -83,16 +83,16 @@ export default function TableView({ viewFiles }: { viewFiles: viewFiles }) {
                     </label>
                   </th>
                   <th className="">Filename</th>
-                  <th className="max-sm:hidden">Modify Date</th>
+                  <th className="max-lg:hidden ">Modify Date</th>
                   <th className="">Size</th>
-                  {/* <th></th> */}
+
                 </tr>
               </thead>
               <tbody>
                 {viewFiles.map((view_file) => {
                   return (
                     <tr key={view_file.name + view_file.isFile}>
-                      <th>
+                      <th className="pr-0">
                         <label>
                           <input
                             type="checkbox"
@@ -130,7 +130,7 @@ export default function TableView({ viewFiles }: { viewFiles: viewFiles }) {
                         </label>
                       </th>
                       <td>
-                        <div className="flex flex-row items-center gap-2 w-20">
+                        <div className="flex flex-row items-center gap-2 w-28 sm:w-48 md:w-72 lg:w-80">
                           {view_file.isFile ? (
                             <>
                               <FileIcon className="min-w-5  h-5" />{" "}
@@ -153,7 +153,7 @@ export default function TableView({ viewFiles }: { viewFiles: viewFiles }) {
                           )}
                         </div>
                       </td>
-                      <td className="max-sm:hidden truncate">
+                      <td className="max-sm:hidden max-lg:hidden truncate">
                         {new Date(view_file.mtimeMs).toLocaleDateString(
                           "en-US",
                           {

@@ -305,7 +305,7 @@ export default function LeftBar() {
         <div
           className={
             "absolute pointer-events-auto right-0 bottom-0 z-10 visible transition-all max-w-full " +
-            (showTaskBar ? "translate-y-0 w-full" : "translate-y-48  w-12")
+            (showTaskBar ? "translate-y-0 w-full sm:w-1/2" : "translate-y-48  w-12")
           }
         >
           <div className="card bg-base-200 shadow-2xl ">
