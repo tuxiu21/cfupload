@@ -45,6 +45,11 @@ export default function TableView({ viewFiles }: { viewFiles: viewFiles }) {
   }, []);
 
   useEffect(() => {
+    // 选中的文件变化时 viewFiles也要变化
+    setViewFiles(viewFiles);
+  }, [selectedFiles]);
+
+  useEffect(() => {
     // 每次切换目录都清空选中的文件
     setSelectedFiles([]);
   }, [parentPath]);

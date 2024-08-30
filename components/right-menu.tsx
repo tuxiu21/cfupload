@@ -158,6 +158,7 @@ export default function RightMenu() {
       );
     });
   }
+  
   let multipleInfo:
     | undefined
     | { fileCount: number; folderCount: number; size: number };
