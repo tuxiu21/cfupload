@@ -26,12 +26,12 @@ export async function pasteFiles(
 
     try {
 
-      await actionFunc(src, dest,{recursive:true});
+      await actionFunc(src, dest, { recursive: true });
 
 
     } catch (e) {
       console.log(e);
-      
+
       return {
         success: false,
         message: "Error pasting file"
@@ -128,8 +128,8 @@ export async function chunkUpload(chunkFormData: FormData) {
   }
   );
 
-
-  if (index + 1 === chunks) {
+  // 这里还要考虑文件size为0的情况 也就是chunks为0的情况
+  if (index + 1 === chunks || chunks === 0) {
     const destPath = path.join(BASE_PATH, pathname, filename);
     fs.renameSync(filePath, destPath);
   }

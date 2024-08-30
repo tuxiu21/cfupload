@@ -128,12 +128,20 @@ export default function LeftBar() {
               task.filename === file.name &&
               task.destination === uploadParentPath
             ) {
-              task.chunkUploaded = index + 1;
+              if (task.chunkTotal === 0) {
+                task.chunkTotal=1
+                task.chunkUploaded=1
+              }else{
+                task.chunkUploaded = index + 1;
+              }
+
               return task;
             }
             return task;
           });
         });
+
+        router.refresh();
       }
     };
     const uploadPromises = [];
@@ -305,7 +313,9 @@ export default function LeftBar() {
         <div
           className={
             "absolute pointer-events-auto right-0 bottom-0 z-10 visible transition-all max-w-full " +
-            (showTaskBar ? "translate-y-0 w-full sm:w-1/2" : "translate-y-48  w-12")
+            (showTaskBar
+              ? "translate-y-0 w-full sm:w-1/2"
+              : "translate-y-48  w-12")
           }
         >
           <div className="card bg-base-200 shadow-2xl ">
@@ -314,7 +324,6 @@ export default function LeftBar() {
               <label className="btn btn-ghost swap swap-rotate ">
                 <input
                   type="checkbox"
-                  // value={showTaskBar ? "on" : "off"}
                   checked={showTaskBar}
                   onChange={(e) => {
                     setShowTaskBar(e.target.checked);
@@ -361,13 +370,16 @@ export default function LeftBar() {
                                 role="button"
                                 className="btn btn-ghost btn-square m-1 swap  hover:swap-active"
                                 onClick={() => {
-                                  const dstPath=path.join('/files',task.destination)
-                                  router.push(dstPath)
-                                  setShowTaskBar(false)
+                                  const dstPath = path.join(
+                                    "/files",
+                                    task.destination
+                                  );
+                                  router.push(dstPath);
+                                  setShowTaskBar(false);
                                 }}
                               >
                                 <FolderIcon className="h-6 w-6 text-secondary swap-on" />
-                                < CheckMarkIcon className="h-6 w-6 text-green-600 swap-off" />
+                                <CheckMarkIcon className="h-6 w-6 text-green-600 swap-off" />
                               </div>
                             </>
                           ) : (
