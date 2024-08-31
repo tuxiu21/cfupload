@@ -11,7 +11,8 @@ export default function TestClient() {
   const [value,setValue]=useState(0)
 
   return (
-    <div>
+    <div className="bg-sky-300">
+      login<br/>
       value:{value}<br/>
       <button 
       className="btn"

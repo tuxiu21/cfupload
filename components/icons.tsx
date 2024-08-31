@@ -2,42 +2,79 @@ import * as React from "react";
 
 import { IconSvgProps } from "@/types";
 
-<svg
-  xmlns="http://www.w3.org/2000/svg"
-  width="1em"
-  height="1em"
-  viewBox="0 0 24 24"
->
-  <g
-    fill="none"
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 32 32"><path fill="currentColor" d="M6 30h20v-5a7.01 7.01 0 0 0-7-7h-6a7.01 7.01 0 0 0-7 7zM9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7"/></svg>
+export const UserFilledIcon: React.FC<IconSvgProps> = ({
+  size = 12,
+  width,
+  height,
+  ...props
+}) => (
+  <svg
+    // fill={props.color}
+    // fill="none"
     stroke="currentColor"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    strokeWidth="2"
+    // strokeWidth={0.5}
+    height={size || height}
+    viewBox="0 0 32 32"
+    width={size || width}
+    {...props}
+  >
+<path fill="currentColor" d="M6 30h20v-5a7.01 7.01 0 0 0-7-7h-6a7.01 7.01 0 0 0-7 7zM9 9a7 7 0 1 0 7-7a7 7 0 0 0-7 7"/>
+  </svg>
+);
+
+export const KeyIcon: React.FC<IconSvgProps> = ({
+  size = 12,
+  width,
+  height,
+  ...props
+}) => (
+  <svg
+    // fill={props.color}
+    fill="currentColor"
+    stroke="currentColor"
+    // strokeWidth={0.5}
+    height={size || height}
+    viewBox="0 0 16 16"
+    width={size || width}
+    {...props}
   >
     <path
-      strokeDasharray="20"
-      strokeDashoffset="20"
-      d="M12 15h2v-6h2.5l-4.5 -4.5M12 15h-2v-6h-2.5l4.5 -4.5"
+      fillRule="evenodd"
+      d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z"
+      clipRule="evenodd"
+    />
+  </svg>
+);
+export const UserIcon: React.FC<IconSvgProps> = ({
+  size = 12,
+  width,
+  height,
+  ...props
+}) => (
+  <svg
+    // fill={props.color}
+    // fill="none"
+    stroke="currentColor"
+    // strokeWidth={0.5}
+    height={size || height}
+    viewBox="0 0 24 24"
+    width={size || width}
+    {...props}
+  >
+    <g
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
     >
-      <animate
-        fill="freeze"
-        attributeName="stroke-dashoffset"
-        dur="0.4s"
-        values="20;0"
-      />
-    </path>
-    <path strokeDasharray="16" strokeDashoffset="16" d="M6 19h12">
-      <animate
-        fill="freeze"
-        attributeName="stroke-dashoffset"
-        begin="0.5s"
-        dur="0.2s"
-        values="16;0"
-      />
-    </path>
-  </g>
-</svg>;
+      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </g>
+  </svg>
+);
+
 export const UploadingIcon: React.FC<IconSvgProps> = ({
   size = 12,
   width,
@@ -54,37 +91,37 @@ export const UploadingIcon: React.FC<IconSvgProps> = ({
     width={size || width}
     {...props}
   >
-      <g
-    fill="none"
-    stroke="currentColor"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    strokeWidth="2"
-  >
-    <path
-      strokeDasharray="20"
-      strokeDashoffset="20"
-      d="M12 15h2v-6h2.5l-4.5 -4.5M12 15h-2v-6h-2.5l4.5 -4.5"
+    <g
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
     >
-      <animate
-        fill="freeze"
-        attributeName="stroke-dashoffset"
-        dur="1.5s"
-        values="20;0"
-        repeatCount="indefinite"
-      />
-    </path>
-    <path strokeDasharray="16" strokeDashoffset="16" d="M6 19h12">
-      <animate
-        fill="freeze"
-        attributeName="stroke-dashoffset"
-        begin="0.5s"
-        dur="1s"
-        values="16;0"
-        // repeatCount="indefinite"
-      />
-    </path>
-  </g>
+      <path
+        strokeDasharray="20"
+        strokeDashoffset="20"
+        d="M12 15h2v-6h2.5l-4.5 -4.5M12 15h-2v-6h-2.5l4.5 -4.5"
+      >
+        <animate
+          fill="freeze"
+          attributeName="stroke-dashoffset"
+          dur="1.5s"
+          values="20;0"
+          repeatCount="indefinite"
+        />
+      </path>
+      <path strokeDasharray="16" strokeDashoffset="16" d="M6 19h12">
+        <animate
+          fill="freeze"
+          attributeName="stroke-dashoffset"
+          begin="0.5s"
+          dur="1s"
+          values="16;0"
+          // repeatCount="indefinite"
+        />
+      </path>
+    </g>
   </svg>
 );
 
