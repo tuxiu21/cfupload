@@ -1,5 +1,4 @@
 import { SVGProps } from "react";
-import fs, { Dirent } from "fs";
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
 };
@@ -17,3 +16,9 @@ export type SelectedFileType = {
   name: string;
   isFile: boolean;
 };
+
+export type ToastMessage={
+  success: boolean;
+  message: string;
+  duration?: number;
+}

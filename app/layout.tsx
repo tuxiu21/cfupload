@@ -25,7 +25,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <Providers>
           <div className="h-dvh flex flex-col">
-            <Navbar></Navbar>
+            
             {children}
           </div>
         </Providers>

@@ -1,17 +1,17 @@
-"use client";
+// "use client";
 
 import { useState } from "react";
 import { KeyIcon, UserFilledIcon, UserIcon } from "./icons";
 import ThemeSwitch from "./theme-switch";
 import { login } from "@/app/action";
+import Link from "next/link";
 
 export default function Navbar() {
-  const [showLoginModal, setShowLoginModal] = useState(false);
 
   return (
     <div className="navbar bg-base-100">
       <div className="flex-none">
-        <button className="btn btn-square btn-ghost" onClick={() => {}}>
+        <button className="btn btn-square btn-ghost">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -58,19 +58,23 @@ export default function Navbar() {
             </li>
           </ul>
         </div> */}
-        <div className="dropdown dropdown-end">
+        {/* <div className="dropdown dropdown-end">
           <div
             tabIndex={0}
             role="button"
             className="btn btn-ghost btn-square"
             onClick={() => {
               setShowLoginModal(true);
+              
             }}
           >
             <span>Login</span>
-          </div>
+          </div> */}
+          <Link href="/login" className="btn btn-ghost btn-square">
+          Login
+          </Link>
         </div>
-        <dialog className={" modal " + (showLoginModal ? "modal-open" : "")}>
+        {/* <dialog className={" modal " + (showLoginModal ? "modal-open" : "")}>
           <div className="modal-box">
             <form method="dialog">
               <button
@@ -106,8 +110,9 @@ export default function Navbar() {
               </button>
             </div>
           </div>
-        </dialog>
+        </dialog> */}
       </div>
-    </div>
+    // </div>
+    
   );
 }

@@ -1,5 +1,5 @@
 "use client";
-import { addFile, chunkUpload } from "@/app/files/action";
+import { addFile, chunkUpload } from "@/app/(main)/files/action";
 import {
   CheckMarkIcon,
   CreateFileIcon,
@@ -17,7 +17,7 @@ import { useParentPath } from "@/hooks";
 import { redirect, usePathname, useRouter } from "next/navigation";
 import { useRef, useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
-import Toast from "./toast";
+import Toast, { useToast } from "./toast-provider";
 import path from "path";
 enum ModalType {
   None,
@@ -45,10 +45,6 @@ export default function LeftBar() {
   const [modalStatus, setModalStatus] = useState(ModalType.None);
   const [addFileName, setAddFileName] = useState("");
 
-  const [addFileRes, setAddFileRes] = useState({ success: false, message: "" });
-
-  const [showToast, setShowToast] = useState(false);
-
   const [tasks, setTasks] = useState<TaskStatus[]>([]);
   const [showTaskBar, setShowTaskBar] = useState(false);
 
@@ -58,17 +54,17 @@ export default function LeftBar() {
 
   const router = useRouter();
 
+  const toast=useToast()
+
   const handleAddFile = async () => {
     const res = await addFile(
       addFileName,
       modalStatus === ModalType.CreateFile,
       parentPath
     );
-    setAddFileRes(res);
-    setShowToast(true);
-    setTimeout(() => {
-      setShowToast(false);
-    }, 2000);
+
+    toast({success:res.success,message:res.message})
+    
 
     if (res.success) {
       // 重新获取文件列表
@@ -264,7 +260,7 @@ export default function LeftBar() {
           <div className="modal-box">
             <form method="dialog">
               <button
-                className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                className="btn btn-sm btn-square btn-ghost absolute right-2 top-2"
                 onClick={() => setModalStatus(ModalType.None)}
               >
                 ✕
@@ -400,11 +396,7 @@ export default function LeftBar() {
           </div>
         </div>
       </div>
-      <Toast
-        show={showToast}
-        success={addFileRes.success}
-        message={addFileRes.message}
-      />
+
     </div>
   );
 }

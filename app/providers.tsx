@@ -1,3 +1,4 @@
+import ToastProvider from '@/components/toast-provider';
 import { ThemeProvider } from 'next-themes'
 
 
@@ -8,7 +9,10 @@ export default function Providers({ children }: Readonly<{ children: React.React
     // daisyui用的是data-theme
     attribute='data-theme'
     >
-      {children}
+      {/* {children} */}
+      <ToastProvider>
+        {children}
+      </ToastProvider>
     </ThemeProvider>
   );
 }

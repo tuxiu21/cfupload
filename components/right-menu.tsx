@@ -15,16 +15,16 @@ import {
   PasteIcon,
   PlusIcon,
 } from "@/components/icons";
-import { deleteFile, pasteFiles } from "@/app/files/action";
+import { deleteFile, pasteFiles } from "@/app/(main)/files/action";
 // import { useFiles } from "@/app/files/providers";
 import { useParentPath } from "@/hooks";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import path from "path";
 import { useEffect, useRef, useState } from "react";
-import Toast from "./toast";
+import Toast, { useToast } from "./toast-provider";
 import { formatSize } from "@/utils";
-import { useSelectedFiles, useViewFiles } from "@/app/files/providers";
+import { useSelectedFiles, useViewFiles } from "@/app/(main)/files/providers";
 
 
 enum ClipboardStatus {
@@ -44,11 +44,7 @@ export default function RightMenu() {
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const [showToast, setShowToast] = useState(false);
-  const [toastRes, setToastRes] = useState({
-    success: false,
-    message: "",
-  });
+
 
   const router = useRouter();
 
@@ -58,6 +54,18 @@ export default function RightMenu() {
     files: [] as SelectedFileType[],
     parentPath: "",
   });
+
+  const [mounted, setMounted] = useState(false);
+
+  const toast=useToast();
+
+
+  useEffect(() => {
+    setMounted(true);
+    // return () => {
+      
+    // };
+  }, []);
 
   const handleDownload = async () => {
     console.log(selectedFiles);
@@ -104,23 +112,15 @@ export default function RightMenu() {
   };
   const toDeleteFile = async () => {
     const res = await deleteFile(selectedFiles, parentPath);
-    setToastRes(res);
-    setShowToast(true);
 
+    toast(res);
     if (res.success) {
       setShowDeleteModal(false);
-      setTimeout(() => {
-        setShowToast(false);
-      }, 2000);
+
       setSelectedFiles([]);
 
       router.refresh();
-    } else {
-      setTimeout(() => {
-        setShowToast(false);
-      }, 5000);
-      // console.log(res.message);
-    }
+    } 
   };
   const handleClipAction = (status: ClipboardStatus) => {
     setClipboardStatus(status);
@@ -137,16 +137,17 @@ export default function RightMenu() {
       parentPath,
       clipboardStatus === ClipboardStatus.Copy ? "copy" : "cut"
     );
-    setToastRes(res);
-    setShowToast(true);
-    setTimeout(() => {
-      setShowToast(false);
-    }, 3000);
+
+    toast(res);
+
     if (res.success) {
       setClipboardStatus(ClipboardStatus.None);
       router.refresh();
     }
   };
+
+
+
 
   // 重新渲染时候会进行执行 所以不必将其设为state
   let singleInfo: undefined | viewFiles[number];
@@ -204,8 +205,11 @@ export default function RightMenu() {
     menuClipboardExtraClass = " -translate-x-full ";
   }
 
+
   return (
     <>
+    {
+      mounted &&     <>
       {/* 右侧菜单 */}
       <div className="absolute w-full h-full top-0 left-0 overflow-y-scroll pointer-events-none overflow-x-hidden invisible">
         <div
@@ -307,11 +311,11 @@ export default function RightMenu() {
           </ul>
         </div>
         <a ref={linkRef} className="hidden" download></a>
-        <Toast
+        {/* <Toast
           show={showToast}
           success={toastRes.success}
           message={toastRes.message}
-        />
+        /> */}
       </div>
       {/* 菜单对话框 */}
       <div>
@@ -319,7 +323,7 @@ export default function RightMenu() {
           <div className="modal-box">
             <form method="dialog">
               <button
-                className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                className="btn btn-sm btn-square btn-ghost absolute right-2 top-2"
                 onClick={() => setShowInfoModal(false)}
               >
                 ✕
@@ -419,7 +423,7 @@ export default function RightMenu() {
           <div className="modal-box">
             <form method="dialog">
               <button
-                className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                className="btn btn-sm btn-square btn-ghost absolute right-2 top-2"
                 onClick={() => setShowDeleteModal(false)}
               >
                 ✕
@@ -444,6 +448,8 @@ export default function RightMenu() {
 
         </dialog>
       </div>
+    </>
+    }
     </>
   );
 }
