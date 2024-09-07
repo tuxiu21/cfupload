@@ -6,15 +6,26 @@ import Link from "next/link";
 import { useFormState, useFormStatus } from "react-dom";
 import { useEffect, useState } from "react";
 import Toast, { useToast } from "./toast-provider";
+import { redirect } from "next/navigation";
 
 export default function Login({ inDialog }: { inDialog?: boolean }) {
-  // action: (state: Awaited<State>, payload: Payload) => State | Promise<State>,
-  // fn：当按钮被按下或者表单被提交时触发的函数。当函数被调用时，该函数会接收到表单的上一个 state（初始值为传入的 initialState 参数，否则为上一次执行完该函数的结果）作为函数的第一个参数，余下参数为普通表单动作接到的参数。
-  const [state, action] = useFormState(login, { success: false, message: "" });
+
   const toast = useToast();
-  useEffect(() => {
-    toast({ success: state.success, message: state.message });
-  }, [state]);
+
+
+  const handleLogin=async (formData:FormData)=>{
+    const res = await login( formData);
+
+    toast({ success: res.success, message: res.message });
+    if(res.success){
+      // if(inDialog){
+      //   location.href = "/files";
+      // }else{
+      //   location.href = "/files";
+      // }
+      redirect("/files");
+    }
+  }
 
   return (
     <>
@@ -23,8 +34,8 @@ export default function Login({ inDialog }: { inDialog?: boolean }) {
       ) : (
         <h2 className="card-title mb-2">File Manager</h2>
       )}
-      <form className=" flex flex-col gap-2" action={action}>
-        <label className={"input input-bordered flex items-center gap-2 "}>
+      <form className=" flex flex-col gap-2" action={handleLogin}>
+        <label className="input input-bordered flex items-center gap-2 ">
           <UserFilledIcon className="h-5 w-5 opacity-70" />
           <input
             type="text"
@@ -34,7 +45,7 @@ export default function Login({ inDialog }: { inDialog?: boolean }) {
           />
         </label>
 
-        <label className={"input input-bordered flex items-center gap-2 "}>
+        <label className="input input-bordered flex items-center gap-2 ">
           <KeyIcon className="h-5 w-5 opacity-70" />
           <input
             type="password"

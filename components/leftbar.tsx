@@ -54,7 +54,7 @@ export default function LeftBar() {
 
   const router = useRouter();
 
-  const toast=useToast()
+  const toast = useToast();
 
   const handleAddFile = async () => {
     const res = await addFile(
@@ -63,8 +63,7 @@ export default function LeftBar() {
       parentPath
     );
 
-    toast({success:res.success,message:res.message})
-    
+    toast({ success: res.success, message: res.message });
 
     if (res.success) {
       // 重新获取文件列表
@@ -125,9 +124,9 @@ export default function LeftBar() {
               task.destination === uploadParentPath
             ) {
               if (task.chunkTotal === 0) {
-                task.chunkTotal=1
-                task.chunkUploaded=1
-              }else{
+                task.chunkTotal = 1;
+                task.chunkUploaded = 1;
+              } else {
                 task.chunkUploaded = index + 1;
               }
 
@@ -249,6 +248,26 @@ export default function LeftBar() {
           </li>
         </ul>
       </div>
+      {/* <div className="divider"></div> */}
+
+
+      {/* 下方选项卡 */}
+      <ul className="menu  rounded-box w-56 mt-4">
+        <li>
+          <h2 className="menu-title">Files</h2>
+          <ul>
+            <li>
+              <a>Item 1</a>
+            </li>
+            <li>
+              <a>Item 2</a>
+            </li>
+            <li>
+              <a>Item 3</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
 
       {/* new 对话框 */}
       <div>
@@ -396,7 +415,6 @@ export default function LeftBar() {
           </div>
         </div>
       </div>
-
     </div>
   );
 }

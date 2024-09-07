@@ -183,7 +183,7 @@ export default function RightMenu() {
     );
   }
 
-  console.log("right-menu渲染");
+  // console.log("right-menu渲染");
 
   let menuExtraClass = "";
   let menuClipboardExtraClass = "";
