@@ -252,7 +252,7 @@ export default function LeftBar() {
 
 
       {/* 下方选项卡 */}
-      <ul className="menu  rounded-box w-56 mt-4">
+      {/* <ul className="menu  rounded-box w-56 mt-4 max-sm:hidden">
         <li>
           <h2 className="menu-title">Files</h2>
           <ul>
@@ -267,7 +267,7 @@ export default function LeftBar() {
             </li>
           </ul>
         </li>
-      </ul>
+      </ul> */}
 
       {/* new 对话框 */}
       <div>

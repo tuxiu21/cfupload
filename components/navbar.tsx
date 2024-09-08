@@ -7,11 +7,10 @@ import { login } from "@/app/action";
 import Link from "next/link";
 
 export default function Navbar() {
-
   return (
     <div className="navbar bg-base-100">
       <div className="flex-none">
-        <button className="btn btn-square btn-ghost">
+        {/* <button className="btn btn-square btn-ghost">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -25,7 +24,24 @@ export default function Navbar() {
               d="M4 6h16M4 12h16M4 18h16"
             ></path>
           </svg>
-        </button>
+        </button> */}
+        <label className="btn btn-square btn-ghost" htmlFor="my-drawer">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            className="inline-block h-5 w-5 stroke-current"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            ></path>
+          </svg>
+        </label> 
+           {/* <label htmlFor="my-drawer" className="btn btn-primary drawer-button">Open drawer</label> */}
+
       </div>
       <div className="flex-1">
         <a className="btn btn-ghost text-xl">File Manager</a>
@@ -70,11 +86,11 @@ export default function Navbar() {
           >
             <span>Login</span>
           </div> */}
-          <Link href="/login" className="btn btn-ghost btn-square">
+        <Link href="/login" className="btn btn-ghost btn-square">
           Login
-          </Link>
-        </div>
-        {/* <dialog className={" modal " + (showLoginModal ? "modal-open" : "")}>
+        </Link>
+      </div>
+      {/* <dialog className={" modal " + (showLoginModal ? "modal-open" : "")}>
           <div className="modal-box">
             <form method="dialog">
               <button
@@ -111,8 +127,6 @@ export default function Navbar() {
             </div>
           </div>
         </dialog> */}
-      </div>
-    // </div>
-    
+    </div>
   );
 }
