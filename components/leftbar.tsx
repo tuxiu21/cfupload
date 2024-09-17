@@ -13,7 +13,7 @@ import {
   UploadingIcon,
 } from "@/components/icons";
 import { formatSize } from "@/utils";
-import { useParentPath } from "@/hooks";
+import {  useTabPath } from "@/hooks";
 import { redirect, usePathname, useRouter } from "next/navigation";
 import { useRef, useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -40,7 +40,7 @@ const CHUNK_SIZE = 1024 * 1024 * Number(process.env.NEXT_PUBLIC_CHUNK_SIZE_MB);
 
 export default function LeftBar() {
   // 这个获取的是完整的路径
-  const parentPath = useParentPath();
+  const {tabUrl,parentPath} = useTabPath();
 
   const [modalStatus, setModalStatus] = useState(ModalType.None);
   const [addFileName, setAddFileName] = useState("");
@@ -67,7 +67,6 @@ export default function LeftBar() {
 
     if (res.success) {
       // 重新获取文件列表
-
       router.refresh();
       setModalStatus(ModalType.None);
     }

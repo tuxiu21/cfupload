@@ -53,7 +53,7 @@ function Toast({
 }) {
   return (
     <div
-      className={`z-[9999] toast transition-all duration-500 ease-out ${
+      className={`z-[9999] toast transition-all duration-500 ease-out box-border max-w-full min-w-0 ${
         show ? " visible opacity-100 " : "invisible opacity-0 "
       }`}
     >
@@ -63,11 +63,11 @@ function Toast({
         } flex flex-row`}
       >
         {success ? (
-          <CheckMarkIcon className="h-5 w-5" />
+          <CheckMarkIcon className="h-5 min-w-5" />
         ) : (
-          <ErrorIcon className="h-5 w-5" />
+          <ErrorIcon className="h-5 min-w-5" />
         )}
-        <span>{message}</span>
+        <span className="break-words text-wrap">{message}</span>
       </div>
     </div>
   );

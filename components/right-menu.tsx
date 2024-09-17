@@ -16,16 +16,14 @@ import {
   PlusIcon,
 } from "@/components/icons";
 import { deleteFile, pasteFiles } from "@/app/(main)/files/action";
-// import { useFiles } from "@/app/files/providers";
-import { useParentPath } from "@/hooks";
+import {  useTabPath } from "@/hooks";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import path from "path";
 import { useEffect, useRef, useState } from "react";
-import Toast, { useToast } from "./toast-provider";
+import { useToast } from "./toast-provider";
 import { formatSize } from "@/utils";
 import { useSelectedFiles, useViewFiles } from "@/app/(main)/files/providers";
-
 
 enum ClipboardStatus {
   None,
@@ -36,15 +34,13 @@ enum ClipboardStatus {
 export default function RightMenu() {
   const { selectedFiles, setSelectedFiles } = useSelectedFiles();
   const { viewFiles } = useViewFiles();
-  const parentPath = useParentPath();
+  const { tabUrl, parentPath } = useTabPath();
   const themeProps = useTheme();
 
   const [clipboardStatus, setClipboardStatus] = useState(ClipboardStatus.None);
 
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
-
 
   const router = useRouter();
 
@@ -57,13 +53,12 @@ export default function RightMenu() {
 
   const [mounted, setMounted] = useState(false);
 
-  const toast=useToast();
-
+  const toast = useToast();
 
   useEffect(() => {
     setMounted(true);
     // return () => {
-      
+
     // };
   }, []);
 
@@ -120,7 +115,7 @@ export default function RightMenu() {
       setSelectedFiles([]);
 
       router.refresh();
-    } 
+    }
   };
   const handleClipAction = (status: ClipboardStatus) => {
     setClipboardStatus(status);
@@ -146,9 +141,6 @@ export default function RightMenu() {
     }
   };
 
-
-
-
   // 重新渲染时候会进行执行 所以不必将其设为state
   let singleInfo: undefined | viewFiles[number];
   if (selectedFiles.length === 1) {
@@ -159,7 +151,7 @@ export default function RightMenu() {
       );
     });
   }
-  
+
   let multipleInfo:
     | undefined
     | { fileCount: number; folderCount: number; size: number };
@@ -205,251 +197,264 @@ export default function RightMenu() {
     menuClipboardExtraClass = " -translate-x-full ";
   }
 
-
   return (
     <>
-    {
-      mounted &&     <>
-      {/* 右侧菜单 */}
-      <div className="absolute w-full h-full top-0 left-0 overflow-y-scroll pointer-events-none overflow-x-hidden invisible">
-        <div
-          // transition必须要有初始值
-          className={
-            "transition-all ease-in  absolute left-full top-1/4 pointer-events-auto visible " +
-            menuExtraClass
-          }
-        >
-          <ul
-            className={
-              "menu bg-base-200 shadow-xl " +
-              (themeProps.resolvedTheme == "cyberpunk" ? "" : "rounded-l-xl ")
-            }
-          >
-            <li>
-              <a
-                className="tooltip tooltip-left"
-                data-tip="Download"
-                onClick={handleDownload}
+      {mounted && (
+        <>
+          {/* 右侧菜单 */}
+          <div className="absolute w-full h-full top-0 left-0 overflow-y-scroll pointer-events-none overflow-x-hidden invisible">
+            <div
+              // transition必须要有初始值
+              className={
+                "transition-all ease-in  absolute left-full top-1/4 pointer-events-auto visible " +
+                menuExtraClass
+              }
+            >
+              <ul
+                className={
+                  "menu bg-base-200 shadow-xl " +
+                  (themeProps.resolvedTheme == "cyberpunk"
+                    ? ""
+                    : "rounded-l-xl ")
+                }
               >
-                <DownloadIcon className="h-5 w-5" />
-              </a>
-            </li>
-            <li>
-              <a
-                className="tooltip tooltip-left"
-                data-tip="Info"
-                onClick={handleShowInfo}
+                <li>
+                  <a
+                    className="tooltip tooltip-left"
+                    data-tip="Download"
+                    onClick={handleDownload}
+                  >
+                    <DownloadIcon className="h-5 w-5" />
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="tooltip tooltip-left"
+                    data-tip="Info"
+                    onClick={handleShowInfo}
+                  >
+                    <InfoIcon className="h-5 w-5" />
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="tooltip tooltip-left"
+                    data-tip="Cut"
+                    onClick={() => {
+                      handleClipAction(ClipboardStatus.Cut);
+                    }}
+                  >
+                    <CutIcon className="h-5 w-5" />
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="tooltip tooltip-left"
+                    data-tip="Copy"
+                    onClick={() => {
+                      handleClipAction(ClipboardStatus.Copy);
+                    }}
+                  >
+                    <CopyIcon className="h-5 w-5" />
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="tooltip tooltip-left"
+                    data-tip="Delete"
+                    onClick={handleDelete}
+                  >
+                    <DeleteIcon className="h-5 w-5" />
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div
+              className={
+                "transition-all ease-in  absolute left-full top-1/4 pointer-events-auto visible " +
+                menuClipboardExtraClass
+              }
+            >
+              <ul
+                className={
+                  "menu bg-base-200 shadow-xl " +
+                  (themeProps.resolvedTheme == "cyberpunk"
+                    ? ""
+                    : "rounded-l-xl ")
+                }
               >
-                <InfoIcon className="h-5 w-5" />
-              </a>
-            </li>
-            <li>
-              <a
-                className="tooltip tooltip-left"
-                data-tip="Cut"
-                onClick={() => {
-                  handleClipAction(ClipboardStatus.Cut);
-                }}
-              >
-                <CutIcon className="h-5 w-5" />
-              </a>
-            </li>
-            <li>
-              <a
-                className="tooltip tooltip-left"
-                data-tip="Copy"
-                onClick={() => {
-                  handleClipAction(ClipboardStatus.Copy);
-                }}
-              >
-                <CopyIcon className="h-5 w-5" />
-              </a>
-            </li>
-            <li>
-              <a
-                className="tooltip tooltip-left"
-                data-tip="Delete"
-                onClick={handleDelete}
-              >
-                <DeleteIcon className="h-5 w-5" />
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div
-          className={
-            "transition-all ease-in  absolute left-full top-1/4 pointer-events-auto visible " +
-            menuClipboardExtraClass
-          }
-        >
-          <ul
-            className={
-              "menu bg-base-200 shadow-xl " +
-              (themeProps.resolvedTheme == "cyberpunk" ? "" : "rounded-l-xl ")
-            }
-          >
-            <li>
-              <a
-                className="tooltip tooltip-left"
-                data-tip="Paste"
-                onClick={handlePaste}
-              >
-                <PasteIcon className="h-5 w-5" />
-              </a>
-            </li>
-            <li>
-              <a
-                className="tooltip tooltip-left"
-                data-tip="Cancel"
-                onClick={() => {
-                  setClipboardStatus(ClipboardStatus.None);
-                }}
-              >
-                <CancelIcon className="h-5 w-5" />
-              </a>
-            </li>
-          </ul>
-        </div>
-        <a ref={linkRef} className="hidden" download></a>
-        {/* <Toast
+                <li>
+                  <a
+                    className="tooltip tooltip-left"
+                    data-tip="Paste"
+                    onClick={handlePaste}
+                  >
+                    <PasteIcon className="h-5 w-5" />
+                  </a>
+                </li>
+                <li>
+                  <a
+                    className="tooltip tooltip-left"
+                    data-tip="Cancel"
+                    onClick={() => {
+                      setClipboardStatus(ClipboardStatus.None);
+                    }}
+                  >
+                    <CancelIcon className="h-5 w-5" />
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <a ref={linkRef} className="hidden" download></a>
+            {/* <Toast
           show={showToast}
           success={toastRes.success}
           message={toastRes.message}
         /> */}
-      </div>
-      {/* 菜单对话框 */}
-      <div>
-        <dialog className={" modal " + (showInfoModal ? "modal-open" : "")}>
-          <div className="modal-box">
-            <form method="dialog">
-              <button
-                className="btn btn-sm btn-square btn-ghost absolute right-2 top-2"
-                onClick={() => setShowInfoModal(false)}
-              >
-                ✕
-              </button>
-            </form>
-            <h3 className="font-bold text-lg">Details</h3>
-            {singleInfo ? (
-              <>
-                <div className="grid grid-cols-2 gap-2 py-4">
-                  <div className="flex flex-col">
-                    <small className="text-default-500">Name</small>
-                    <p className="text-wrap break-words">{singleInfo.name}</p>
-                  </div>
-                  <div className="flex flex-col">
-                    <small className="text-default-500">Type</small>
-                    <p>{singleInfo.isFile ? "File" : "Folder"}</p>
-                  </div>
-                  <div className="flex flex-col">
-                    <small className="text-default-500">Size</small>
-                    <p>
-                      {singleInfo.isFile ? formatSize(singleInfo.size) : "-"}
-                    </p>
-                  </div>
-                  <div className="flex flex-col">
-                    <small className="text-default-500">Path</small>
-                    <p>{singleInfo.parentPath}</p>
-                  </div>
-
-                  <div className="flex flex-col">
-                    <small className="text-default-500">Create Time</small>
-                    <p>
-                      {new Date(singleInfo.birthtimeMs).toLocaleDateString(
-                        "en-US",
-                        {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                          hour: "numeric",
-                          minute: "numeric",
-                        }
-                      )}
-                    </p>
-                  </div>
-                  <div className="flex flex-col">
-                    <small className="text-default-500">Modify Time</small>
-                    <p>
-                      {new Date(singleInfo.mtimeMs).toLocaleDateString(
-                        "en-US",
-                        {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                          hour: "numeric",
-                          minute: "numeric",
-                        }
-                      )}
-                    </p>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <></>
-            )}
-            {multipleInfo ? (
-              <>
-                <div className="grid grid-cols-2 gap-2 py-4">
-                  <div className="flex flex-col">
-                    <small className="text-default-500">Number of files</small>
-                    <p>{multipleInfo.fileCount}</p>
-                  </div>
-                  <div className="flex flex-col">
-                    <small className="text-default-500">
-                      Number of folders
-                    </small>
-                    <p>{multipleInfo.folderCount}</p>
-                  </div>
-                  <div className="flex flex-col">
-                    <small className="text-default-500">Total</small>
-                    {multipleInfo.fileCount + multipleInfo.folderCount}
-                  </div>
-                  <div className="flex flex-col">
-                    <small className="text-default-500">Size</small>
-                    {multipleInfo.folderCount > 0 ? (
-                      "-"
-                    ) : (
-                      <p>{formatSize(multipleInfo.size)}</p>
-                    )}
-                  </div>
-                </div>
-              </>
-            ) : (
-              <></>
-            )}
           </div>
-        </dialog>
-        <dialog className={" modal " + (showDeleteModal ? "modal-open" : "")}>
-          <div className="modal-box">
-            <form method="dialog">
-              <button
-                className="btn btn-sm btn-square btn-ghost absolute right-2 top-2"
-                onClick={() => setShowDeleteModal(false)}
-              >
-                ✕
-              </button>
-            </form>
-            <h3 className="font-bold text-lg">Delete</h3>
-            <p className="my-4">
-              Are you sure you want to delete the selected files?
-            </p>
-            <div className="flex flex-row gap-2 justify-end">
-              <button
-                className="btn btn-sm btn-ghost"
-                onClick={() => setShowDeleteModal(false)}
-              >
-                Cancel
-              </button>
-              <button className="btn btn-sm btn-error" onClick={toDeleteFile}>
-                Delete
-              </button>
-            </div>
-          </div>
+          {/* 菜单对话框 */}
+          <div>
+            <dialog className={" modal " + (showInfoModal ? "modal-open" : "")}>
+              <div className="modal-box">
+                <form method="dialog">
+                  <button
+                    className="btn btn-sm btn-square btn-ghost absolute right-2 top-2"
+                    onClick={() => setShowInfoModal(false)}
+                  >
+                    ✕
+                  </button>
+                </form>
+                <h3 className="font-bold text-lg">Details</h3>
+                {singleInfo ? (
+                  <>
+                    <div className="grid grid-cols-2 gap-2 py-4">
+                      <div className="flex flex-col">
+                        <small className="text-default-500">Name</small>
+                        <p className="text-wrap break-words">
+                          {singleInfo.name}
+                        </p>
+                      </div>
+                      <div className="flex flex-col">
+                        <small className="text-default-500">Type</small>
+                        <p>{singleInfo.isFile ? "File" : "Folder"}</p>
+                      </div>
+                      <div className="flex flex-col">
+                        <small className="text-default-500">Size</small>
+                        <p>
+                          {singleInfo.isFile
+                            ? formatSize(singleInfo.size)
+                            : "-"}
+                        </p>
+                      </div>
+                      <div className="flex flex-col">
+                        <small className="text-default-500">Path</small>
+                        <p>{singleInfo.parentPath}</p>
+                      </div>
 
-        </dialog>
-      </div>
-    </>
-    }
+                      <div className="flex flex-col">
+                        <small className="text-default-500">Create Time</small>
+                        <p>
+                          {new Date(singleInfo.birthtimeMs).toLocaleDateString(
+                            "en-US",
+                            {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                              hour: "numeric",
+                              minute: "numeric",
+                            }
+                          )}
+                        </p>
+                      </div>
+                      <div className="flex flex-col">
+                        <small className="text-default-500">Modify Time</small>
+                        <p>
+                          {new Date(singleInfo.mtimeMs).toLocaleDateString(
+                            "en-US",
+                            {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                              hour: "numeric",
+                              minute: "numeric",
+                            }
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <></>
+                )}
+                {multipleInfo ? (
+                  <>
+                    <div className="grid grid-cols-2 gap-2 py-4">
+                      <div className="flex flex-col">
+                        <small className="text-default-500">
+                          Number of files
+                        </small>
+                        <p>{multipleInfo.fileCount}</p>
+                      </div>
+                      <div className="flex flex-col">
+                        <small className="text-default-500">
+                          Number of folders
+                        </small>
+                        <p>{multipleInfo.folderCount}</p>
+                      </div>
+                      <div className="flex flex-col">
+                        <small className="text-default-500">Total</small>
+                        {multipleInfo.fileCount + multipleInfo.folderCount}
+                      </div>
+                      <div className="flex flex-col">
+                        <small className="text-default-500">Size</small>
+                        {multipleInfo.folderCount > 0 ? (
+                          "-"
+                        ) : (
+                          <p>{formatSize(multipleInfo.size)}</p>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <></>
+                )}
+              </div>
+            </dialog>
+            <dialog
+              className={" modal " + (showDeleteModal ? "modal-open" : "")}
+            >
+              <div className="modal-box">
+                <form method="dialog">
+                  <button
+                    className="btn btn-sm btn-square btn-ghost absolute right-2 top-2"
+                    onClick={() => setShowDeleteModal(false)}
+                  >
+                    ✕
+                  </button>
+                </form>
+                <h3 className="font-bold text-lg">Delete</h3>
+                <p className="my-4">
+                  Are you sure you want to delete the selected files?
+                </p>
+                <div className="flex flex-row gap-2 justify-end">
+                  <button
+                    className="btn btn-sm btn-ghost"
+                    onClick={() => setShowDeleteModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="btn btn-sm btn-error"
+                    onClick={toDeleteFile}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </dialog>
+          </div>
+        </>
+      )}
     </>
   );
 }

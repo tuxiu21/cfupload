@@ -16,3 +16,8 @@ export function formatSize(bytes: number) {
   const gb = mb / 1024;
   return `${gb.toFixed(2)} GB`;
 }
+export function formatUrlPath(tagName: string) {
+  const res=tagName.match(/[a-zA-Z0-9]/g);
+  const urlName=res ? res.join('').toLowerCase() : '';
+  return urlName
+}

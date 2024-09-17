@@ -25,7 +25,7 @@ import Toast from "./toast-provider";
 
 import { useRouter } from "next/navigation";
 import { useSelectedFiles, useViewFiles } from "@/app/(main)/files/providers";
-import { useParentPath } from "@/hooks";
+import { useTabPath } from "@/hooks";
 
 export default function TableView({ viewFiles }: { viewFiles: viewFiles }) {
   const [mounted, setMounted] = useState(false);
@@ -35,7 +35,7 @@ export default function TableView({ viewFiles }: { viewFiles: viewFiles }) {
   const { setViewFiles} = useViewFiles();
 
   // setViewFiles(viewFiles);
-  const parentPath=useParentPath()
+  const {tabUrl,parentPath}=useTabPath()
 
 
   useEffect(() => {

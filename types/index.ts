@@ -22,3 +22,10 @@ export type ToastMessage={
   message: string;
   duration?: number;
 }
+export type Tab = {
+  tabName: string;
+  urlName: string;
+  pathName: string;
+  // permissions: string[];
+  permissions: ('visitorVisible' | 'visitorFullAccess' )[];
+}

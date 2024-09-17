@@ -1,9 +1,11 @@
 import { SelectedFileType } from "@/types";
 import archiver from "archiver";
+import { LRUCache } from "lru-cache";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
 
-const fileListMap = new Map<string, string>();
+// const fileListMap = new Map<string, string>();
+const fileListMap = new LRUCache<string, string>({ max:10,ttl:60*1000});
 const BASE_PATH = process.env.BASE_PATH!;
 
 export async function GET(request: Request) {
@@ -20,7 +22,7 @@ export async function GET(request: Request) {
   const resObj = JSON.parse(res);
   const parentPath: string = resObj.parentPath;
   const selectedFiles: SelectedFileType[] = resObj.selectedFiles;
-  fileListMap.delete(uuid);
+  // fileListMap.delete(uuid);
 
 
   const archive = archiver('zip', { zlib: { level: 4 } })
@@ -58,10 +60,10 @@ export async function POST(request: Request) {
   const uuid = uuidv4();
   fileListMap.set(uuid, JSON.stringify(result));
 
-  // 1分钟后删除
-  setTimeout(() => {
-    fileListMap.delete(uuid);
-  }, 60000);
+  // // 1分钟后删除
+  // setTimeout(() => {
+  //   fileListMap.delete(uuid);
+  // }, 60000);
   
   return new Response(uuid, {
     headers: {

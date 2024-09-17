@@ -1,3 +1,8 @@
+'use client'
+
+import { getTabMap } from "./action";
+
+
 export default function Home() {
   return (
     <div className="hero bg-base-200 grow">
@@ -9,7 +14,13 @@ export default function Home() {
             excepturi exercitationem quasi. In deleniti eaque aut repudiandae et
             a id nisi.
           </p>
-          <button className="btn btn-primary">Get Started</button>
+          <button className="btn btn-primary"
+          onClick={async ()=>{
+            // const res=await getTabMap()
+            const res=await getTabMap()
+            console.log(res);
+          }}
+          >Get Started</button>
         </div>
       </div>
     </div>

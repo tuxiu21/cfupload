@@ -18,33 +18,23 @@ import {
 import LeftBar from "@/components/leftbar";
 import TableView from "@/components/tableview";
 import { getSingleFileUrl } from "@/utils";
-import TestClient from "@/components/testclient";
+// import { getFiles,  } from "./action";
+import { getFiles } from "./action";
 const BASE_PATH = process.env.BASE_PATH!;
 
-async function getFiles(parentPath: string): Promise<Dirent[]> {
-  return new Promise((resolve, reject) => {
-    const callback = (err: NodeJS.ErrnoException | null, files: Dirent[]) => {
-      if (err) {
-        reject(err);
-      } else {
-        // 这里的reject和resolve是从Promise((resolve, reject)）中来的 所以 即使它在callback中 也是传进来的 对应的是Promise的resolve和reject
-        resolve(files);
-      }
-    };
-    fs.readdir(
-      path.join(BASE_PATH, parentPath),
-      { withFileTypes: true },
-      callback
-    );
-  });
-}
 
 
 export default async function Files({
   params,
 }: {
-  params: { path_slug?: string[] };
+  params: {
+    tab: string;
+    path_slug?: string[];
+  }
 }) {
+  const tag_basepath=path.join(BASE_PATH, params.tab);
+
+  // 所有的parentPath都是url上面的
   let parentPath = "";
   if (params.path_slug) {
     parentPath = path.join(...params.path_slug);
@@ -79,8 +69,11 @@ export default async function Files({
     })
   );
 
+  // const testDiv = await getFoldersUl(parentPath);
+
   return (
     <>
+    {/* {testDiv} */}
       <div className="mx-6 breadcrumbs text-sm">
         <ul>
           <li>
@@ -101,4 +94,3 @@ export default async function Files({
     </>
   );
 }
-
