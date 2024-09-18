@@ -34,7 +34,7 @@ enum ClipboardStatus {
 export default function RightMenu() {
   const { selectedFiles, setSelectedFiles } = useSelectedFiles();
   const { viewFiles } = useViewFiles();
-  const { tabUrl, parentPath } = useTabPath();
+  const { tabUrl, urlParentPath } = useTabPath();
   const themeProps = useTheme();
 
   const [clipboardStatus, setClipboardStatus] = useState(ClipboardStatus.None);
@@ -48,7 +48,7 @@ export default function RightMenu() {
 
   const clipboardRef = useRef({
     files: [] as SelectedFileType[],
-    parentPath: "",
+    urlParentPath: "",
   });
 
   const [mounted, setMounted] = useState(false);
@@ -70,7 +70,7 @@ export default function RightMenu() {
     // 如果选中单个并且是文件
     if (selectedFiles.length === 1 && selectedFiles[0].isFile) {
       linkRef.current.href =
-        "/files/" + path.join(parentPath, selectedFiles[0].name);
+        "/files/" + path.join(urlParentPath, selectedFiles[0].name);
       linkRef.current.click();
       return;
     }
@@ -82,7 +82,7 @@ export default function RightMenu() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        parentPath,
+        urlParentPath,
         selectedFiles,
       }),
     });
@@ -106,7 +106,7 @@ export default function RightMenu() {
     }
   };
   const toDeleteFile = async () => {
-    const res = await deleteFile(selectedFiles, parentPath);
+    const res = await deleteFile(selectedFiles, urlParentPath);
 
     toast(res);
     if (res.success) {
@@ -121,15 +121,15 @@ export default function RightMenu() {
     setClipboardStatus(status);
     clipboardRef.current = {
       files: selectedFiles,
-      parentPath,
+      urlParentPath,
     };
     setSelectedFiles([]);
   };
   const handlePaste = async () => {
     const res = await pasteFiles(
       clipboardRef.current.files,
-      clipboardRef.current.parentPath,
-      parentPath,
+      clipboardRef.current.urlParentPath,
+      urlParentPath,
       clipboardStatus === ClipboardStatus.Copy ? "copy" : "cut"
     );
 
@@ -348,7 +348,7 @@ export default function RightMenu() {
                       </div>
                       <div className="flex flex-col">
                         <small className="text-default-500">Path</small>
-                        <p>{singleInfo.parentPath}</p>
+                        <p>{singleInfo.urlParentPath}</p>
                       </div>
 
                       <div className="flex flex-col">

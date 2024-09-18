@@ -35,7 +35,7 @@ export default function TableView({ viewFiles }: { viewFiles: viewFiles }) {
   const { setViewFiles} = useViewFiles();
 
   // setViewFiles(viewFiles);
-  const {tabUrl,parentPath}=useTabPath()
+  const {tabUrl,urlParentPath}=useTabPath()
 
 
   useEffect(() => {
@@ -52,7 +52,7 @@ export default function TableView({ viewFiles }: { viewFiles: viewFiles }) {
   useEffect(() => {
     // 每次切换目录都清空选中的文件
     setSelectedFiles([]);
-  }, [parentPath]);
+  }, [urlParentPath]);
 
   return (
     <>
@@ -147,9 +147,11 @@ export default function TableView({ viewFiles }: { viewFiles: viewFiles }) {
                               <Link
                                 href={path.join(
                                   "/files/",
-                                  view_file.parentPath,
+                                  tabUrl,
+                                  view_file.urlParentPath,
                                   view_file.name
                                 )}
+                                // href={view_file.name+'000'}
                                 className="truncate"
                               >
                                 {view_file.name}

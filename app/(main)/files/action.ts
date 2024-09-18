@@ -8,18 +8,17 @@ import archiver from "archiver";
 import { Readable } from "stream";
 
 const tmp_path = os.tmpdir();
-const BASE_PATH = process.env.BASE_PATH!;
 
 export async function pasteFiles(
   selectedFiles: SelectedFileType[],
-  originParentPath: string,
-  parentPath: string,
+  originurlParentPath: string,
+  urlParentPath: string,
   action: "copy" | "cut"
 ) {
   const actionFunc = action === "copy" ? fs.promises.cp : fs.promises.rename;
   for (const { name, isFile } of selectedFiles) {
-    const src = path.join(BASE_PATH, originParentPath, name);
-    const dest = path.join(BASE_PATH, parentPath, name);
+    const src = path.join(BASE_PATH, originurlParentPath, name);
+    const dest = path.join(BASE_PATH, urlParentPath, name);
 
     console.log('copy files：');
     console.log(src, dest);
@@ -48,10 +47,10 @@ export async function pasteFiles(
 
 
 
-export async function deleteFile(selectedFiles: SelectedFileType[], parentPath: string) {
+export async function deleteFile(selectedFiles: SelectedFileType[], urlParentPath: string) {
 
   for (const { name, isFile } of selectedFiles) {
-    const filePath = path.join(BASE_PATH, parentPath, name);
+    const filePath = path.join(BASE_PATH, urlParentPath, name);
     try {
       const res = await fs.promises.stat(filePath)
       if (isFile) {
@@ -72,8 +71,8 @@ export async function deleteFile(selectedFiles: SelectedFileType[], parentPath: 
   }
 }
 
-export async function addFile(name: string, isFile: boolean, parentPath: string) {
-  const filePath = path.join(BASE_PATH, parentPath, name);
+export async function addFile(name: string, isFile: boolean, urlParentPath: string) {
+  const filePath = path.join(BASE_PATH, urlParentPath, name);
   // console.log(filePath);
 
   try {

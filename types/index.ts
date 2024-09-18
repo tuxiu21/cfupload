@@ -7,7 +7,7 @@ export type viewFiles =   {
   size: number;
   mtimeMs: number;
   name: string;
-  parentPath: string;
+  urlParentPath: string;
   // path: string;
   isFile: boolean;
   birthtimeMs: number;

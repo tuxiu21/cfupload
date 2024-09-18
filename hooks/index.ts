@@ -8,11 +8,11 @@ export function useTabPath(){
   // return pathname;
   const parts = pathname.split(path.sep);
   const tabUrl = parts[2];
-  const parentPath = parts.slice(2).join(path.sep);
+  const urlParentPath = parts.slice(3).join(path.sep);
 
   console.log("tabUrl", tabUrl);
-  console.log("parentPath", parentPath);
+  console.log("urlParentPath", urlParentPath);
   
-  return {tabUrl, parentPath};
+  return {tabUrl, urlParentPath};
 
 }

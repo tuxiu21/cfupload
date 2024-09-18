@@ -10,12 +10,12 @@ import {
   useRef,
   useState,
 } from "react";
-import { FolderIcon, InfoIcon, PlusIcon } from "./icons";
+import { EditIcon, FolderIcon, InfoIcon, LockedIcon, PlusIcon } from "./icons";
 import { getFoldersUlInfo } from "@/app/(main)/files/[tab]/[[...path_slug]]/action";
 import path from "path";
 import { formatUrlPath } from "@/utils";
 import { Tab } from "@/types";
-import { getTabMap, putTabMapFromForm,  } from "@/app/action";
+import { getTabMap, putTabMapFromForm } from "@/app/action";
 import { useToast } from "./toast-provider";
 import { useTabPath } from "@/hooks";
 import Link from "next/link";
@@ -28,29 +28,30 @@ export default function FileMenu() {
   const [mountFirstUl, setMountFirstUl] = useState(true);
 
   const [tabs, setTabs] = useState(new Map<string, Tab>());
-  const { tabUrl, parentPath } = useTabPath();
+  const { tabUrl, urlParentPath } = useTabPath();
 
   const modalFirstInputRef = useRef<HTMLInputElement>(null);
+  const drawerToggleLabel = useRef<HTMLLabelElement>(null);
 
   const [tabDialogForm, setTabDialogForm] = useState<Tab>({
     tabName: "",
     urlName: "",
     pathName: "",
-    permissions:[]
+    permissions: [],
   });
 
-  const toast=useToast();
+  const toast = useToast();
 
   useEffect(() => {
     init();
   }, []);
 
-  const init=async()=>{
+  const init = async () => {
     const tabs = await getTabMap();
     console.log(tabs);
-    
+
     setTabs(tabs);
-  }
+  };
 
   const handleCreateTab = async () => {
     // 打开modal
@@ -63,7 +64,7 @@ export default function FileMenu() {
     <>
       <ul className="menu  rounded-box w-full mt-4 ">
         <li>
-          <div className="menu-title flex flex-row justify-between items-center">
+          <div className="menu-title flex flex-row justify-between items-center pr-0">
             <div className="flex flex-row gap-2 items-center">
               <FolderIcon className="h-5 w-5" />
               <span className="">Files</span>
@@ -71,25 +72,54 @@ export default function FileMenu() {
             <label
               className="btn btn-square btn-sm btn-ghost "
               onClick={handleCreateTab}
-              // htmlFor="my-drawer"
             >
               <PlusIcon className="h-5 w-5" />
             </label>
+            <label
+              htmlFor="my-drawer"
+              ref={drawerToggleLabel}
+              className="hidden"
+            ></label>
           </div>
-          <ul>
-            {/* <li>
-              <a>All Files</a>
-            </li> */}
-            {
-              
-              Array.from(tabs).map(([key, value]) => {                
-                return (
-                  <li key={key}>
-                    <Link href={key} className={(tabUrl===key)?' active ':''}>{value.tabName}</Link>
-                  </li>
-                );
-              })
-            }
+          <ul className="">
+            {Array.from(tabs).map(([key, value]) => {
+              return (
+                <li key={key} className="">
+                  <div
+                    // className={
+                    //   "relative block p-0 has-[:active]:![all:unset]" + (tabUrl === key ? " active " : "")
+                    // }
+                    className={
+                      "relative block p-0" + (tabUrl === key ? " active " : "")
+                    }
+                  >
+                    <Link
+                      href={path.join("/files", key)}
+                      className="block w-full px-4 py-2"
+                      onClick={() => {
+                        drawerToggleLabel.current?.click();
+                      }}
+                    >
+                      {value.tabName}
+                    </Link>
+                    <div className="flex flex-row items-center gap-1 absolute right-0 top-0 bottom-0 my-auto"
+                    
+                    >
+                      <div
+                        className="tooltip"
+                        data-tip="This folder is private."
+                      >
+                        <LockedIcon className="w-4 h-4" />
+                      </div>
+                      <button className="btn btn-square btn-sm btn-ghost "
+                      >
+                        <EditIcon className="h-5 w-5" />
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         </li>
       </ul>
@@ -113,15 +143,14 @@ export default function FileMenu() {
               formData.forEach((value, key) => {
                 console.log(key, value);
               });
-              // 
-              const res=await putTabMapFromForm(formData);
+              //
+              const res = await putTabMapFromForm(formData);
               // setShowCreateTabModal(false);
-              if(res.success){
+              if (res.success) {
                 setShowCreateTabModal(false);
-              }else{
-                toast({success:false,message:res.message});
+              } else {
+                toast({ success: false, message: res.message });
               }
-
             }}
           >
             <label className="input input-bordered input-sm flex items-center gap-2">
@@ -188,7 +217,7 @@ export default function FileMenu() {
                   <FileUlContext.Provider
                     value={[selectedPath, setSelectedPath]}
                   >
-                    {mountFirstUl && <FileUl parentPath="/" />}
+                    {mountFirstUl && <FileUl urlParentPath="/" />}
                   </FileUlContext.Provider>
                 </details>
               </li>
@@ -214,24 +243,11 @@ export default function FileMenu() {
               </label>
             </div>
             <div className="flex flex-row gap-2 justify-end">
-
               <button className="btn btn-sm btn-primary" type="submit">
                 Create
               </button>
             </div>
           </form>
-
-          {/* <div className="flex flex-row gap-2 justify-end">
-            <button
-              className="btn btn-sm btn-ghost"
-              onClick={() => setShowCreateTabModal(false)}
-            >
-              Close
-            </button>
-            <button className="btn btn-sm btn-primary" onClick={() => {}} >
-              Sign in
-            </button>
-          </div> */}
         </div>
       </dialog>
     </>
@@ -250,10 +266,10 @@ function useFileUlContext() {
 }
 
 // 客户端组件不能用async
-function FileUl({ parentPath }: { parentPath: string }) {
+function FileUl({ urlParentPath }: { urlParentPath: string }) {
   type Folder = {
     name: string;
-    parentPath: string;
+    urlParentPath: string;
     isFile: boolean;
     hasFolder: boolean;
   };
@@ -268,8 +284,8 @@ function FileUl({ parentPath }: { parentPath: string }) {
   }, []);
 
   async function setupFolders() {
-    // console.log("setupFolders", parentPath);
-    const folders = await getFoldersUlInfo(parentPath);
+    // console.log("setupFolders", urlParentPath);
+    const folders = await getFoldersUlInfo(urlParentPath);
 
     setFolders(folders);
   }
@@ -285,7 +301,7 @@ function FileUl({ parentPath }: { parentPath: string }) {
                   onToggle={(e) => {
                     //阻止事件冒泡
                     e.stopPropagation();
-                    setSelectedPath(path.join(parentPath, folder.name));
+                    setSelectedPath(path.join(urlParentPath, folder.name));
                     if ((e.target as any).open) {
                       setMountNextUlKeys((prev) => [...prev, folder.name]);
                     } else {
@@ -298,7 +314,7 @@ function FileUl({ parentPath }: { parentPath: string }) {
                 >
                   <summary
                     className={
-                      selectedPath === path.join(parentPath, folder.name)
+                      selectedPath === path.join(urlParentPath, folder.name)
                         ? "active"
                         : ""
                     }
@@ -308,19 +324,21 @@ function FileUl({ parentPath }: { parentPath: string }) {
                   </summary>
 
                   {mountNextUlKeys.includes(folder.name) && (
-                    <FileUl parentPath={path.join(parentPath, folder.name)} />
+                    <FileUl
+                      urlParentPath={path.join(urlParentPath, folder.name)}
+                    />
                   )}
                 </details>
               </>
             ) : (
               <a
                 className={
-                  selectedPath === path.join(parentPath, folder.name)
+                  selectedPath === path.join(urlParentPath, folder.name)
                     ? "active"
                     : ""
                 }
                 onClick={() => {
-                  setSelectedPath(path.join(parentPath, folder.name));
+                  setSelectedPath(path.join(urlParentPath, folder.name));
                 }}
               >
                 <FolderIcon className="h-4 w-4" />

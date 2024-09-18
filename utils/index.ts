@@ -1,5 +1,7 @@
 import { usePathname } from "next/navigation";
 import path from "path";
+
+// base_path只能在这里引入
 const BASE_PATH = process.env.BASE_PATH!;
 export function getSingleFileUrl(filepath: string) {
   const params = new URLSearchParams({
@@ -20,4 +22,7 @@ export function formatUrlPath(tagName: string) {
   const res=tagName.match(/[a-zA-Z0-9]/g);
   const urlName=res ? res.join('').toLowerCase() : '';
   return urlName
+}
+export function getTagBasePath(tagPath: string) {
+  return path.join(BASE_PATH, tagPath);
 }

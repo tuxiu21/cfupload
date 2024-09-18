@@ -40,7 +40,7 @@ const CHUNK_SIZE = 1024 * 1024 * Number(process.env.NEXT_PUBLIC_CHUNK_SIZE_MB);
 
 export default function LeftBar() {
   // 这个获取的是完整的路径
-  const {tabUrl,parentPath} = useTabPath();
+  const {tabUrl,urlParentPath} = useTabPath();
 
   const [modalStatus, setModalStatus] = useState(ModalType.None);
   const [addFileName, setAddFileName] = useState("");
@@ -60,7 +60,7 @@ export default function LeftBar() {
     const res = await addFile(
       addFileName,
       modalStatus === ModalType.CreateFile,
-      parentPath
+      urlParentPath
     );
 
     toast({ success: res.success, message: res.message });
@@ -76,7 +76,7 @@ export default function LeftBar() {
     setShowTaskBar(true);
 
     // 因为用户可能会切换目录 所以这里需要保存一下
-    const uploadParentPath = parentPath;
+    const uploadurlParentPath = urlParentPath;
 
     const upload = async (file: File) => {
       const chunks = Math.ceil(file.size / CHUNK_SIZE);
@@ -86,7 +86,7 @@ export default function LeftBar() {
         return tasks.map((task) => {
           if (
             task.filename === file.name &&
-            task.destination === uploadParentPath
+            task.destination === uploadurlParentPath
           ) {
             task.chunkTotal = chunks;
             return task;
@@ -109,7 +109,7 @@ export default function LeftBar() {
         chunkFormData.append("uuid", uuid);
         chunkFormData.append("index", index.toString());
         chunkFormData.append("chunks", chunks.toString());
-        chunkFormData.append("pathname", uploadParentPath);
+        chunkFormData.append("pathname", uploadurlParentPath);
         console.log(chunkFormData);
         chunkFormData.forEach((value, key) => {
           console.log(key, value);
@@ -120,7 +120,7 @@ export default function LeftBar() {
           return tasks.map((task) => {
             if (
               task.filename === file.name &&
-              task.destination === uploadParentPath
+              task.destination === uploadurlParentPath
             ) {
               if (task.chunkTotal === 0) {
                 task.chunkTotal = 1;
@@ -147,7 +147,7 @@ export default function LeftBar() {
         filename: files[i].name,
         chunkUploaded: 0,
         chunkTotal: 0,
-        destination: uploadParentPath,
+        destination: uploadurlParentPath,
         size: files[i].size,
       });
     }

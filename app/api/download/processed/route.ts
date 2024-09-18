@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from "uuid";
 
 // const fileListMap = new Map<string, string>();
 const fileListMap = new LRUCache<string, string>({ max:10,ttl:60*1000});
-const BASE_PATH = process.env.BASE_PATH!;
 
 export async function GET(request: Request) {
   const url = new URL(request.url)
@@ -20,7 +19,7 @@ export async function GET(request: Request) {
   }
 
   const resObj = JSON.parse(res);
-  const parentPath: string = resObj.parentPath;
+  const urlParentPath: string = resObj.urlParentPath;
   const selectedFiles: SelectedFileType[] = resObj.selectedFiles;
   // fileListMap.delete(uuid);
 
@@ -28,7 +27,7 @@ export async function GET(request: Request) {
   const archive = archiver('zip', { zlib: { level: 4 } })
   selectedFiles.forEach((selectedFile) => {
     console.log(selectedFile);
-    const fullPath = path.join(BASE_PATH, parentPath, selectedFile.name);
+    const fullPath = path.join(BASE_PATH, urlParentPath, selectedFile.name);
     if (selectedFile.isFile) {
       archive.file(fullPath, { name: selectedFile.name });
     } else {
