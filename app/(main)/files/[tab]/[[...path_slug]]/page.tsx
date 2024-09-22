@@ -6,23 +6,12 @@ import path from "path";
 import { redirect, RedirectType } from "next/navigation";
 // import Uploader from "../../../components/uploader";
 
-import { randomUUID, UUID } from "crypto";
-import {
-  CreateFileIcon,
-  FileIcon,
-  FileUploadIcon,
-  FolderIcon,
-  FolderUploadIcon,
-  PlusIcon,
-} from "@/components/icons";
-import LeftBar from "@/components/leftbar";
+
 import TableView from "@/components/tableview";
 import { getSingleFileUrl, getTagBasePath } from "@/utils";
 // import { getFiles,  } from "./action";
 import { getFiles } from "./action";
-import { getTabMap } from "@/app/action";
-
-
+import { getTabByUrlName, getTabMap, verifySession } from "@/app/action";
 
 export default async function Files({
   params,
@@ -30,14 +19,19 @@ export default async function Files({
   params: {
     tab: string;
     path_slug?: string[];
-  }
+  };
 }) {
-  const tab=(await getTabMap()).get(params.tab)
-  if(!tab){
-    throw new Error("Tab not found")
-  }
+  // 验证用户身份
+  const { isAuth, username } = await verifySession();
 
-  const tag_basepath=getTagBasePath(tab.pathName)
+
+  const tab = await getTabByUrlName(params.tab);
+  if (!tab) {
+    throw new Error("Tab not found");
+  }
+  // if(!isAuth && tab.permissions.)
+
+  const tag_basepath = getTagBasePath(tab.pathName);
 
   let urlParentPath = "";
   if (params.path_slug) {
@@ -69,6 +63,7 @@ export default async function Files({
         size: stat.size,
         mtimeMs: stat.mtimeMs,
         birthtimeMs: stat.birthtimeMs,
+        href: path.join("/files", params.tab, urlParentPath, file.name),
       };
     })
   );
@@ -77,16 +72,20 @@ export default async function Files({
 
   return (
     <>
-    {/* {testDiv} */}
+      {/* {testDiv} */}
       <div className="mx-6 breadcrumbs text-sm">
         <ul>
           <li>
-            <Link href={path.join('/files',params.tab)}>My Files</Link>
+            <Link href={path.join("/files", params.tab)}>{tab.tabName}</Link>
           </li>
           {urlParentPath.split(path.sep).map((name, index, arr) => {
             // array（可选）：调用 map 方法的原数组。
-            const href = path.join("/files",params.tab, ...arr.slice(0, index + 1));
-            
+            const href = path.join(
+              "/files",
+              params.tab,
+              ...arr.slice(0, index + 1)
+            );
+
             return (
               <li key={href}>
                 <Link href={href}>{name}</Link>
@@ -95,7 +94,7 @@ export default async function Files({
           })}
         </ul>
       </div>
-      <TableView viewFiles={viewFiles} />
+      <TableView viewFiles={viewFiles} tabUrl={params.tab} urlParentPath={urlParentPath}/>
     </>
   );
 }

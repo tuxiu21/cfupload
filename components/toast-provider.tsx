@@ -63,9 +63,9 @@ function Toast({
         } flex flex-row`}
       >
         {success ? (
-          <CheckMarkIcon className="h-5 min-w-5" />
+          <CheckMarkIcon className="h-6 min-w-6" />
         ) : (
-          <ErrorIcon className="h-5 min-w-5" />
+          <ErrorIcon className="h-6 min-w-6" />
         )}
         <span className="break-words text-wrap">{message}</span>
       </div>

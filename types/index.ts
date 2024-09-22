@@ -11,6 +11,7 @@ export type viewFiles =   {
   // path: string;
   isFile: boolean;
   birthtimeMs: number;
+  href: string;
 }[]
 export type SelectedFileType = {
   name: string;

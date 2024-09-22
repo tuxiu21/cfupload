@@ -7,22 +7,23 @@ import { useFormState, useFormStatus } from "react-dom";
 import { useEffect, useState } from "react";
 import Toast, { useToast } from "./toast-provider";
 import { redirect } from "next/navigation";
+import { useAuthInfo } from "./auth-provider";
 
 export default function Login({ inDialog }: { inDialog?: boolean }) {
 
   const toast = useToast();
+  const {authInfo,setAuthInfo} = useAuthInfo();
 
 
   const handleLogin=async (formData:FormData)=>{
-    const res = await login( formData);
+    const {res,authInfo} = await login( formData);
+    // 写入auth-provider
+    setAuthInfo(authInfo)
+
+
 
     toast({ success: res.success, message: res.message });
     if(res.success){
-      // if(inDialog){
-      //   location.href = "/files";
-      // }else{
-      //   location.href = "/files";
-      // }
       redirect("/files");
     }
   }

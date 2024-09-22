@@ -10,8 +10,8 @@ export function useTabPath(){
   const tabUrl = parts[2];
   const urlParentPath = parts.slice(3).join(path.sep);
 
-  console.log("tabUrl", tabUrl);
-  console.log("urlParentPath", urlParentPath);
+  // console.log("tabUrl", tabUrl);
+  // console.log("urlParentPath", urlParentPath);
   
   return {tabUrl, urlParentPath};
 

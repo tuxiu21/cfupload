@@ -1,6 +1,7 @@
 import 'server-only'
 import  {SignJWT} from 'jose/jwt/sign'
 import { cookies } from 'next/headers'
+import { jwtVerify } from 'jose'
 const secret=process.env.SECRET_KEY
 const encodedSecret=new TextEncoder().encode(secret)
 
@@ -20,5 +21,20 @@ export async function createSession(username:string){
     sameSite: 'lax',
     path: '/',
   })
-
 }
+export async function decryptSession(cookie:string|undefined){
+  if(!cookie){
+    return null
+  }
+  try {
+    const {payload}=await jwtVerify(cookie,encodedSecret)
+    return payload
+  } catch (error) {
+    return null
+  }
+}
+
+// export async function deleteSession(){
+//   // cookies().delete('session')
+//   cookies().set('pig','sdad')
+// }

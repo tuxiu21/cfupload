@@ -1,6 +1,6 @@
 "use client";
 
-import { viewFiles } from "@/types";
+import { Tab, viewFiles } from "@/types";
 import {
   CopyIcon,
   CreateFileIcon,
@@ -20,22 +20,16 @@ import path from "path";
 import { useTheme } from "next-themes";
 import { SelectedFileType } from "@/types";
 import { formatSize, getSingleFileUrl } from "@/utils";
-import { Readable } from "stream";
-import Toast from "./toast-provider";
 
-import { useRouter } from "next/navigation";
 import { useSelectedFiles, useViewFiles } from "@/app/(main)/files/providers";
-import { useTabPath } from "@/hooks";
 
-export default function TableView({ viewFiles }: { viewFiles: viewFiles }) {
+export default function TableView({viewFiles,tabUrl,urlParentPath}: {viewFiles: viewFiles;tabUrl:string;urlParentPath:string}) {
   const [mounted, setMounted] = useState(false);
 
   // const [selectedFiles, setSelectedFiles] = useState<SelectedFileType[]>([]);
   const { selectedFiles, setSelectedFiles } = useSelectedFiles();
   const { setViewFiles} = useViewFiles();
 
-  // setViewFiles(viewFiles);
-  const {tabUrl,urlParentPath}=useTabPath()
 
 
   useEffect(() => {
@@ -145,12 +139,13 @@ export default function TableView({ viewFiles }: { viewFiles: viewFiles }) {
                             <>
                               <FolderIcon className="min-w-5 h-5" />
                               <Link
-                                href={path.join(
-                                  "/files/",
-                                  tabUrl,
-                                  view_file.urlParentPath,
-                                  view_file.name
-                                )}
+                                // href={path.join(
+                                //   "/files/",
+                                //   tabUrl,
+                                //   view_file.urlParentPath,
+                                //   view_file.name
+                                // )}
+                                href={view_file.href}
                                 // href={view_file.name+'000'}
                                 className="truncate"
                               >

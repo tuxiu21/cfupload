@@ -17,7 +17,7 @@ function main() {
   
 
   // 生成ssh key
-  const secret = crypto.randomBytes(64).toString('hex');
+  const secret = crypto.randomBytes(128).toString('hex');
 
   // prompt.message = colors.underline("Prompt");
   // prompt.delimiter = colors.green(":");

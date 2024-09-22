@@ -1,3 +1,4 @@
+import AuthProvider from '@/components/auth-provider';
 import ToastProvider from '@/components/toast-provider';
 import { ThemeProvider } from 'next-themes'
 
@@ -11,8 +12,12 @@ export default function Providers({ children }: Readonly<{ children: React.React
     >
       {/* {children} */}
       <ToastProvider>
-        {children}
+        {/* {children} */}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </ToastProvider>
     </ThemeProvider>
   );
 }
+

@@ -1,18 +1,67 @@
 import * as React from "react";
 
 import { IconSvgProps } from "@/types";
+{/* <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} color="currentColor"><path d="M22 9c0 3.314-4.477 6-10 6S2 12.314 2 9s4.477-6 10-6s10 2.686 10 6"></path><path d="M12 6.854c3-1.413 5 .863 5 1.928c0 3.17-10 3.005-10-.9C7 5.498 9 3 12 3"></path><path d="M22 9v6c0 3.314-4.477 6-10 6S2 18.314 2 15V9"></path></g></svg> */}
+{/* <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m3 10l3-3l3 3l3-3l3 3l3-3l3 3M3 17l3-3l3 3l3-3l3 3l3-3l3 3"></path></svg> */}
+export const AquaIcon: React.FC<IconSvgProps> = ({
+  size = 12,
+  width,
+  height,
+  ...props
+}) => (
+  <svg
+    // fill={props.color}
+    // fill="none"
+    stroke="currentColor"
+    strokeWidth={0.1}
+    height={size || height}
+    viewBox="0 0 24 24"
+    width={size || width}
+    {...props}
+  >
+<path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m3 10l3-3l3 3l3-3l3 3l3-3l3 3M3 17l3-3l3 3l3-3l3 3l3-3l3 3"></path>
+  </svg>
+);
+export const CinnamorollIcon: React.FC<IconSvgProps> = ({
+  size = 12,
+  width,
+  height,
+  ...props
+}) => (
+  <svg
+    // fill={props.color}
+    // fill="none"
+    stroke="currentColor"
+    // strokeWidth={0.1}
+    height={size || height}
+    viewBox="0 0 24 24"
+    width={size || width}
+    {...props}
+  >
+<g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} color="currentColor"><path d="M22 9c0 3.314-4.477 6-10 6S2 12.314 2 9s4.477-6 10-6s10 2.686 10 6"></path><path d="M12 6.854c3-1.413 5 .863 5 1.928c0 3.17-10 3.005-10-.9C7 5.498 9 3 12 3"></path><path d="M22 9v6c0 3.314-4.477 6-10 6S2 18.314 2 15V9"></path></g>
+  </svg>
+);
 
-<svg
-  xmlns="http://www.w3.org/2000/svg"
-  width="0.82em"
-  height="1em"
-  viewBox="0 0 1152 1408"
->
-  <path
-    fill="currentColor"
-    d="M320 640h512V448q0-106-75-181t-181-75t-181 75t-75 181zm832 96v576q0 40-28 68t-68 28H96q-40 0-68-28t-28-68V736q0-40 28-68t68-28h32V448q0-184 132-316T576 0t316 132t132 316v192h32q40 0 68 28t28 68"
-  ></path>
-</svg>;
+export const ValentineIcon: React.FC<IconSvgProps> = ({
+  size = 12,
+  width,
+  height,
+  ...props
+}) => (
+  <svg
+    // fill={props.color}
+    // fill="none"
+    stroke="currentColor"
+    strokeWidth={0.1}
+    height={size || height}
+    viewBox="0 0 16 16"
+    width={size || width}
+    {...props}
+  >
+<g fill="currentColor"><path d="M8 5.993c1.664-1.711 5.825 1.283 0 5.132c-5.825-3.85-1.664-6.843 0-5.132M2.25 4a.25.25 0 0 0-.25.25v1.5a.25.25 0 0 0 .5 0V4.5h1.25a.25.25 0 0 0 0-.5zm10 0a.25.25 0 1 0 0 .5h1.25v1.25a.25.25 0 1 0 .5 0v-1.5a.25.25 0 0 0-.25-.25zM2.5 10.25a.25.25 0 1 0-.5 0v1.5c0 .138.112.25.25.25h1.5a.25.25 0 1 0 0-.5H2.5zm11.5 0a.25.25 0 1 0-.5 0v1.25h-1.25a.25.25 0 1 0 0 .5h1.5a.25.25 0 0 0 .25-.25z"></path><path fillRule="evenodd" d="M0 2.994v-.06a1 1 0 0 1 .859-.99l13-1.857a1 1 0 0 1 1.141.99V2a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1zM1 3v10h14V3z"></path></g>
+  </svg>
+);
+
 export const EditIcon: React.FC<IconSvgProps> = ({
   size = 12,
   width,
@@ -25,7 +74,6 @@ export const EditIcon: React.FC<IconSvgProps> = ({
     stroke="currentColor"
     strokeWidth={0.1}
     height={size || height}
-
     viewBox="0 0 24 24"
     width={size || width}
     {...props}
@@ -49,15 +97,38 @@ export const UnlockedIcon: React.FC<IconSvgProps> = ({
     // fill={props.color}
     // fill="none"
     stroke="currentColor"
-    // strokeWidth={0.5}
+    strokeWidth={0.1}
     height={size || height}
-    viewBox="0 0 1664 1408"
+    viewBox="0 0 24 24"
     width={size || width}
     {...props}
   >
     <path
       fill="currentColor"
-      d="M1664 448v256q0 26-19 45t-45 19h-64q-26 0-45-19t-19-45V448q0-106-75-181t-181-75t-181 75t-75 181v192h96q40 0 68 28t28 68v576q0 40-28 68t-68 28H96q-40 0-68-28t-28-68V736q0-40 28-68t68-28h672V448q0-185 131.5-316.5T1216 0t316.5 131.5T1664 448"
+      d="M10 13a2 2 0 0 1 2 2c0 1.11-.89 2-2 2s-2-.89-2-2s.9-2 2-2m8-12c-2.76 0-5 2.24-5 5v2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2h-1V6c0-1.66 1.34-3 3-3s3 1.34 3 3v2h2V6c0-2.76-2.24-5-5-5m-2 9v10H4V10z"
+    ></path>
+  </svg>
+);
+
+export const PartLockedIcon: React.FC<IconSvgProps> = ({
+  size = 12,
+  width,
+  height,
+  ...props
+}) => (
+  <svg
+    // fill={props.color}
+    // fill="none"
+    stroke="currentColor"
+    strokeWidth={0.1}
+    height={size || height}
+    viewBox="0 0 24 24"
+    width={size || width}
+    {...props}
+  >
+    <path
+      fill="currentColor"
+      d="M14 15c0 1.11-.89 2-2 2a2 2 0 0 1-2-2c0-1.11.89-2 2-2a2 2 0 0 1 2 2m-.91 5c.12.72.37 1.39.72 2H6a2 2 0 0 1-2-2V10c0-1.11.89-2 2-2h1V6c0-2.76 2.24-5 5-5s5 2.24 5 5v2h1a2 2 0 0 1 2 2v3.09c-.33-.05-.66-.09-1-.09s-.67.04-1 .09V10H6v10zM9 8h6V6c0-1.66-1.34-3-3-3S9 4.34 9 6zm6 10v2h8v-2z"
     ></path>
   </svg>
 );
@@ -71,16 +142,16 @@ export const LockedIcon: React.FC<IconSvgProps> = ({
     // fill={props.color}
     // fill="none"
     stroke="currentColor"
-    // strokeWidth={0.5}
+    strokeWidth={0.1}
     height={size || height}
-    viewBox="0 0 1152 1408"
+    viewBox="0 0 24 24"
     width={size || width}
     {...props}
   >
     <path
       fill="currentColor"
-      d="M320 640h512V448q0-106-75-181t-181-75t-181 75t-75 181zm832 96v576q0 40-28 68t-68 28H96q-40 0-68-28t-28-68V736q0-40 28-68t68-28h32V448q0-184 132-316T576 0t316 132t132 316v192h32q40 0 68 28t28 68"
-    ></path>{" "}
+      d="M14 15c0 1.11-.89 2-2 2a2 2 0 0 1-2-2c0-1.11.89-2 2-2a2 2 0 0 1 2 2m-.91 5c.12.72.37 1.39.72 2H6a2 2 0 0 1-2-2V10c0-1.11.89-2 2-2h1V6c0-2.76 2.24-5 5-5s5 2.24 5 5v2h1a2 2 0 0 1 2 2v3.09c-.33-.05-.66-.09-1-.09s-.67.04-1 .09V10H6v10zM9 8h6V6c0-1.66-1.34-3-3-3S9 4.34 9 6zm12.34 7.84l-3.59 3.59l-1.59-1.59L15 19l2.75 3l4.75-4.75z"
+    ></path>
   </svg>
 );
 export const UserFilledIcon: React.FC<IconSvgProps> = ({

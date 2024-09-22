@@ -20,3 +20,9 @@ tabMap.set('pig2',{
   pathName:'/1212',
   permissions:['visitorVisible']
 })
+tabMap.set('u',{
+  tabName:'upload文件夹',
+  urlName:'u',
+  pathName:'/upld111',
+  permissions:['visitorVisible','visitorFullAccess']
+})

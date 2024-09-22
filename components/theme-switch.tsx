@@ -3,6 +3,8 @@
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import {
+  AquaIcon,
+  CinnamorollIcon,
   ComputerIcon,
   CupcakeIcon,
   CyberpunkIcon,
@@ -10,6 +12,7 @@ import {
   MoonFilledIcon,
   SunFilledIcon,
   SunsetIcon,
+  ValentineIcon,
 } from "./icons";
 
 import { renderToStaticMarkup } from "react-dom/server";
@@ -33,9 +36,11 @@ export default function ThemeSwitch() {
               {
                 light: <SunFilledIcon className="h-6 w-6" color="4B4B4B"/>,
                 dark: <MoonFilledIcon className="h-6 w-6" />,
-                cupcake: <CupcakeIcon className="h-6 w-6" color="4B4B4B"/>,
+                aqua: <AquaIcon className="h-6 w-6" color="4B4B4B"/>,
                 cyberpunk: <CyberpunkIcon className="h-6 w-6"  color="#4B4B4B" />,
                 sunset: <SunsetIcon className="h-6 w-6" color="#C0C0C0" />,
+                valentine: <ValentineIcon className="h-6 w-6" color="#4B4B4B" />,
+                cinnamoroll: <CinnamorollIcon className="h-6 w-6" color="#4B4B4B" />,
               }[themeProps.resolvedTheme!]
             }
             <DropdownIcon className="h-2 w-2" color="gray" />
@@ -78,7 +83,7 @@ export default function ThemeSwitch() {
                 style={
                   {
                     "--url": `url(${reactSvgComponentToMarkupString(
-                      CupcakeIcon,
+                      AquaIcon,
                       {
                         size: 24,
                         color: "#969696",
@@ -92,10 +97,10 @@ export default function ThemeSwitch() {
                 after:h-full
                 after:flex after:flex-row after:items-center after:justify-start
                 "
-                aria-label="Cupcake"
-                value="cupcake"
-                onClick={() => themeProps.setTheme("cupcake")}
-                defaultChecked={themeProps.theme== "cupcake"}
+                aria-label="Aqua"
+                value="aqua"
+                onClick={() => themeProps.setTheme("aqua")}
+                defaultChecked={themeProps.theme== "aqua"}
               />
             </li>
             <li>
@@ -150,6 +155,60 @@ export default function ThemeSwitch() {
                 value="sunset"
                 onClick={() => themeProps.setTheme("sunset")}
                 defaultChecked={themeProps.theme== "sunset"}
+              />
+            </li>
+            <li>
+              <input
+                type="radio"
+                name="theme-dropdown"
+                style={
+                  {
+                    "--url": `url(${reactSvgComponentToMarkupString(
+                      ValentineIcon,
+                      {
+                        size: 24,
+                        color: "#969696",
+                        xmlns: "http://www.w3.org/2000/svg",
+                      }
+                    )})`,
+                  } as React.CSSProperties
+                }
+                className="btn btn-sm btn-block btn-ghost justify-start 
+                after:bg-[image:var(--url)] after:bg-no-repeat after:bg-right after:w-full 
+                after:h-full
+                after:flex after:flex-row after:items-center after:justify-start
+                "
+                aria-label="Valentine"
+                value="valentine"
+                onClick={() => themeProps.setTheme("valentine")}
+                defaultChecked={themeProps.theme== "valentine"}
+              />
+            </li>
+            <li>
+              <input
+                type="radio"
+                name="theme-dropdown"
+                style={
+                  {
+                    "--url": `url(${reactSvgComponentToMarkupString(
+                      CinnamorollIcon,
+                      {
+                        size: 24,
+                        color: "#969696",
+                        xmlns: "http://www.w3.org/2000/svg",
+                      }
+                    )})`,
+                  } as React.CSSProperties
+                }
+                className="btn btn-sm btn-block btn-ghost justify-start 
+                after:bg-[image:var(--url)] after:bg-no-repeat after:bg-right after:w-full 
+                after:h-full
+                after:flex after:flex-row after:items-center after:justify-start
+                "
+                aria-label="Cinnamoroll"
+                value="cinnamoroll"
+                onClick={() => themeProps.setTheme("cinnamoroll")}
+                defaultChecked={themeProps.theme== "cinnamoroll"}
               />
             </li>
           </ul>

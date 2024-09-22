@@ -1,5 +1,6 @@
-'use client'
+// 'use client'
 
+import Link from "next/link";
 import { getTabMap } from "./action";
 
 
@@ -14,13 +15,16 @@ export default function Home() {
             excepturi exercitationem quasi. In deleniti eaque aut repudiandae et
             a id nisi.
           </p>
-          <button className="btn btn-primary"
+          {/* <button className="btn btn-primary"
           onClick={async ()=>{
             // const res=await getTabMap()
             const res=await getTabMap()
             console.log(res);
           }}
-          >Get Started</button>
+          >Get Started</button> */}
+          <Link href="/files" className="btn btn-primary">
+          Get Started
+          </Link>
         </div>
       </div>
     </div>
