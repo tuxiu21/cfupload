@@ -6,12 +6,12 @@ import path from "path";
 import { redirect, RedirectType } from "next/navigation";
 // import Uploader from "../../../components/uploader";
 
-
 import TableView from "@/components/tableview";
 import { getSingleFileUrl, getTagBasePath } from "@/utils";
 // import { getFiles,  } from "./action";
 import { getFiles } from "./action";
 import { getTabByUrlName, getTabMap, verifySession } from "@/app/action";
+import { LockedIcon } from "@/components/icons";
 
 export default async function Files({
   params,
@@ -24,12 +24,25 @@ export default async function Files({
   // 验证用户身份
   const { isAuth, username } = await verifySession();
 
-
   const tab = await getTabByUrlName(params.tab);
   if (!tab) {
     throw new Error("Tab not found");
   }
-  // if(!isAuth && tab.permissions.)
+  if (
+    !isAuth &&
+    !(
+      tab.permissions.includes("visitorFullAccess") ||
+      tab.permissions.includes("visitorVisible")
+    )
+  ) {
+    return (
+      <div className="grow flex flex-col items-center justify-center">
+        <LockedIcon className="w-24 h-24 " />
+        <h1 className="text-2xl font-bold">Access Denied</h1>
+        <p className="text-center">{"You do not have permission to access this directory, please login first."}</p>
+      </div>
+    );
+  }
 
   const tag_basepath = getTagBasePath(tab.pathName);
 
@@ -68,11 +81,9 @@ export default async function Files({
     })
   );
 
-  // const testDiv = await getFoldersUl(urlParentPath);
 
   return (
     <>
-      {/* {testDiv} */}
       <div className="mx-6 breadcrumbs text-sm">
         <ul>
           <li>
@@ -94,7 +105,12 @@ export default async function Files({
           })}
         </ul>
       </div>
-      <TableView viewFiles={viewFiles} tabUrl={params.tab} urlParentPath={urlParentPath}/>
+      <TableView
+        viewFiles={viewFiles}
+        tabUrl={params.tab}
+        urlParentPath={urlParentPath}
+      />
     </>
   );
 }
+

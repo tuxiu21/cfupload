@@ -17,6 +17,7 @@ import {
   FolderIcon,
   InfoIcon,
   LockedIcon,
+  LockedOKIcon,
   PartLockedIcon,
   PlusIcon,
   UnlockedIcon,
@@ -29,8 +30,7 @@ import { editTabMapFromForm, getTabMap, putTabMapFromForm } from "@/app/action";
 import { useToast } from "./toast-provider";
 import { useTabPath } from "@/hooks";
 import Link from "next/link";
-import { set } from "zod";
-import { originalPathname } from "next/dist/build/templates/app-page";
+
 
 const tabInit: Tab = {
   tabName: "",
@@ -176,7 +176,7 @@ export default function FileMenu() {
                             className="tooltip"
                             data-tip="This folder is private."
                           >
-                            <LockedIcon className="w-5 h-5" />
+                            <LockedOKIcon className="w-5 h-5" />
                           </div>
                         )}
                       </>

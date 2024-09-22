@@ -9,6 +9,14 @@ import { useRef } from "react";
 export default function FileMenuLink({ tab }: { tab: Tab }) {
   const { tabUrl, urlParentPath } = useTabPath();
   const drawerToggleLabel = useRef<HTMLLabelElement>(null);
+  console.log('path:');
+  
+  console.log(path.join("/files", tab.urlName));
+  console.log('tabURl');
+  console.log(tabUrl);
+  
+  
+  
 
   return (
     <div
@@ -22,8 +30,8 @@ export default function FileMenuLink({ tab }: { tab: Tab }) {
         className="hidden"
       ></label>
       <Link
-        // href={"test"}
         href={path.join("/files", tab.urlName)}
+        // href={'/files/'+tab.urlName}
         className="block w-full px-4 py-2"
         onClick={() => {
           drawerToggleLabel.current?.click();

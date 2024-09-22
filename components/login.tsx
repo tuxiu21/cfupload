@@ -6,13 +6,14 @@ import Link from "next/link";
 import { useFormState, useFormStatus } from "react-dom";
 import { useEffect, useState } from "react";
 import Toast, { useToast } from "./toast-provider";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useAuthInfo } from "./auth-provider";
 
 export default function Login({ inDialog }: { inDialog?: boolean }) {
 
   const toast = useToast();
   const {authInfo,setAuthInfo} = useAuthInfo();
+  const router=useRouter()
 
 
   const handleLogin=async (formData:FormData)=>{
@@ -24,7 +25,8 @@ export default function Login({ inDialog }: { inDialog?: boolean }) {
 
     toast({ success: res.success, message: res.message });
     if(res.success){
-      redirect("/files");
+      // redirect("/files");
+      router.push('/files')
     }
   }
 

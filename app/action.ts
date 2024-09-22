@@ -9,27 +9,26 @@ import { cookies } from "next/headers"
 
 export const verifySession = async () => {
 
-  console.log('verifySession!!');
+  // console.log('verifySession!!');
   
 
   const cookie = cookies().get('session')?.value
   const sessionPayload=await decryptSession(cookie)
   if(sessionPayload && sessionPayload.username){
-    console.log('very success');
+    // console.log('very success');
     
     return {isAuth:true,username:sessionPayload.username as string}
   }
-  console.log('very fail');
+  // console.log('very fail');
   
   return {isAuth:false,username:''}
 }
 
-// export const logout = async () => {
-//   console.log("try to logout");
+export const logout = async () => {
+  console.log("try to logout");
   
-//   await cookies().delete('session')
-//   red
-// }
+  await cookies().delete('session')
+}
 
 
 export async function login(formData: FormData) {

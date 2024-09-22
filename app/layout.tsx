@@ -20,7 +20,7 @@ export default function RootLayout({
     <html
       lang="en"
       // data-theme="dark"
-      suppressHydrationWarning
+      suppressHydrationWarning={true}
     >
       <body className={inter.className}>
         <Providers>
