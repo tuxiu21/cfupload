@@ -1,32 +1,38 @@
 'use server'
 
-import { createTabSchema, editTabSchema, getEditTabSchema,  } from "@/lib/definitions"
+import { createTabSchema, editTabSchema, getEditTabSchema, } from "@/lib/definitions"
 import { createSession, decryptSession } from "@/lib/sessions"
 import { tabMap } from "@/store/tabMap"
 import { Tab } from "@/types"
 import { cookies } from "next/headers"
+import { cache } from "react";
 
-
+// // 这里用cache进行缓存  React 将在每次服务器请求时使所有记忆化函数的缓存失效 所以渲染时进行的多次请求会被缓存
+// export const verifySession = cache(async () => {
+//   const cookie = cookies().get('session')?.value
+//   const sessionPayload = await decryptSession(cookie)
+//   if (sessionPayload && sessionPayload.username) {
+//     return { isAuth: true, username: sessionPayload.username as string }
+//   }
+//   return { isAuth: false, username: '' }
+// })
 export const verifySession = async () => {
-
-  // console.log('verifySession!!');
-  
-
   const cookie = cookies().get('session')?.value
-  const sessionPayload=await decryptSession(cookie)
-  if(sessionPayload && sessionPayload.username){
-    // console.log('very success');
-    
-    return {isAuth:true,username:sessionPayload.username as string}
+  const sessionPayload = await decryptSession(cookie)
+  if (sessionPayload && sessionPayload.username) {
+    return { isAuth: true, username: sessionPayload.username as string }
   }
-  // console.log('very fail');
-  
-  return {isAuth:false,username:''}
+  return { isAuth: false, username: '' }
 }
 
+// export const testCache = cache(async()=>{})
+// export const testCache2 = cache(async()=>{})
+
+
+
+
+
 export const logout = async () => {
-  console.log("try to logout");
-  
   await cookies().delete('session')
 }
 
@@ -38,14 +44,14 @@ export async function login(formData: FormData) {
   const password = formData.get('password')
   if (!(username === process.env.USER_NAME && password === process.env.USER_PASSWORD)) {
     return {
-      res :{ success: false, message: 'Invalid username or password' },
+      res: { success: false, message: 'Invalid username or password' },
       authInfo: { isAuth: false, username: '' }
     }
   }
   await createSession(username)
 
   return {
-    res:{ success: true, message:"Login successful! "  },
+    res: { success: true, message: "Login successful! " },
     authInfo: { isAuth: true, username: username as string }
   }
 }
@@ -99,7 +105,3 @@ export async function getTabByUrlName(urlName: string) {
 export async function getVisitorTabs() {
   return Array.from(tabMap.values()).filter(tab => tab.permissions.includes('visitorVisible') || tab.permissions.includes('visitorFullAccess'))
 }
-// export async function get() {
-//   return Array.from(tabMap.values())
-// }
-

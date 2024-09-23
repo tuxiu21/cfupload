@@ -24,7 +24,7 @@ import { formatSize, getSingleFileUrl } from "@/utils";
 import { useSelectedFiles, useViewFiles } from "@/app/(main)/files/providers";
 
 export default function TableView({viewFiles,tabUrl,urlParentPath}: {viewFiles: viewFiles;tabUrl:string;urlParentPath:string}) {
-  const [mounted, setMounted] = useState(false);
+  // const [mounted, setMounted] = useState(false);
 
   // const [selectedFiles, setSelectedFiles] = useState<SelectedFileType[]>([]);
   const { selectedFiles, setSelectedFiles } = useSelectedFiles();
@@ -34,7 +34,7 @@ export default function TableView({viewFiles,tabUrl,urlParentPath}: {viewFiles: 
 
   useEffect(() => {
     // 等挂载好再显示 不然会出现水合问题
-    setMounted(true);
+    // setMounted(true);
     setViewFiles(viewFiles);
   }, []);
 
@@ -50,7 +50,6 @@ export default function TableView({viewFiles,tabUrl,urlParentPath}: {viewFiles: 
 
   return (
     <>
-      {mounted && (
         <div className="basis-4 grow   overflow-x-hidden">
           {/* 表格主体 */}
           <div className="h-full overflow-y-scroll">
@@ -179,7 +178,7 @@ export default function TableView({viewFiles,tabUrl,urlParentPath}: {viewFiles: 
             </table>
           </div>
         </div>
-      )}
+      
     </>
   );
 }

@@ -34,7 +34,8 @@ const config: Config = {
         // "primary": "#a8d8e9",  // 柔和的蓝色
         // "secondary": "#f1c0b2", // 浅奶油色
         "accent": "#fff4e3",    // 温暖的米色
-        "neutral": "#f5f5f5",   // 温和的灰白色
+        // "neutral": "#f5f5f5",   // 温和的灰白色
+        "neutral": "#bae6fd",   // 温和的灰白色
         "base-100": "#ffffff",  // 纯白
         "info": "#a2d9ef",      // 浅蓝色
         "success": "#b2e7a0",   // 清新的绿色

@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { getTabMap } from "./action";
-
+import { cache } from "react";
+const testCache = cache(()=>{})
 
 export default function Home() {
+  
   return (
     <div className="hero bg-base-200 grow">
       <div className="hero-content text-center">

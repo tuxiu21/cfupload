@@ -6,7 +6,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 
 export default async function Navbar() {
-  console.log("navbar渲染！");
+  // console.log("navbar渲染！");
   
   const { isAuth, username } = await verifySession();
   return (

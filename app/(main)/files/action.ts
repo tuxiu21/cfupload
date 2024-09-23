@@ -3,11 +3,12 @@ import fs from "fs";
 import path from "path";
 import os from "os";
 import { SelectedFileType } from "@/types";
-import { getSingleFileUrl } from "@/utils";
-import archiver from "archiver";
-import { Readable } from "stream";
+import { cache } from "react";
+
 
 const tmp_path = os.tmpdir();
+
+
 
 export async function pasteFiles(
   selectedFiles: SelectedFileType[],
