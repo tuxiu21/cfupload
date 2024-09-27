@@ -2,8 +2,9 @@ import FileMenu from "@/components/file-menu";
 import LeftBar from "@/components/leftbar";
 import Navbar from "@/components/navbar";
 import { ReactNode } from "react";
-import { verifySession } from "../action";
 import FileMenuVisitor from "@/components/file-menu-visitor";
+import { verifySessionAction } from "../action-cached";
+import { getTabMap, getVisitorTabs } from "../action";
 
 // 这个layout 用来包裹navbar 因为login不需要navbar 所以要独立开来
 export default async function Layout({
@@ -14,7 +15,12 @@ export default async function Layout({
   children: ReactNode;
 }) {
 
-  const {isAuth,username}= await verifySession()
+  const {isAuth,username}= await verifySessionAction()
+  let tabMap
+
+  if(isAuth){
+    tabMap = await getTabMap()
+  }
 
   return (
     <>
@@ -35,7 +41,7 @@ export default async function Layout({
           <div className="bg-base-200 text-base-content min-h-full w-80 p-4">
             {/* 根据是否登入分别渲染 减少visitor bundle加载 */}
             {
-              isAuth?<FileMenu/>:<FileMenuVisitor/>
+              isAuth?<FileMenu tabs={tabMap!}/>:<FileMenuVisitor/>
             }
           </div>
         </div>

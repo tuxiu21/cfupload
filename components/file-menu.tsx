@@ -30,7 +30,7 @@ import { editTabMapFromForm, getTabMap, putTabMapFromForm } from "@/app/action";
 import { useToast } from "./toast-provider";
 import { useTabPath } from "@/hooks";
 import Link from "next/link";
-
+import { useRouter } from "next/navigation";
 
 const tabInit: Tab = {
   tabName: "",
@@ -39,15 +39,15 @@ const tabInit: Tab = {
   permissions: [],
 };
 
-export default function FileMenu() {
+export default function FileMenu({ tabs }: { tabs: Map<string, Tab> }) {
   const [showCreateTabModal, setShowCreateTabModal] = useState(false);
   const [dialogMounted, setDialogMounted] = useState(false);
 
   const [selectedPath, setSelectedPath] = useState("");
-  
+
   const [mountFirstUl, setMountFirstUl] = useState(true);
 
-  const [tabs, setTabs] = useState(new Map<string, Tab>());
+  // const [tabs, setTabs] = useState(new Map<string, Tab>());
   const { tabUrl, urlParentPath } = useTabPath();
 
   const modalFirstInputRef = useRef<HTMLInputElement>(null);
@@ -55,27 +55,32 @@ export default function FileMenu() {
 
   const [tabDialogForm, setTabDialogForm] = useState(tabInit);
 
-  
-  const originalUrlNameInput=useMemo(()=>
-    <input
-      type="hidden"
-      name="originalUrlName"
-      defaultValue={tabDialogForm.urlName}
-    />,[showCreateTabModal]
-    )
+  const [mounted, setMounted] = useState(false);
+  const router = useRouter();
+
+  const originalUrlNameInput = useMemo(
+    () => (
+      <input
+        type="hidden"
+        name="originalUrlName"
+        defaultValue={tabDialogForm.urlName}
+      />
+    ),
+    [showCreateTabModal]
+  );
 
   const toast = useToast();
 
   useEffect(() => {
-    init();
+    setMounted(true);
   }, []);
 
-  const init = async () => {
-    const tabs = await getTabMap();
-    console.log(tabs);
+  // const init = async () => {
+  //   const tabs = await getTabMap();
+  //   console.log(tabs);
 
-    setTabs(tabs);
-  };
+  //   setTabs(tabs);
+  // };
 
   const handleCreateTab = async () => {
     // // 清空表单
@@ -137,12 +142,16 @@ export default function FileMenu() {
                 <li key={key} className="">
                   <div
                     className={
-                      "relative block p-0 peer" +
-                      (tabUrl === key ? " active " : "")
+                      // "relative block p-0 peer" +
+                      // (tabUrl === key ? " active " : "")
+                      !mounted
+                        ? "relative block p-0 peer"
+                        : "relative block p-0 peer" +
+                          (tabUrl === key ? " active " : "")
                     }
                   >
                     <Link
-                      href={path.join("/files", key)}
+                      href={"/files/" + key}
                       className="block w-full px-4 py-2"
                       onClick={() => {
                         drawerToggleLabel.current?.click();
@@ -238,10 +247,20 @@ export default function FileMenu() {
                   res = await editTabMapFromForm(formData);
                 }
                 if (res.success) {
+                  router.refresh();
+
+                  if (
+                    !isCreateTab &&
+                    tabUrl === formData.get("originalUrlName")
+                  ) {
+                    router.push(
+                      path.join("/files", formData.get("urlName") as string)
+                    );
+                  }
+
                   setShowCreateTabModal(false);
-                } else {
-                  toast({ success: false, message: res.message });
                 }
+                toast({ success: res.success, message: res.message });
               }}
             >
               <label className="input input-bordered input-sm flex items-center gap-2">
@@ -272,9 +291,7 @@ export default function FileMenu() {
                   placeholder=""
                   name="urlName"
                 />
-                {!isCreateTab && (
-                  originalUrlNameInput
-                )}
+                {!isCreateTab && originalUrlNameInput}
                 <div
                   className="tooltip tooltip-left
               before:max-w-60

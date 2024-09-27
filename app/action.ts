@@ -1,36 +1,10 @@
 'use server'
-
 import { createTabSchema, editTabSchema, getEditTabSchema, } from "@/lib/definitions"
 import { createSession, decryptSession } from "@/lib/sessions"
 import { tabMap } from "@/store/tabMap"
 import { Tab } from "@/types"
+import { renameKey } from "@/utils"
 import { cookies } from "next/headers"
-import { cache } from "react";
-
-// // 这里用cache进行缓存  React 将在每次服务器请求时使所有记忆化函数的缓存失效 所以渲染时进行的多次请求会被缓存
-// export const verifySession = cache(async () => {
-//   const cookie = cookies().get('session')?.value
-//   const sessionPayload = await decryptSession(cookie)
-//   if (sessionPayload && sessionPayload.username) {
-//     return { isAuth: true, username: sessionPayload.username as string }
-//   }
-//   return { isAuth: false, username: '' }
-// })
-export const verifySession = async () => {
-  const cookie = cookies().get('session')?.value
-  const sessionPayload = await decryptSession(cookie)
-  if (sessionPayload && sessionPayload.username) {
-    return { isAuth: true, username: sessionPayload.username as string }
-  }
-  return { isAuth: false, username: '' }
-}
-
-// export const testCache = cache(async()=>{})
-// export const testCache2 = cache(async()=>{})
-
-
-
-
 
 export const logout = async () => {
   await cookies().delete('session')
@@ -70,9 +44,6 @@ export async function putTabMapFromForm(formData: FormData) {
   if (!validatedFields.success) {
     return { success: false, message: validatedFields.error.errors[0].message }
   }
-
-
-
   tabMap.set(tab.urlName, tab);
   return { success: true, message: 'ok' }
 }
@@ -90,9 +61,10 @@ export async function editTabMapFromForm(formData: FormData) {
   if (!validatedFields.success) {
     return { success: false, message: validatedFields.error.errors[0].message }
   }
-
-
-
+  // 如果urlName发生了变化，需要修改tabMap的key
+  if(tab.urlName!==originalUrlName){
+    renameTabKey(originalUrlName,tab.urlName)
+  }
   tabMap.set(tab.urlName, tab);
   return { success: true, message: 'ok' }
 }
@@ -104,4 +76,7 @@ export async function getTabByUrlName(urlName: string) {
 }
 export async function getVisitorTabs() {
   return Array.from(tabMap.values()).filter(tab => tab.permissions.includes('visitorVisible') || tab.permissions.includes('visitorFullAccess'))
+}
+export async function renameTabKey(oldKey: string, newKey: string) {
+  renameKey(tabMap, oldKey, newKey)
 }

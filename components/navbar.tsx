@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { KeyIcon, UserFilledIcon, UserIcon } from "./icons";
 import ThemeSwitch from "./theme-switch";
-import { getTabMap, login, verifySession } from "@/app/action";
+import { getTabMap, login } from "@/app/action";
 import Link from "next/link";
 import { cookies } from "next/headers";
+import { verifySessionAction } from "@/app/action-cached";
 
 export default async function Navbar() {
   // console.log("navbar渲染！");
   
-  const { isAuth, username } = await verifySession();
+  const { isAuth, username } = await verifySessionAction();
   return (
     <div className="navbar bg-base-100">
       <div className="flex-none">

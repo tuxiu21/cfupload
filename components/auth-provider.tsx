@@ -1,5 +1,5 @@
 'use client'
-import { verifySession } from "@/app/action";
+import { verifySessionAction } from "@/app/action-cached";
 import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 
 type AuthContextType = {
@@ -19,7 +19,7 @@ export default function AuthProvider({ children }: Readonly<{ children: React.Re
     init()
   }, []);
   const init=async ()=>{
-    const authInfo=await verifySession()
+    const authInfo=await verifySessionAction()
     setAuthInfo(authInfo)
   }
 

@@ -10,8 +10,9 @@ import TableView from "@/components/tableview";
 import { getSingleFileUrl, getTagBasePath } from "@/utils";
 // import { getFiles,  } from "./action";
 import { getFiles } from "./action";
-import { getTabByUrlName, getTabMap, verifySession } from "@/app/action";
+import { getTabByUrlName, getTabMap } from "@/app/action";
 import { LockedIcon } from "@/components/icons";
+import { verifySessionAction } from "@/app/action-cached";
 
 export default async function Files({
   params,
@@ -22,7 +23,7 @@ export default async function Files({
   };
 }) {
   // 验证用户身份
-  const { isAuth, username } = await verifySession();
+  const { isAuth, username } = await verifySessionAction();
 
   const tab = await getTabByUrlName(params.tab);
   if (!tab) {

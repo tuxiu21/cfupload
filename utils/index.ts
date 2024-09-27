@@ -1,3 +1,4 @@
+import { Tab } from "@/types";
 import { usePathname } from "next/navigation";
 import path from "path";
 
@@ -25,4 +26,17 @@ export function formatUrlPath(tagName: string) {
 }
 export function getTagBasePath(tagPath: string) {
   return path.join(BASE_PATH, tagPath);
+}
+export function renameKey(map:Map<string,Tab>, oldKey:string, newKey:string) {
+  const oldMap = new Map(map);
+  map.clear();
+  oldMap.forEach((value,key)=>{
+    if (key === oldKey) {
+      // 如果是要改名的键，使用新键名
+      map.set(newKey, value);
+    } else {
+      // 其他键值对保持不变
+      map.set(key, value);
+    }
+  })
 }

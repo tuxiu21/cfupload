@@ -10,21 +10,19 @@ export default function FileMenuLink({ tab }: { tab: Tab }) {
   const { tabUrl, urlParentPath } = useTabPath();
   const drawerToggleLabel = useRef<HTMLLabelElement>(null);
 
-  // 为了防止水和问题  
+  // 为了防止水和问题
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  
-  
-  
-  
-
   return (
     <div
       className={
-        !mounted ? "relative block p-0 peer" :("relative block p-0 peer" + (tabUrl === tab.urlName ? " active " : ""))
+        !mounted
+          ? "relative block p-0 peer"
+          : "relative block p-0 peer" +
+            (tabUrl === tab.urlName ? " active " : "")
       }
     >
       <label
@@ -33,8 +31,7 @@ export default function FileMenuLink({ tab }: { tab: Tab }) {
         className="hidden"
       ></label>
       <Link
-        href={'/files/'+tab.urlName}
-        
+        href={"/files/" + tab.urlName}
         className="block w-full px-4 py-2"
         onClick={() => {
           drawerToggleLabel.current?.click();
