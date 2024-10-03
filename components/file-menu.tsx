@@ -26,7 +26,7 @@ import { getFoldersUlInfo } from "@/app/(main)/files/[tab]/[[...path_slug]]/acti
 import path from "path";
 import { formatUrlPath } from "@/utils";
 import { Tab } from "@/types";
-import { editTabMapFromForm, getTabMap, putTabMapFromForm } from "@/app/action";
+import { edittabListFromForm, puttabListFromForm } from "@/app/action";
 import { useToast } from "./toast-provider";
 import { useTabPath } from "@/hooks";
 import Link from "next/link";
@@ -39,7 +39,7 @@ const tabInit: Tab = {
   permissions: [],
 };
 
-export default function FileMenu({ tabs }: { tabs: Map<string, Tab> }) {
+export default function FileMenu({ tabs }: { tabs: Tab[] }) {
   const [showCreateTabModal, setShowCreateTabModal] = useState(false);
   const [dialogMounted, setDialogMounted] = useState(false);
 
@@ -48,7 +48,7 @@ export default function FileMenu({ tabs }: { tabs: Map<string, Tab> }) {
   const [mountFirstUl, setMountFirstUl] = useState(true);
 
   // const [tabs, setTabs] = useState(new Map<string, Tab>());
-  const { tabUrl, urlParentPath } = useTabPath();
+  const { tabUrlName, urlParentPath } = useTabPath();
 
   const modalFirstInputRef = useRef<HTMLInputElement>(null);
   const drawerToggleLabel = useRef<HTMLLabelElement>(null);
@@ -76,7 +76,7 @@ export default function FileMenu({ tabs }: { tabs: Map<string, Tab> }) {
   }, []);
 
   // const init = async () => {
-  //   const tabs = await getTabMap();
+  //   const tabs = await getTabList();
   //   console.log(tabs);
 
   //   setTabs(tabs);
@@ -137,71 +137,69 @@ export default function FileMenu({ tabs }: { tabs: Map<string, Tab> }) {
             ></label>
           </div>
           <ul className="">
-            {Array.from(tabs).map(([key, value]) => {
-              return (
-                <li key={key} className="">
+            {
+              tabs.map((tab)=>                <li key={tab.urlName} className="">
+              <div
+                className={
+                  // "relative block p-0 peer" +
+                  // (tabUrlName === key ? " active " : "")
+                  !mounted
+                    ? "relative block p-0 peer"
+                    : "relative block p-0 peer" +
+                      (tabUrlName === tab.urlName ? " active " : "")
+                }
+              >
+                <Link
+                  href={"/files/" + tab.urlName }
+                  className="block w-full px-4 py-2"
+                  onClick={() => {
+                    drawerToggleLabel.current?.click();
+                  }}
+                >
+                  {tab.tabName}
+                </Link>
+              </div>
+              {/* 这里用peer清除action的样式 防止点击此按钮导致触发上面div的action状态
+              这里之所以用ul 因为ul是在ui框架中action样式的排除标签
+              */}
+              <ul className="flex flex-row items-center gap-1 absolute right-0 top-0 bottom-0 my-auto peer-active:text-neutral-content peer-[.active]:text-neutral-content">
+                {tab.permissions.includes("visitorFullAccess") ? (
                   <div
-                    className={
-                      // "relative block p-0 peer" +
-                      // (tabUrl === key ? " active " : "")
-                      !mounted
-                        ? "relative block p-0 peer"
-                        : "relative block p-0 peer" +
-                          (tabUrl === key ? " active " : "")
-                    }
+                    className="tooltip"
+                    data-tip="This folder is public."
                   >
-                    <Link
-                      href={"/files/" + key}
-                      className="block w-full px-4 py-2"
-                      onClick={() => {
-                        drawerToggleLabel.current?.click();
-                      }}
-                    >
-                      {value.tabName}
-                    </Link>
+                    <UnlockedIcon className="w-5 h-5" />
                   </div>
-                  {/* 这里用peer清除action的样式 防止点击此按钮导致触发上面div的action状态
-                  这里之所以用ul 因为ul是在ui框架中action样式的排除标签
-                  */}
-                  <ul className="flex flex-row items-center gap-1 absolute right-0 top-0 bottom-0 my-auto peer-active:text-neutral-content peer-[.active]:text-neutral-content">
-                    {value.permissions.includes("visitorFullAccess") ? (
+                ) : (
+                  <>
+                    {tab.permissions.includes("visitorVisible") ? (
                       <div
                         className="tooltip"
-                        data-tip="This folder is public."
+                        data-tip="This folder is visible to visitors."
                       >
-                        <UnlockedIcon className="w-5 h-5" />
+                        <PartLockedIcon className="w-5 h-5" />
                       </div>
                     ) : (
-                      <>
-                        {value.permissions.includes("visitorVisible") ? (
-                          <div
-                            className="tooltip"
-                            data-tip="This folder is visible to visitors."
-                          >
-                            <PartLockedIcon className="w-5 h-5" />
-                          </div>
-                        ) : (
-                          <div
-                            className="tooltip"
-                            data-tip="This folder is private."
-                          >
-                            <LockedOKIcon className="w-5 h-5" />
-                          </div>
-                        )}
-                      </>
+                      <div
+                        className="tooltip"
+                        data-tip="This folder is private."
+                      >
+                        <LockedOKIcon className="w-5 h-5" />
+                      </div>
                     )}
-                    <button
-                      className="btn btn-square btn-sm btn-ghost "
-                      onClick={() => {
-                        handleEditTab(value);
-                      }}
-                    >
-                      <EditIcon className="h-5 w-5" />
-                    </button>
-                  </ul>
-                </li>
-              );
-            })}
+                  </>
+                )}
+                <button
+                  className="btn btn-square btn-sm btn-ghost "
+                  onClick={() => {
+                    handleEditTab(tab);
+                  }}
+                >
+                  <EditIcon className="h-5 w-5" />
+                </button>
+              </ul>
+            </li>)
+            }
           </ul>
         </li>
       </ul>
@@ -242,16 +240,16 @@ export default function FileMenu({ tabs }: { tabs: Map<string, Tab> }) {
                 });
                 let res;
                 if (isCreateTab) {
-                  res = await putTabMapFromForm(formData);
+                  res = await puttabListFromForm(formData);
                 } else {
-                  res = await editTabMapFromForm(formData);
+                  res = await edittabListFromForm(formData);
                 }
                 if (res.success) {
                   router.refresh();
 
                   if (
                     !isCreateTab &&
-                    tabUrl === formData.get("originalUrlName")
+                    tabUrlName === formData.get("originalUrlName")
                   ) {
                     router.push(
                       path.join("/files", formData.get("urlName") as string)

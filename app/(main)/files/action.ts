@@ -4,6 +4,9 @@ import path from "path";
 import os from "os";
 import { SelectedFileType } from "@/types";
 import { cache } from "react";
+import { verifyTab } from "@/app/action-cached";
+import { redirect } from "next/navigation";
+import { getFullFilePathByTabUrlName } from "@/app/action";
 
 
 const tmp_path = os.tmpdir();
@@ -11,27 +14,33 @@ const tmp_path = os.tmpdir();
 
 
 export async function pasteFiles(
+  tabUrlName: string,
   selectedFiles: SelectedFileType[],
   originurlParentPath: string,
   urlParentPath: string,
   action: "copy" | "cut"
 ) {
+
+  if (!(await verifyTab(tabUrlName))) {
+    redirect('/login')
+  }
+
+  if(originurlParentPath === urlParentPath){
+    return {
+      success: false,
+      message: "Please select a different destination"
+    }
+  }
+
   const actionFunc = action === "copy" ? fs.promises.cp : fs.promises.rename;
   for (const { name, isFile } of selectedFiles) {
-    const src = path.join(BASE_PATH, originurlParentPath, name);
-    const dest = path.join(BASE_PATH, urlParentPath, name);
+    const src = await getFullFilePathByTabUrlName(tabUrlName, path.join(originurlParentPath, name));
+    const dest = await getFullFilePathByTabUrlName(tabUrlName, path.join(urlParentPath, name));
 
-    console.log('copy files：');
-    console.log(src, dest);
 
     try {
-
       await actionFunc(src, dest, { recursive: true });
-
-
     } catch (e) {
-      console.log(e);
-
       return {
         success: false,
         message: "Error pasting file"
@@ -48,10 +57,15 @@ export async function pasteFiles(
 
 
 
-export async function deleteFile(selectedFiles: SelectedFileType[], urlParentPath: string) {
+export async function deleteFile(tabUrlName: string, selectedFiles: SelectedFileType[], urlParentPath: string) {
+
+  if (!(await verifyTab(tabUrlName))) {
+    redirect('/login')
+  }
 
   for (const { name, isFile } of selectedFiles) {
-    const filePath = path.join(BASE_PATH, urlParentPath, name);
+    // const filePath = path.join(BASE_PATH, urlParentPath, name);
+    const filePath = await getFullFilePathByTabUrlName(tabUrlName, path.join(urlParentPath, name));
     try {
       const res = await fs.promises.stat(filePath)
       if (isFile) {
@@ -72,9 +86,14 @@ export async function deleteFile(selectedFiles: SelectedFileType[], urlParentPat
   }
 }
 
-export async function addFile(name: string, isFile: boolean, urlParentPath: string) {
-  const filePath = path.join(BASE_PATH, urlParentPath, name);
-  // console.log(filePath);
+export async function addFile(tabUrlName:string,name: string, isFile: boolean, urlParentPath: string) {
+
+  if (!(await verifyTab(tabUrlName))) {
+    redirect('/login')
+  }
+
+  // const filePath = path.join(BASE_PATH, urlParentPath, name);
+  const filePath = await getFullFilePathByTabUrlName(tabUrlName, path.join(urlParentPath, name));
 
   try {
     // 如果没报错 说明有文件 
@@ -97,6 +116,14 @@ export async function addFile(name: string, isFile: boolean, urlParentPath: stri
 }
 
 export async function chunkUpload(chunkFormData: FormData) {
+
+  const tabUrlName = chunkFormData.get("tabUrlName") as string;
+
+  if (!(await verifyTab(tabUrlName))) {
+    redirect('/login')
+  }
+
+
   // 取得表单参数
   const file = chunkFormData.get("file") as File;
   const filename = chunkFormData.get("filename") as string;
@@ -130,7 +157,8 @@ export async function chunkUpload(chunkFormData: FormData) {
 
   // 这里还要考虑文件size为0的情况 也就是chunks为0的情况
   if (index + 1 === chunks || chunks === 0) {
-    const destPath = path.join(BASE_PATH, pathname, filename);
+    // const destPath = path.join(BASE_PATH, pathname, filename);
+    const destPath = await getFullFilePathByTabUrlName(tabUrlName, path.join(pathname, filename));
     fs.renameSync(filePath, destPath);
   }
 }

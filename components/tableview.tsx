@@ -19,16 +19,16 @@ import Link from "next/link";
 import path from "path";
 import { useTheme } from "next-themes";
 import { SelectedFileType } from "@/types";
-import { formatSize, getSingleFileUrl } from "@/utils";
+import { formatSize } from "@/utils";
 
 import { useSelectedFiles, useViewFiles } from "@/app/(main)/files/providers";
 
-export default function TableView({viewFiles,tabUrl,urlParentPath}: {viewFiles: viewFiles;tabUrl:string;urlParentPath:string}) {
-  // const [mounted, setMounted] = useState(false);
+export default function TableView({viewFiles,tabUrlName,urlParentPath}: {viewFiles: viewFiles;tabUrlName:string;urlParentPath:string}) {
 
-  // const [selectedFiles, setSelectedFiles] = useState<SelectedFileType[]>([]);
   const { selectedFiles, setSelectedFiles } = useSelectedFiles();
   const { setViewFiles} = useViewFiles();
+
+  const [selectAllChecked, setSelectAllChecked] = useState(false);
 
 
 
@@ -41,6 +41,12 @@ export default function TableView({viewFiles,tabUrl,urlParentPath}: {viewFiles: 
   useEffect(() => {
     // 选中的文件变化时 viewFiles也要变化
     setViewFiles(viewFiles);
+
+    // 如果选中的文件为空 取消选择
+    if(selectedFiles.length === 0){
+      setSelectAllChecked(false);
+    }
+
   }, [selectedFiles]);
 
   useEffect(() => {
@@ -63,6 +69,9 @@ export default function TableView({viewFiles,tabUrl,urlParentPath}: {viewFiles: 
                         type="checkbox"
                         className="checkbox"
                         onChange={(e) => {
+
+                          setSelectAllChecked(!selectAllChecked);
+
                           const checkbox = e.target as HTMLInputElement;
                           if (checkbox.checked) {
                             setSelectedFiles(
@@ -77,6 +86,9 @@ export default function TableView({viewFiles,tabUrl,urlParentPath}: {viewFiles: 
                             setSelectedFiles([]);
                           }
                         }}
+                        checked={
+                          selectAllChecked
+                        }
                       />
                     </label>
                   </th>
@@ -140,7 +152,7 @@ export default function TableView({viewFiles,tabUrl,urlParentPath}: {viewFiles: 
                               <Link
                                 // href={path.join(
                                 //   "/files/",
-                                //   tabUrl,
+                                //   tabUrlName,
                                 //   view_file.urlParentPath,
                                 //   view_file.name
                                 // )}

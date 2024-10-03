@@ -1,14 +1,14 @@
 'use client'
 
 import { cache } from "react"
-import { getTabMap } from "../action"
+import { getTabList } from "@/app/action-cached";
 
 export default function TestPage(){
   const testCache = cache(()=>{})
   return <>
   <div className="w-20 h-20 bg-sky-300 hover:bg-sky-700">
     <button className="btn btn-primary" onClick={async()=>{
-      const taskMap=await getTabMap()
+      const taskMap=await getTabList()
       console.log(taskMap);
       
     }}>test</button>

@@ -1,4 +1,4 @@
-import { getTabMap } from '@/app/action';
+import { getTabList } from "@/app/action-cached";
 import {z} from 'zod';
 export const createTabSchema=z.object({
   tabName:z
@@ -10,8 +10,9 @@ export const createTabSchema=z.object({
   .min(1,'urlName must be at least 1 character long')
   .trim()
   .refine(async (urlName)=>{
-    const tabMap=await getTabMap();
-    return !tabMap.has(urlName)
+    const tabList=await getTabList();
+    // return !tabList.has(urlName)
+    return !tabList.some(tab=>tab.urlName===urlName)
   },{message:'urlName already exists'}),
   pathName:z.string(),
   permissions:z.array(z.union([z.literal('visitorVisible'),z.literal('visitorFullAccess')]))
@@ -27,8 +28,9 @@ export const editTabSchema=z.object({
   .min(1,'urlName must be at least 1 character long')
   .trim()
   .refine(async (urlName)=>{
-    const tabMap=await getTabMap();
-    return !tabMap.has(urlName)
+    const tabList=await getTabList();
+    // return !tabList.has(urlName)
+    return !tabList.some(tab=>tab.urlName===urlName)
   },{message:'urlName already exists'}),
   pathName:z.string(),
   permissions:z.array(z.union([z.literal('visitorVisible'),z.literal('visitorFullAccess')]))
@@ -50,8 +52,9 @@ export const getEditTabSchema=(originalUrlName:string)=>z.object({
     if(urlName===originalUrlName){
       return true
     }else{
-      const tabMap=await getTabMap();
-      return !tabMap.has(urlName)
+      const tabList=await getTabList();
+      // return !tabList.has(urlName)
+      return !tabList.some(tab=>tab.urlName===urlName)
     }
   },{message:'urlName already exists'}),
   pathName:z.string(),

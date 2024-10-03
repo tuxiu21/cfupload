@@ -1,7 +1,7 @@
 // 'use client'
 
 import Link from "next/link";
-import { getTabMap } from "./action";
+import { getTabList } from "@/app/action-cached";
 import { cache } from "react";
 const testCache = cache(()=>{})
 
@@ -19,8 +19,8 @@ export default function Home() {
           </p>
           {/* <button className="btn btn-primary"
           onClick={async ()=>{
-            // const res=await getTabMap()
-            const res=await getTabMap()
+            // const res=await getTabList()
+            const res=await getTabList()
             console.log(res);
           }}
           >Get Started</button> */}

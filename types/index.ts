@@ -30,3 +30,7 @@ export type Tab = {
   // permissions: string[];
   permissions: ('visitorVisible' | 'visitorFullAccess' )[];
 }
+
+export type dbData={
+  tabList: Tab[];
+}

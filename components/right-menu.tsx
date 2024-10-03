@@ -1,5 +1,5 @@
 "use client";
-import { SelectedFileType, viewFiles } from "@/types";
+import { SelectedFileType, Tab, viewFiles } from "@/types";
 import {
   CancelIcon,
   CopyIcon,
@@ -16,7 +16,7 @@ import {
   PlusIcon,
 } from "@/components/icons";
 import { deleteFile, pasteFiles } from "@/app/(main)/files/action";
-import {  useTabPath } from "@/hooks";
+import { useTabPath } from "@/hooks";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import path from "path";
@@ -31,10 +31,16 @@ enum ClipboardStatus {
   Cut,
 }
 
-export default function RightMenu() {
+export default function RightMenu({
+  tabs,
+  isAuth,
+}: {
+  tabs: Tab[];
+  isAuth: boolean;
+}) {
   const { selectedFiles, setSelectedFiles } = useSelectedFiles();
   const { viewFiles } = useViewFiles();
-  const { tabUrl, urlParentPath } = useTabPath();
+  const { tabUrlName, urlParentPath } = useTabPath();
   const themeProps = useTheme();
 
   const [clipboardStatus, setClipboardStatus] = useState(ClipboardStatus.None);
@@ -47,6 +53,7 @@ export default function RightMenu() {
   const linkRef = useRef<HTMLAnchorElement>(null);
 
   const clipboardRef = useRef({
+    tabUrlName: "",
     files: [] as SelectedFileType[],
     urlParentPath: "",
   });
@@ -57,9 +64,6 @@ export default function RightMenu() {
 
   useEffect(() => {
     setMounted(true);
-    // return () => {
-
-    // };
   }, []);
 
   const handleDownload = async () => {
@@ -70,22 +74,26 @@ export default function RightMenu() {
     // 如果选中单个并且是文件
     if (selectedFiles.length === 1 && selectedFiles[0].isFile) {
       linkRef.current.href =
-        "/files/" + path.join(urlParentPath, selectedFiles[0].name);
+        "/files/" + path.join(tabUrlName, urlParentPath, selectedFiles[0].name);
       linkRef.current.click();
       return;
     }
 
     // 这里直接把需要下载的对象传过去
-    const res = await fetch("/api/download/processed", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        urlParentPath,
-        selectedFiles,
-      }),
-    });
+    const res = await fetch(
+      "/api/download/processed?tabUrlName=" + tabUrlName,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          tabUrlName,
+          urlParentPath,
+          selectedFiles,
+        }),
+      }
+    );
     const uuid = await res.text();
     const params = new URLSearchParams({ uuid: uuid });
     linkRef.current.href = "/api/download/processed?" + params;
@@ -106,7 +114,7 @@ export default function RightMenu() {
     }
   };
   const toDeleteFile = async () => {
-    const res = await deleteFile(selectedFiles, urlParentPath);
+    const res = await deleteFile(tabUrlName, selectedFiles, urlParentPath);
 
     toast(res);
     if (res.success) {
@@ -120,6 +128,7 @@ export default function RightMenu() {
   const handleClipAction = (status: ClipboardStatus) => {
     setClipboardStatus(status);
     clipboardRef.current = {
+      tabUrlName,
       files: selectedFiles,
       urlParentPath,
     };
@@ -127,6 +136,7 @@ export default function RightMenu() {
   };
   const handlePaste = async () => {
     const res = await pasteFiles(
+      clipboardRef.current.tabUrlName,
       clipboardRef.current.files,
       clipboardRef.current.urlParentPath,
       urlParentPath,
@@ -197,6 +207,9 @@ export default function RightMenu() {
     menuClipboardExtraClass = " -translate-x-full ";
   }
 
+  // 在渲染的时候根据tabUrlName找到对应的tab
+  const tab = tabs.find((tab) => tab.urlName === tabUrlName);
+
   return (
     <>
       {mounted && (
@@ -236,37 +249,43 @@ export default function RightMenu() {
                     <InfoIcon className="h-5 w-5" />
                   </a>
                 </li>
-                <li>
-                  <a
-                    className="tooltip tooltip-left"
-                    data-tip="Cut"
-                    onClick={() => {
-                      handleClipAction(ClipboardStatus.Cut);
-                    }}
-                  >
-                    <CutIcon className="h-5 w-5" />
-                  </a>
-                </li>
-                <li>
-                  <a
-                    className="tooltip tooltip-left"
-                    data-tip="Copy"
-                    onClick={() => {
-                      handleClipAction(ClipboardStatus.Copy);
-                    }}
-                  >
-                    <CopyIcon className="h-5 w-5" />
-                  </a>
-                </li>
-                <li>
-                  <a
-                    className="tooltip tooltip-left"
-                    data-tip="Delete"
-                    onClick={handleDelete}
-                  >
-                    <DeleteIcon className="h-5 w-5" />
-                  </a>
-                </li>
+
+                {/* 这里根据tab权限 判断是否展示 */}
+                {(isAuth || tab?.permissions.includes("visitorFullAccess")) && (
+                  <>
+                    <li>
+                      <a
+                        className="tooltip tooltip-left"
+                        data-tip="Cut"
+                        onClick={() => {
+                          handleClipAction(ClipboardStatus.Cut);
+                        }}
+                      >
+                        <CutIcon className="h-5 w-5" />
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        className="tooltip tooltip-left"
+                        data-tip="Copy"
+                        onClick={() => {
+                          handleClipAction(ClipboardStatus.Copy);
+                        }}
+                      >
+                        <CopyIcon className="h-5 w-5" />
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        className="tooltip tooltip-left"
+                        data-tip="Delete"
+                        onClick={handleDelete}
+                      >
+                        <DeleteIcon className="h-5 w-5" />
+                      </a>
+                    </li>
+                  </>
+                )}
               </ul>
             </div>
             <div
@@ -286,7 +305,7 @@ export default function RightMenu() {
                 <li>
                   <a
                     className="tooltip tooltip-left"
-                    data-tip="Paste"
+                    data-tip="Paste Here"
                     onClick={handlePaste}
                   >
                     <PasteIcon className="h-5 w-5" />
@@ -306,11 +325,6 @@ export default function RightMenu() {
               </ul>
             </div>
             <a ref={linkRef} className="hidden" download></a>
-            {/* <Toast
-          show={showToast}
-          success={toastRes.success}
-          message={toastRes.message}
-        /> */}
           </div>
           {/* 菜单对话框 */}
           <div>

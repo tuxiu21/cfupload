@@ -7,12 +7,12 @@ export function useTabPath(){
   // const 
   // return pathname;
   const parts = pathname.split(path.sep);
-  const tabUrl = parts[2];
+  const tabUrlName = parts[2];
   const urlParentPath = parts.slice(3).join(path.sep);
 
-  // console.log("tabUrl", tabUrl);
+  // console.log("tabUrlName", tabUrlName);
   // console.log("urlParentPath", urlParentPath);
   
-  return {tabUrl, urlParentPath};
+  return {tabUrlName, urlParentPath};
 
 }

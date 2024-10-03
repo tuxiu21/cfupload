@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { KeyIcon, UserFilledIcon, UserIcon } from "./icons";
 import ThemeSwitch from "./theme-switch";
-import { getTabMap, login } from "@/app/action";
+
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { verifySessionAction } from "@/app/action-cached";

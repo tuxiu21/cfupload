@@ -19,6 +19,7 @@ import { useRef, useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import Toast, { useToast } from "./toast-provider";
 import path from "path";
+import { Tab } from "@/types";
 enum ModalType {
   None,
   Folder,
@@ -38,9 +39,9 @@ type TaskStatus = {
 
 const CHUNK_SIZE = 1024 * 1024 * Number(process.env.NEXT_PUBLIC_CHUNK_SIZE_MB);
 
-export default function LeftBar() {
+export default function LeftBar({tabs,isAuth}:{tabs:Tab[],isAuth:boolean}) {
   // 这个获取的是完整的路径
-  const {tabUrl,urlParentPath} = useTabPath();
+  const {tabUrlName,urlParentPath} = useTabPath();
 
   const [modalStatus, setModalStatus] = useState(ModalType.None);
   const [addFileName, setAddFileName] = useState("");
@@ -58,6 +59,7 @@ export default function LeftBar() {
 
   const handleAddFile = async () => {
     const res = await addFile(
+      tabUrlName,
       addFileName,
       modalStatus === ModalType.CreateFile,
       urlParentPath
@@ -101,8 +103,12 @@ export default function LeftBar() {
       ) {
         const start = index * CHUNK_SIZE;
         const end = (index + 1) * CHUNK_SIZE;
+        // 在这里对文件进行分块
         const blob = file.slice(start, end);
+
         const chunkFormData = new FormData();
+
+        chunkFormData.append("tabUrlName", tabUrlName);
         chunkFormData.append("file", blob);
         chunkFormData.append("filename", file.name);
 
@@ -110,10 +116,10 @@ export default function LeftBar() {
         chunkFormData.append("index", index.toString());
         chunkFormData.append("chunks", chunks.toString());
         chunkFormData.append("pathname", uploadurlParentPath);
-        console.log(chunkFormData);
-        chunkFormData.forEach((value, key) => {
-          console.log(key, value);
-        });
+        // console.log(chunkFormData);
+        // chunkFormData.forEach((value, key) => {
+        //   console.log(key, value);
+        // });
         await chunkUpload(chunkFormData);
 
         setTasks((tasks) => {
@@ -159,9 +165,17 @@ export default function LeftBar() {
       // 同时发送多个异步请求
       uploadPromises.push(upload(file));
     }
+
+    // 对于单个文件的所有chunk 所有请求同步
+    // 对于多个文件 所有请求同时发出 
     await Promise.all(uploadPromises);
     router.refresh();
   };
+
+  const tab= tabs.find((tab) => tab.urlName === tabUrlName);
+  if(!(isAuth || tab?.permissions.includes("visitorFullAccess"))){
+    return null;
+  }
 
   return (
     <div className="sm:min-w-60 p-2">
@@ -247,26 +261,7 @@ export default function LeftBar() {
           </li>
         </ul>
       </div>
-      {/* <div className="divider"></div> */}
 
-
-      {/* 下方选项卡 */}
-      {/* <ul className="menu  rounded-box w-56 mt-4 max-sm:hidden">
-        <li>
-          <h2 className="menu-title">Files</h2>
-          <ul>
-            <li>
-              <a>Item 1</a>
-            </li>
-            <li>
-              <a>Item 2</a>
-            </li>
-            <li>
-              <a>Item 3</a>
-            </li>
-          </ul>
-        </li>
-      </ul> */}
 
       {/* new 对话框 */}
       <div>

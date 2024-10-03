@@ -1,15 +1,14 @@
-import { Tab } from "@/types";
-import { usePathname } from "next/navigation";
+
 import path from "path";
 
-// base_path只能在这里引入
 const BASE_PATH = process.env.BASE_PATH!;
-export function getSingleFileUrl(filepath: string) {
-  const params = new URLSearchParams({
-    filepath: path.join(BASE_PATH, filepath),
-  });
-  return "/api/download/direct?" + params;
-}
+// export function getSingleFileDownloadUrl(tabUrlName:string,urlPath: string) {
+//   const params = new URLSearchParams({
+//     tabUrlName: tabUrlName,
+//     urlPath: path.join(BASE_PATH, urlPath),
+//   });
+//   return "/api/download/direct?" + params;
+// }
 export function formatSize(bytes: number) {
   if (bytes < 1024) return `${bytes} bytes`;
   const kb = bytes / 1024;
@@ -24,19 +23,5 @@ export function formatUrlPath(tagName: string) {
   const urlName=res ? res.join('').toLowerCase() : '';
   return urlName
 }
-export function getTagBasePath(tagPath: string) {
-  return path.join(BASE_PATH, tagPath);
-}
-export function renameKey(map:Map<string,Tab>, oldKey:string, newKey:string) {
-  const oldMap = new Map(map);
-  map.clear();
-  oldMap.forEach((value,key)=>{
-    if (key === oldKey) {
-      // 如果是要改名的键，使用新键名
-      map.set(newKey, value);
-    } else {
-      // 其他键值对保持不变
-      map.set(key, value);
-    }
-  })
-}
+
+

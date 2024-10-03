@@ -1,3 +1,5 @@
+import { getFullFilePathByTabUrlName } from "@/app/action";
+import { verifyTab } from "@/app/action-cached";
 import { SelectedFileType } from "@/types";
 import archiver from "archiver";
 import { LRUCache } from "lru-cache";
@@ -21,19 +23,26 @@ export async function GET(request: Request) {
   const resObj = JSON.parse(res);
   const urlParentPath: string = resObj.urlParentPath;
   const selectedFiles: SelectedFileType[] = resObj.selectedFiles;
-  // fileListMap.delete(uuid);
-
+  const tabUrlName:string = resObj.tabUrlName;
 
   const archive = archiver('zip', { zlib: { level: 4 } })
-  selectedFiles.forEach((selectedFile) => {
-    console.log(selectedFile);
-    const fullPath = path.join(BASE_PATH, urlParentPath, selectedFile.name);
+  // selectedFiles.forEach(async (selectedFile) => {
+  //   const fullPath = await getFullFilePathByTabUrlName(tabUrlName, path.join(urlParentPath, selectedFile.name));  
+  //   if (selectedFile.isFile) {
+  //     archive.file(fullPath, { name: selectedFile.name });
+  //   } else {
+  //     archive.directory(fullPath, selectedFile.name);
+  //   }
+  // });
+  for (let i = 0; i < selectedFiles.length; i++) {
+    const selectedFile = selectedFiles[i];
+    const fullPath = await getFullFilePathByTabUrlName(tabUrlName, path.join(urlParentPath, selectedFile.name));  
     if (selectedFile.isFile) {
       archive.file(fullPath, { name: selectedFile.name });
     } else {
       archive.directory(fullPath, selectedFile.name);
     }
-  });
+  }
   const zipname = (selectedFiles.length === 1 ? selectedFiles[0].name : ("download-" + new Date().getTime()))+".zip";
 
   archive.finalize()
@@ -52,6 +61,13 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   //得到需要下载的文件list
   // 注意，尽管方法被命名为 json()，结果并不是 JSON，而是将输入作为 JSON 解析，以生成一个 JavaScript 对象。
+  const url = new URL(request.url)
+
+  const tabUrlName = url.searchParams.get("tabUrlName")
+  if(!(await verifyTab(tabUrlName))){
+    return new Response("Permission denied", { status: 403 })
+  }
+
   const result: string = await request.json()
 
 
@@ -59,10 +75,6 @@ export async function POST(request: Request) {
   const uuid = uuidv4();
   fileListMap.set(uuid, JSON.stringify(result));
 
-  // // 1分钟后删除
-  // setTimeout(() => {
-  //   fileListMap.delete(uuid);
-  // }, 60000);
   
   return new Response(uuid, {
     headers: {

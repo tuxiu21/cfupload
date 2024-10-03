@@ -7,7 +7,7 @@ import path from "path";
 import { useEffect, useRef, useState } from "react";
 
 export default function FileMenuLink({ tab }: { tab: Tab }) {
-  const { tabUrl, urlParentPath } = useTabPath();
+  const { tabUrlName, urlParentPath } = useTabPath();
   const drawerToggleLabel = useRef<HTMLLabelElement>(null);
 
   // 为了防止水和问题
@@ -22,7 +22,7 @@ export default function FileMenuLink({ tab }: { tab: Tab }) {
         !mounted
           ? "relative block p-0 peer"
           : "relative block p-0 peer" +
-            (tabUrl === tab.urlName ? " active " : "")
+            (tabUrlName === tab.urlName ? " active " : "")
       }
     >
       <label

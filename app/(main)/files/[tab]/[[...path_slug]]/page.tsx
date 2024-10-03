@@ -7,12 +7,12 @@ import { redirect, RedirectType } from "next/navigation";
 // import Uploader from "../../../components/uploader";
 
 import TableView from "@/components/tableview";
-import { getSingleFileUrl, getTagBasePath } from "@/utils";
 // import { getFiles,  } from "./action";
 import { getFiles } from "./action";
-import { getTabByUrlName, getTabMap } from "@/app/action";
+import { getTabByUrlName, getTabList } from "@/app/action";
 import { LockedIcon } from "@/components/icons";
 import { verifySessionAction } from "@/app/action-cached";
+const BASE_PATH = process.env.BASE_PATH!;
 
 export default async function Files({
   params,
@@ -36,16 +36,22 @@ export default async function Files({
       tab.permissions.includes("visitorVisible")
     )
   ) {
+    // 这里直接返回一个页面，提示用户没有权限
+    // 未授权的用户接触不到数据
     return (
       <div className="grow flex flex-col items-center justify-center">
         <LockedIcon className="w-24 h-24 " />
         <h1 className="text-2xl font-bold">Access Denied</h1>
-        <p className="text-center">{"You do not have permission to access this directory, please login first."}</p>
+        <p className="text-center">
+          {
+            "You do not have permission to access this directory, please login first."
+          }
+        </p>
       </div>
     );
   }
 
-  const tag_basepath = getTagBasePath(tab.pathName);
+  const tag_basepath = path.join(BASE_PATH, tab.pathName);
 
   let urlParentPath = "";
   if (params.path_slug) {
@@ -58,8 +64,11 @@ export default async function Files({
   if (stat.isFile()) {
     // 发现这是文件 下载该文件
     // 在这里我们可以实现wget的下载
-    const filepath = getSingleFileUrl(urlParentPath);
-    redirect(filepath);
+    const searchParams = new URLSearchParams({
+      tabUrlName: tab.urlName,
+      urlPath: urlParentPath,
+    });
+    redirect("/api/download/direct?"+searchParams);
   }
 
   const filesDirent = await getFiles(tag_basepath, urlParentPath);
@@ -81,7 +90,6 @@ export default async function Files({
       };
     })
   );
-
 
   return (
     <>
@@ -108,10 +116,9 @@ export default async function Files({
       </div>
       <TableView
         viewFiles={viewFiles}
-        tabUrl={params.tab}
+        tabUrlName={params.tab}
         urlParentPath={urlParentPath}
       />
     </>
   );
 }
-
