@@ -172,10 +172,11 @@ export default function FileMenu({ tabs }: { tabs: Tab[] }) {
                   </div>
                 ) : (
                   <>
-                    {tab.permissions.includes("visitorVisible") ? (
+                    {tab.permissions.includes("visitorReadOnly") ? (
                       <div
-                        className="tooltip"
-                        data-tip="This folder is visible to visitors."
+                        className="tooltip   before:max-w-36 "
+                        data-tip="This folder is read-only to visitors."
+                        
                       >
                         <PartLockedIcon className="w-5 h-5" />
                       </div>
@@ -341,14 +342,14 @@ export default function FileMenu({ tabs }: { tabs: Tab[] }) {
               </ul>
               <div className="mb-2">
                 <label className="label cursor-pointer">
-                  <span className="label-text">Visitor Visible</span>
+                  <span className="label-text">Visitor Read Only</span>
                   <input
                     type="checkbox"
                     className="toggle"
                     name="permissions"
-                    value="visitorVisible"
+                    value="visitorReadOnly"
                     defaultChecked={tabDialogForm.permissions.includes(
-                      "visitorVisible"
+                      "visitorReadOnly"
                     )}
                   />
                 </label>

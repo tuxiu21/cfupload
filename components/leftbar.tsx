@@ -13,7 +13,7 @@ import {
   UploadingIcon,
 } from "@/components/icons";
 import { formatSize } from "@/utils";
-import {  useTabPath } from "@/hooks";
+import { useTabPath } from "@/hooks";
 import { redirect, usePathname, useRouter } from "next/navigation";
 import { useRef, useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -39,15 +39,23 @@ type TaskStatus = {
 
 const CHUNK_SIZE = 1024 * 1024 * Number(process.env.NEXT_PUBLIC_CHUNK_SIZE_MB);
 
-export default function LeftBar({tabs,isAuth}:{tabs:Tab[],isAuth:boolean}) {
+export default function LeftBar({
+  tabs,
+  isAuth,
+}: {
+  tabs: Tab[];
+  isAuth: boolean;
+}) {
   // 这个获取的是完整的路径
-  const {tabUrlName,urlParentPath} = useTabPath();
+  const { tabUrlName, urlParentPath } = useTabPath();
 
   const [modalStatus, setModalStatus] = useState(ModalType.None);
   const [addFileName, setAddFileName] = useState("");
 
   const [tasks, setTasks] = useState<TaskStatus[]>([]);
   const [showTaskBar, setShowTaskBar] = useState(false);
+
+  const [mounted, setMounted] = useState(false);
 
   const addModalInputRef = useRef<HTMLInputElement>(null);
   const fileUploadRef = useRef<HTMLInputElement>(null);
@@ -56,6 +64,10 @@ export default function LeftBar({tabs,isAuth}:{tabs:Tab[],isAuth:boolean}) {
   const router = useRouter();
 
   const toast = useToast();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleAddFile = async () => {
     const res = await addFile(
@@ -167,18 +179,33 @@ export default function LeftBar({tabs,isAuth}:{tabs:Tab[],isAuth:boolean}) {
     }
 
     // 对于单个文件的所有chunk 所有请求同步
-    // 对于多个文件 所有请求同时发出 
+    // 对于多个文件 所有请求同时发出
     await Promise.all(uploadPromises);
     router.refresh();
   };
 
-  const tab= tabs.find((tab) => tab.urlName === tabUrlName);
-  if(!(isAuth || tab?.permissions.includes("visitorFullAccess"))){
-    return null;
+  const tab = tabs.find((tab) => tab.urlName === tabUrlName);
+  if (mounted && !(isAuth || tab?.permissions.includes("visitorFullAccess"))) {
+    return (
+      // <div className="sm:min-w-60 p-2">
+      //   {/* new 按钮 */}
+      //   <div className="dropdown">
+      //     <div
+      //       tabIndex={0}
+      //       role="button"
+      //       className="btn btn-primary max-sm:btn-square btn-disabled"
+      //     >
+      //       <PlusIcon className="h-5 w-5" />
+      //       <span className="max-sm:hidden">New</span>
+      //     </div>
+      //   </div>
+      // </div>
+      null
+    );
   }
 
   return (
-    <div className="sm:min-w-60 p-2">
+    <div className={"sm:min-w-60 p-2 "+(mounted?'visible':'hidden')}>
       {/* new 按钮 */}
       <div className="dropdown">
         <div
@@ -261,7 +288,6 @@ export default function LeftBar({tabs,isAuth}:{tabs:Tab[],isAuth:boolean}) {
           </li>
         </ul>
       </div>
-
 
       {/* new 对话框 */}
       <div>

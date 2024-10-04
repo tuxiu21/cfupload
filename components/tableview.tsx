@@ -23,7 +23,7 @@ import { formatSize } from "@/utils";
 
 import { useSelectedFiles, useViewFiles } from "@/app/(main)/files/providers";
 
-export default function TableView({viewFiles,tabUrlName,urlParentPath}: {viewFiles: viewFiles;tabUrlName:string;urlParentPath:string}) {
+export default function TableView({viewFiles,tabUrlName,urlParentPath,className}: {viewFiles: viewFiles;tabUrlName:string;urlParentPath:string;className:string}) {
 
   const { selectedFiles, setSelectedFiles } = useSelectedFiles();
   const { setViewFiles} = useViewFiles();
@@ -56,9 +56,9 @@ export default function TableView({viewFiles,tabUrlName,urlParentPath}: {viewFil
 
   return (
     <>
-        <div className="basis-4 grow   overflow-x-hidden">
+        <div className={"basis-4 grow   overflow-x-hidden "}>
           {/* 表格主体 */}
-          <div className="h-full overflow-y-scroll">
+          <div className={"h-full overflow-y-scroll"+className}>
             {/* 表格的样式只加了table和checkbox */}
             <table className="table">
               <thead>

@@ -1,11 +1,10 @@
 'use server';
 
 import { FolderIcon } from "@/components/icons";
-import { getTagBasePath } from "@/utils";
 import fs, { Dirent } from "fs";
 import path from "path";
 
-
+const BASE_PATH = process.env.BASE_PATH!;
 
 export async function getFiles(tag_basepath:string,urlParentPath: string): Promise<Dirent[]> {
   return new Promise((resolve, reject) => {
@@ -25,28 +24,15 @@ export async function getFiles(tag_basepath:string,urlParentPath: string): Promi
   });
 }
 
-// export async function getFilesPlainObj(urlParentPath: string) {
-//   const filesDirent = await getFiles(urlParentPath);
-//   console.log(filesDirent);
-
-//   // const relativePath = path.relative(BASE_PATH, urlParentPath);
-//   return filesDirent.map((file) => {
-//     return {
-//       name: file.name,
-//       urlParentPath: urlParentPath,
-//       isFile: file.isFile(),
-//     };
-//   });
-// }
 
 export async function getFoldersUlInfo(urlParentPath: string) {
-  const tag_basepath=getTagBasePath('/')
-  const filesDirent = await getFiles(path.join(tag_basepath,'/'),urlParentPath);
+  // const tag_basepath=getTagBasePath('/')
+  const filesDirent = await getFiles(BASE_PATH,urlParentPath);
   const folders = filesDirent.filter((file) => !file.isFile());
 
   // 判断文件夹是否有文件夹
   const promises= folders.map(async (folder) => {
-    const dir = await fs.promises.opendir(path.join(tag_basepath, urlParentPath, folder.name))
+    const dir = await fs.promises.opendir(path.join(BASE_PATH, urlParentPath, folder.name))
     for await (const dirent of dir) {
       if(dirent.isDirectory()){
         return {

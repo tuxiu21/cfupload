@@ -17,7 +17,7 @@ const defaultData = {
       'urlName': 'pig2',
       'pathName': '/1212',
       'permissions': [
-        'visitorVisible'
+        'visitorReadOnly'
       ]
     },
     {
@@ -25,7 +25,7 @@ const defaultData = {
       'urlName': 'u',
       'pathName': '/upld111',
       'permissions': [
-        'visitorVisible',
+        'visitorReadOnly',
         'visitorFullAccess'
       ]
     }

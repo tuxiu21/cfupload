@@ -40,7 +40,7 @@ export async function puttabListFromForm(formData: FormData) {
     tabName: formData.get('tabName') as string,
     urlName: formData.get('urlName') as string,
     pathName: formData.get('pathName') as string,
-    permissions: formData.getAll('permissions') as ('visitorVisible' | 'visitorFullAccess')[]
+    permissions: formData.getAll('permissions') as ('visitorReadOnly' | 'visitorFullAccess')[]
   }
   console.log(tab);
   // 表单验证
@@ -56,7 +56,7 @@ export async function edittabListFromForm(formData: FormData) {
     tabName: formData.get('tabName') as string,
     urlName: formData.get('urlName') as string,
     pathName: formData.get('pathName') as string,
-    permissions: formData.getAll('permissions') as ('visitorVisible' | 'visitorFullAccess')[]
+    permissions: formData.getAll('permissions') as ('visitorReadOnly' | 'visitorFullAccess')[]
   }
   const originalUrlName = formData.get('originalUrlName') as string
   console.log(tab);
@@ -78,7 +78,7 @@ export async function getTabByUrlName(urlName: string) {
 }
 export async function getVisitorTabs() {
   await db.read()
-  return db.data.tabList.filter(tab => tab.permissions.includes('visitorVisible') || tab.permissions.includes('visitorFullAccess'))
+  return db.data.tabList.filter(tab => tab.permissions.includes('visitorReadOnly') || tab.permissions.includes('visitorFullAccess'))
 }
 
 export async function getFullFilePathByTabUrlName(tabUrlName: string, urlPath: string) {

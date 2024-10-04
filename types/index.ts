@@ -28,7 +28,7 @@ export type Tab = {
   urlName: string;
   pathName: string;
   // permissions: string[];
-  permissions: ('visitorVisible' | 'visitorFullAccess' )[];
+  permissions: ('visitorReadOnly' | 'visitorFullAccess' )[];
 }
 
 export type dbData={

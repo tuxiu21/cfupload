@@ -57,10 +57,10 @@ export default async function FileMenuVisitor() {
                     </div>
                   ) : (
                     <>
-                      {tab.permissions.includes("visitorVisible") ? (
+                      {tab.permissions.includes("visitorReadOnly") ? (
                         <div
-                          className="tooltip"
-                          data-tip="This folder is visible to visitors."
+                          className="tooltip before:max-w-36"
+                          data-tip="This folder is read-only to visitors."
                         >
                           <PartLockedIcon className="w-5 h-5" />
                         </div>

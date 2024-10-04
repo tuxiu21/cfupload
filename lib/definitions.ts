@@ -15,7 +15,7 @@ export const createTabSchema=z.object({
     return !tabList.some(tab=>tab.urlName===urlName)
   },{message:'urlName already exists'}),
   pathName:z.string(),
-  permissions:z.array(z.union([z.literal('visitorVisible'),z.literal('visitorFullAccess')]))
+  permissions:z.array(z.union([z.literal('visitorReadOnly'),z.literal('visitorFullAccess')]))
 })
 
 export const editTabSchema=z.object({
@@ -33,7 +33,7 @@ export const editTabSchema=z.object({
     return !tabList.some(tab=>tab.urlName===urlName)
   },{message:'urlName already exists'}),
   pathName:z.string(),
-  permissions:z.array(z.union([z.literal('visitorVisible'),z.literal('visitorFullAccess')]))
+  permissions:z.array(z.union([z.literal('visitorReadOnly'),z.literal('visitorFullAccess')]))
 })
 
 export const getEditTabSchema=(originalUrlName:string)=>z.object({
@@ -58,5 +58,5 @@ export const getEditTabSchema=(originalUrlName:string)=>z.object({
     }
   },{message:'urlName already exists'}),
   pathName:z.string(),
-  permissions:z.array(z.union([z.literal('visitorVisible'),z.literal('visitorFullAccess')]))
+  permissions:z.array(z.union([z.literal('visitorReadOnly'),z.literal('visitorFullAccess')]))
 })

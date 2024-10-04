@@ -9,7 +9,7 @@ import { redirect, RedirectType } from "next/navigation";
 import TableView from "@/components/tableview";
 // import { getFiles,  } from "./action";
 import { getFiles } from "./action";
-import { getTabByUrlName, getTabList } from "@/app/action";
+import { getTabByUrlName,  } from "@/app/action";
 import { LockedIcon } from "@/components/icons";
 import { verifySessionAction } from "@/app/action-cached";
 const BASE_PATH = process.env.BASE_PATH!;
@@ -33,7 +33,7 @@ export default async function Files({
     !isAuth &&
     !(
       tab.permissions.includes("visitorFullAccess") ||
-      tab.permissions.includes("visitorVisible")
+      tab.permissions.includes("visitorReadOnly")
     )
   ) {
     // 这里直接返回一个页面，提示用户没有权限
@@ -91,9 +91,12 @@ export default async function Files({
     })
   );
 
+  // 这里判断如果是只读状态 增加一点margin
+  const visibleOnly = !(isAuth || tab.permissions.includes("visitorFullAccess"));
+// +(visibleOnly && 'mx-4')
   return (
     <>
-      <div className="mx-6 breadcrumbs text-sm">
+      <div className={"mx-6 breadcrumbs text-sm "+(visibleOnly ?" mx-10 ":"")}>
         <ul>
           <li>
             <Link href={path.join("/files", params.tab)}>{tab.tabName}</Link>
@@ -118,6 +121,7 @@ export default async function Files({
         viewFiles={viewFiles}
         tabUrlName={params.tab}
         urlParentPath={urlParentPath}
+        className={visibleOnly ? " px-4 ":""}
       />
     </>
   );
