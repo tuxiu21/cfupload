@@ -20,6 +20,8 @@ import { v4 as uuidv4 } from "uuid";
 import Toast, { useToast } from "./toast-provider";
 import path from "path";
 import { Tab } from "@/types";
+import FileMenu from "./file-menu";
+// import FileMenuVisitor from "./file-menu-visitor";
 enum ModalType {
   None,
   Folder,
@@ -42,9 +44,11 @@ const CHUNK_SIZE = 1024 * 1024 * Number(process.env.NEXT_PUBLIC_CHUNK_SIZE_MB);
 export default function LeftBar({
   tabs,
   isAuth,
+  fileMenuVisitor,
 }: {
   tabs: Tab[];
   isAuth: boolean;
+  fileMenuVisitor: React.ReactNode;
 }) {
   // 这个获取的是完整的路径
   const { tabUrlName, urlParentPath } = useTabPath();
@@ -89,9 +93,6 @@ export default function LeftBar({
   const handleUploadFile = async (files: FileList) => {
     setShowTaskBar(true);
 
-    // 因为用户可能会切换目录 所以这里需要保存一下
-    const uploadurlParentPath = urlParentPath;
-
     const upload = async (file: File) => {
       const chunks = Math.ceil(file.size / CHUNK_SIZE);
       const uuid = uuidv4();
@@ -100,7 +101,7 @@ export default function LeftBar({
         return tasks.map((task) => {
           if (
             task.filename === file.name &&
-            task.destination === uploadurlParentPath
+            task.destination === urlParentPath
           ) {
             task.chunkTotal = chunks;
             return task;
@@ -127,18 +128,22 @@ export default function LeftBar({
         chunkFormData.append("uuid", uuid);
         chunkFormData.append("index", index.toString());
         chunkFormData.append("chunks", chunks.toString());
-        chunkFormData.append("pathname", uploadurlParentPath);
-        // console.log(chunkFormData);
-        // chunkFormData.forEach((value, key) => {
-        //   console.log(key, value);
-        // });
+
+        const pathname = file.webkitRelativePath
+          ? path.join(urlParentPath, path.dirname(file.webkitRelativePath))
+          : urlParentPath;
+
+        chunkFormData.append("pathname", pathname);
+
+        // chunkFormData.append("webkitRelativePath", file.webkitRelativePath);
+
         await chunkUpload(chunkFormData);
 
         setTasks((tasks) => {
           return tasks.map((task) => {
             if (
               task.filename === file.name &&
-              task.destination === uploadurlParentPath
+              task.destination === urlParentPath
             ) {
               if (task.chunkTotal === 0) {
                 task.chunkTotal = 1;
@@ -161,11 +166,18 @@ export default function LeftBar({
     // 向tasks中添加
     const newTasks: TaskStatus[] = [];
     for (let i = 0; i < files.length; i++) {
+      // 这里的dst本来可以实现用户点击跳转到对应目录
+      // 但是可能点击时文件夹的目录结构还没有创建好
+      // 导致报错
+      // const destination = files[i].webkitRelativePath
+      //   ? path.join(urlParentPath, files[i].webkitRelativePath)
+      //   : urlParentPath;
+
       newTasks.push({
         filename: files[i].name,
         chunkUploaded: 0,
         chunkTotal: 0,
-        destination: uploadurlParentPath,
+        destination: urlParentPath,
         size: files[i].size,
       });
     }
@@ -186,26 +198,11 @@ export default function LeftBar({
 
   const tab = tabs.find((tab) => tab.urlName === tabUrlName);
   if (mounted && !(isAuth || tab?.permissions.includes("visitorFullAccess"))) {
-    return (
-      // <div className="sm:min-w-60 p-2">
-      //   {/* new 按钮 */}
-      //   <div className="dropdown">
-      //     <div
-      //       tabIndex={0}
-      //       role="button"
-      //       className="btn btn-primary max-sm:btn-square btn-disabled"
-      //     >
-      //       <PlusIcon className="h-5 w-5" />
-      //       <span className="max-sm:hidden">New</span>
-      //     </div>
-      //   </div>
-      // </div>
-      null
-    );
+    return null;
   }
 
   return (
-    <div className={"sm:min-w-60 p-2 "+(mounted?'visible':'hidden')}>
+    <div className={"sm:min-w-60  p-2 " + (mounted ? "visible" : "hidden")}>
       {/* new 按钮 */}
       <div className="dropdown">
         <div
@@ -287,6 +284,10 @@ export default function LeftBar({
             </button>
           </li>
         </ul>
+      </div>
+
+      <div className="max-sm:hidden relative right-4">
+        {isAuth ? <FileMenu tabs={tabs!} /> : fileMenuVisitor}
       </div>
 
       {/* new 对话框 */}

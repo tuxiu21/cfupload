@@ -159,6 +159,12 @@ export async function chunkUpload(chunkFormData: FormData) {
   if (index + 1 === chunks || chunks === 0) {
     // const destPath = path.join(BASE_PATH, pathname, filename);
     const destPath = await getFullFilePathByTabUrlName(tabUrlName, path.join(pathname, filename));
-    fs.renameSync(filePath, destPath);
+
+    // 如果文件已经存在 删除
+    await fs.promises.rm(destPath, { force: true });
+
+
+    await fs.promises.mkdir(path.dirname(destPath), { recursive: true });
+    await fs.promises.rename(filePath, destPath);
   }
 }

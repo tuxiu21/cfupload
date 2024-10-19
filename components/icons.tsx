@@ -1,12 +1,48 @@
 import * as React from "react";
 
 import { IconSvgProps } from "@/types";
-{
-  /* <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} color="currentColor"><path d="M22 9c0 3.314-4.477 6-10 6S2 12.314 2 9s4.477-6 10-6s10 2.686 10 6"></path><path d="M12 6.854c3-1.413 5 .863 5 1.928c0 3.17-10 3.005-10-.9C7 5.498 9 3 12 3"></path><path d="M22 9v6c0 3.314-4.477 6-10 6S2 18.314 2 15V9"></path></g></svg> */
-}
-{
-  /* <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m3 10l3-3l3 3l3-3l3 3l3-3l3 3M3 17l3-3l3 3l3-3l3 3l3-3l3 3"></path></svg> */
-}
+<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 21v-2h7V5h-7V3h7q.825 0 1.413.588T21 5v14q0 .825-.587 1.413T19 21zm-2-4l-1.375-1.45l2.55-2.55H3v-2h8.175l-2.55-2.55L10 7l5 5z"></path></svg>
+
+export const LoginIcon: React.FC<IconSvgProps> = ({
+  size = 12,
+  width,
+  height,
+  ...props
+}) => (
+  <svg
+    // fill={props.color}
+    // fill="none"
+    stroke="currentColor"
+    strokeWidth={0.1}
+    height={size || height}
+    viewBox="0 0 24 24"
+    width={size || width}
+    {...props}
+  >
+<path fill="currentColor" d="M12 21v-2h7V5h-7V3h7q.825 0 1.413.588T21 5v14q0 .825-.587 1.413T19 21zm-2-4l-1.375-1.45l2.55-2.55H3v-2h8.175l-2.55-2.55L10 7l5 5z"></path>
+  </svg>
+);
+
+export const NotFoundIcon: React.FC<IconSvgProps> = ({
+  size = 12,
+  width,
+  height,
+  ...props
+}) => (
+  <svg
+    // fill={props.color}
+    // fill="none"
+    stroke="currentColor"
+    strokeWidth={0.1}
+    height={size || height}
+    viewBox="0 0 24 24"
+    width={size || width}
+    {...props}
+  >
+<path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v4a1 1 0 0 0 1 1h3m0-5v10m3-9v8a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1m7-1v4a1 1 0 0 0 1 1h3m0-5v10"></path>
+  </svg>
+);
+
 export const LockedIcon: React.FC<IconSvgProps> = ({
   size = 12,
   width,

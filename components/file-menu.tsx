@@ -47,7 +47,6 @@ export default function FileMenu({ tabs }: { tabs: Tab[] }) {
 
   const [mountFirstUl, setMountFirstUl] = useState(true);
 
-  // const [tabs, setTabs] = useState(new Map<string, Tab>());
   const { tabUrlName, urlParentPath } = useTabPath();
 
   const modalFirstInputRef = useRef<HTMLInputElement>(null);
@@ -75,13 +74,6 @@ export default function FileMenu({ tabs }: { tabs: Tab[] }) {
     setMounted(true);
   }, []);
 
-  // const init = async () => {
-  //   const tabs = await getTabList();
-  //   console.log(tabs);
-
-  //   setTabs(tabs);
-  // };
-
   const handleCreateTab = async () => {
     // // 清空表单
     setTabDialogForm(tabInit);
@@ -108,6 +100,30 @@ export default function FileMenu({ tabs }: { tabs: Tab[] }) {
     }, 0);
   };
 
+  const submitTabAction = async (formData: FormData) => {
+    let res;
+    if (isCreateTab) {
+      res = await puttabListFromForm(formData);
+    } else {
+      res = await edittabListFromForm(formData);
+    }
+    if (res.success) {
+      // 如果用户修改了url 要及时跳转到对应url
+      if (!isCreateTab && tabUrlName !== formData.get("urlName")) {
+        router.push(path.join("/files", formData.get("urlName") as string));
+      }
+
+      //要先跳转 然后在进行refresh（也就是服务端部分的重新选渲染） 
+      router.refresh();
+      // setTimeout(() => {
+      //   router.refresh();
+      // }, 0);
+
+      setShowCreateTabModal(false);
+    }
+    toast({ success: res.success, message: res.message });
+  };
+
   // 根据state计算得到的
   const isCreateTab = tabDialogForm.tabName === "";
   const tabDialogFormPathName =
@@ -117,12 +133,12 @@ export default function FileMenu({ tabs }: { tabs: Tab[] }) {
 
   return (
     <>
-      <ul className="menu  rounded-box w-full mt-4 ">
+      <ul className="menu  rounded-box w-full mt-4 sm:mt-0 relative right-2">
         <li>
           <div className="menu-title flex flex-row justify-between items-center pr-0">
             <div className="flex flex-row gap-2 items-center">
               <FolderIcon className="h-5 w-5" />
-              <span className="">Files</span>
+              <span className="">Tabs</span>
             </div>
             <label
               className="btn btn-square btn-sm btn-ghost "
@@ -137,70 +153,72 @@ export default function FileMenu({ tabs }: { tabs: Tab[] }) {
             ></label>
           </div>
           <ul className="">
-            {
-              tabs.map((tab)=>                <li key={tab.urlName} className="">
-              <div
-                className={
-                  // "relative block p-0 peer" +
-                  // (tabUrlName === key ? " active " : "")
-                  !mounted
-                    ? "relative block p-0 peer"
-                    : "relative block p-0 peer" +
-                      (tabUrlName === tab.urlName ? " active " : "")
-                }
-              >
-                <Link
-                  href={"/files/" + tab.urlName }
-                  className="block w-full px-4 py-2"
-                  onClick={() => {
-                    drawerToggleLabel.current?.click();
-                  }}
+            {tabs.map((tab) => (
+              <li key={tab.urlName} className="sm:min-w-60">
+                <div
+                  className={
+                    // "relative block p-0 peer" +
+                    // (tabUrlName === key ? " active " : "")
+                    !mounted
+                      ? "relative block p-0 peer"
+                      : "relative block p-0 peer" +
+                        (tabUrlName === tab.urlName ? " active " : "")
+                  }
                 >
-                  {tab.tabName}
-                </Link>
-              </div>
-              {/* 这里用peer清除action的样式 防止点击此按钮导致触发上面div的action状态
+                  <Link
+                    href={"/files/" + tab.urlName}
+                    className="block w-full px-4 py-2 sm:hidden whitespace-nowrap max-w-40 truncate"
+                    onClick={() => {
+                      drawerToggleLabel.current?.click();
+                    }}
+                  >
+                    {tab.tabName}
+                  </Link>
+                  <Link
+                    href={"/files/" + tab.urlName}
+                    className="block w-full px-4 py-2 max-sm:hidden whitespace-nowrap max-w-40 truncate"
+                  >
+                    {tab.tabName}
+                  </Link>
+                </div>
+                {/* 这里用peer清除action的样式 防止点击此按钮导致触发上面div的action状态
               这里之所以用ul 因为ul是在ui框架中action样式的排除标签
               */}
-              <ul className="flex flex-row items-center gap-1 absolute right-0 top-0 bottom-0 my-auto peer-active:text-neutral-content peer-[.active]:text-neutral-content">
-                {tab.permissions.includes("visitorFullAccess") ? (
-                  <div
-                    className="tooltip"
-                    data-tip="This folder is public."
+                <ul className="flex flex-row items-center gap-1 absolute right-0 top-0 bottom-0 my-auto peer-active:text-neutral-content peer-[.active]:text-neutral-content">
+                  {tab.permissions.includes("visitorFullAccess") ? (
+                    <div className="tooltip" data-tip="This folder is public.">
+                      <UnlockedIcon className="w-5 h-5" />
+                    </div>
+                  ) : (
+                    <>
+                      {tab.permissions.includes("visitorReadOnly") ? (
+                        <div
+                          className="tooltip   before:max-w-36 "
+                          data-tip="This folder is read-only to visitors."
+                        >
+                          <PartLockedIcon className="w-5 h-5" />
+                        </div>
+                      ) : (
+                        <div
+                          className="tooltip"
+                          data-tip="This folder is private."
+                        >
+                          <LockedOKIcon className="w-5 h-5" />
+                        </div>
+                      )}
+                    </>
+                  )}
+                  <button
+                    className="btn btn-square btn-sm btn-ghost "
+                    onClick={() => {
+                      handleEditTab(tab);
+                    }}
                   >
-                    <UnlockedIcon className="w-5 h-5" />
-                  </div>
-                ) : (
-                  <>
-                    {tab.permissions.includes("visitorReadOnly") ? (
-                      <div
-                        className="tooltip   before:max-w-36 "
-                        data-tip="This folder is read-only to visitors."
-                        
-                      >
-                        <PartLockedIcon className="w-5 h-5" />
-                      </div>
-                    ) : (
-                      <div
-                        className="tooltip"
-                        data-tip="This folder is private."
-                      >
-                        <LockedOKIcon className="w-5 h-5" />
-                      </div>
-                    )}
-                  </>
-                )}
-                <button
-                  className="btn btn-square btn-sm btn-ghost "
-                  onClick={() => {
-                    handleEditTab(tab);
-                  }}
-                >
-                  <EditIcon className="h-5 w-5" />
-                </button>
-              </ul>
-            </li>)
-            }
+                    <EditIcon className="h-5 w-5" />
+                  </button>
+                </ul>
+              </li>
+            ))}
           </ul>
         </li>
       </ul>
@@ -228,40 +246,9 @@ export default function FileMenu({ tabs }: { tabs: Tab[] }) {
               </button>
             </form>
             <h3 className="font-bold text-lg">
-              {/* Add Tab */}
               {isCreateTab ? "Create Tab" : "Edit Tab"}
             </h3>
-            <form
-              className="mt-2 flex flex-col gap-2"
-              // key={formKey}
-              action={async (formData: FormData) => {
-                // console.log(formData);
-                formData.forEach((value, key) => {
-                  console.log(key, value);
-                });
-                let res;
-                if (isCreateTab) {
-                  res = await puttabListFromForm(formData);
-                } else {
-                  res = await edittabListFromForm(formData);
-                }
-                if (res.success) {
-                  router.refresh();
-
-                  if (
-                    !isCreateTab &&
-                    tabUrlName === formData.get("originalUrlName")
-                  ) {
-                    router.push(
-                      path.join("/files", formData.get("urlName") as string)
-                    );
-                  }
-
-                  setShowCreateTabModal(false);
-                }
-                toast({ success: res.success, message: res.message });
-              }}
-            >
+            <form className="mt-2 flex flex-col gap-2" action={submitTabAction}>
               <label className="input input-bordered input-sm flex items-center gap-2">
                 <span className="min-w-20">Tab Name</span>
                 <input
@@ -297,11 +284,11 @@ export default function FileMenu({ tabs }: { tabs: Tab[] }) {
               "
                   data-tip="Only lowercase letters and numbers are allowed, as this will be used in the URL."
                 >
-                  <InfoIcon className="min-w-4 h-4 text-info" />
+                  <InfoIcon className="min-w-4 h-4 text-primary" />
                 </div>
               </label>
 
-              <ul className="menu menu-xs w-full max-w-xs border input-bordered rounded-lg">
+              <ul className="menu menu-xs w-full max-w-full border input-bordered rounded-lg">
                 <div className="flex flex-row w-full items-center mb-2">
                   <span className="text-nowrap mr-4">Path Name:</span>
                   <span className=" min-w-0 text-wrap break-all">
@@ -345,7 +332,7 @@ export default function FileMenu({ tabs }: { tabs: Tab[] }) {
                   <span className="label-text">Visitor Read Only</span>
                   <input
                     type="checkbox"
-                    className="toggle"
+                    className="toggle toggle-secondary"
                     name="permissions"
                     value="visitorReadOnly"
                     defaultChecked={tabDialogForm.permissions.includes(
@@ -357,7 +344,7 @@ export default function FileMenu({ tabs }: { tabs: Tab[] }) {
                   <span className="label-text">Visitor Full Access</span>
                   <input
                     type="checkbox"
-                    className="toggle"
+                    className="toggle toggle-secondary"
                     name="permissions"
                     value="visitorFullAccess"
                     defaultChecked={tabDialogForm.permissions.includes(

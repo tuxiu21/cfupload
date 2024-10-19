@@ -9,8 +9,8 @@ import { redirect, RedirectType } from "next/navigation";
 import TableView from "@/components/tableview";
 // import { getFiles,  } from "./action";
 import { getFiles } from "./action";
-import { getTabByUrlName,  } from "@/app/action";
-import { LockedIcon } from "@/components/icons";
+import { getTabByUrlName } from "@/app/action";
+import { LockedIcon, NotFoundIcon } from "@/components/icons";
 import { verifySessionAction } from "@/app/action-cached";
 const BASE_PATH = process.env.BASE_PATH!;
 
@@ -27,7 +27,19 @@ export default async function Files({
 
   const tab = await getTabByUrlName(params.tab);
   if (!tab) {
-    throw new Error("Tab not found");
+    // throw new Error("Tab not found");
+    return (
+      <div className="grow flex flex-col items-center justify-center">
+        <NotFoundIcon className="w-24 h-24 " />
+        <h1 className="text-2xl font-bold">Tag Not Found</h1>
+        <p className="text-center">
+          {/* {
+            "You do not have permission to access this directory, please login first."
+          } */}
+          The tag you are looking for does not exist. 
+        </p>
+      </div>
+    );
   }
   if (
     !isAuth &&
@@ -68,7 +80,7 @@ export default async function Files({
       tabUrlName: tab.urlName,
       urlPath: urlParentPath,
     });
-    redirect("/api/download/direct?"+searchParams);
+    redirect("/api/download/direct?" + searchParams);
   }
 
   const filesDirent = await getFiles(tag_basepath, urlParentPath);
@@ -92,11 +104,15 @@ export default async function Files({
   );
 
   // 这里判断如果是只读状态 增加一点margin
-  const visibleOnly = !(isAuth || tab.permissions.includes("visitorFullAccess"));
-// +(visibleOnly && 'mx-4')
+  const visibleOnly = !(
+    isAuth || tab.permissions.includes("visitorFullAccess")
+  );
+  // +(visibleOnly && 'mx-4')
   return (
     <>
-      <div className={"mx-6 breadcrumbs text-sm "+(visibleOnly ?" mx-10 ":"")}>
+      <div
+        className={"mx-6 breadcrumbs text-sm " + (visibleOnly ? " mx-10 " : "")}
+      >
         <ul>
           <li>
             <Link href={path.join("/files", params.tab)}>{tab.tabName}</Link>
@@ -121,7 +137,7 @@ export default async function Files({
         viewFiles={viewFiles}
         tabUrlName={params.tab}
         urlParentPath={urlParentPath}
-        className={visibleOnly ? " px-4 ":""}
+        className={visibleOnly ? " px-4 " : ""}
       />
     </>
   );

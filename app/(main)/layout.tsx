@@ -13,17 +13,15 @@ export default async function Layout({
   auth: ReactNode;
   children: ReactNode;
 }) {
+  const { isAuth, username } = await verifySessionAction();
+  let tabList;
 
-  const {isAuth,username}= await verifySessionAction()
-  let tabList
-
-  if(isAuth){
-    tabList = await getTabList()
+  if (isAuth) {
+    tabList = await getTabList();
   }
 
   return (
     <>
-
       <div className="drawer h-full">
         <input id="my-drawer" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content flex flex-col">
@@ -39,9 +37,7 @@ export default async function Layout({
           ></label>
           <div className="bg-base-200 text-base-content min-h-full w-80 p-4">
             {/* 根据是否登入分别渲染 减少visitor bundle加载 */}
-            {
-              isAuth?<FileMenu tabs={tabList!}/>:<FileMenuVisitor/>
-            }
+            {isAuth ? <FileMenu tabs={tabList!} /> : <FileMenuVisitor />}
           </div>
         </div>
       </div>

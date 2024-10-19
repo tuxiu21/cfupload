@@ -1,0 +1,19 @@
+{
+  "tabList": [
+    {
+      "tabName": "All Files666666666666666666666",
+      "urlName": "all",
+      "pathName": "/",
+      "permissions": []
+    },
+    {
+      "tabName": "dog9999999999999999999999999",
+      "urlName": "pub",
+      "pathName": "/shared",
+      "permissions": [
+        "visitorReadOnly",
+        "visitorFullAccess"
+      ]
+    }
+  ]
+}

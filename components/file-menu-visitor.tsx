@@ -1,6 +1,5 @@
 import { getVisitorTabs } from "@/app/action";
 import { FolderIcon, LockedIcon, PartLockedIcon, UnlockedIcon } from "./icons";
-import Link from "next/link";
 import FileMenuLink from "./file-menu-link";
 
 export default async function FileMenuVisitor() {
@@ -11,7 +10,7 @@ export default async function FileMenuVisitor() {
         <div className="menu-title flex flex-row justify-between items-center pr-0">
           <div className="flex flex-row gap-2 items-center">
             <FolderIcon className="h-5 w-5" />
-            <span className="">Files</span>
+            <span className="">Tabs</span>
           </div>
           {/* <label
             className="btn btn-square btn-sm btn-ghost "

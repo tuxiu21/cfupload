@@ -8,12 +8,15 @@ import { verifySessionAction } from "@/app/action-cached";
 
 export default async function Navbar() {
   // console.log("navbar渲染！");
-  
+
   const { isAuth, username } = await verifySessionAction();
   return (
     <div className="navbar bg-base-100">
       <div className="flex-none">
-        <label className="btn btn-square btn-ghost" htmlFor="my-drawer">
+        <label
+          className="btn btn-square btn-ghost sm:hidden"
+          htmlFor="my-drawer"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -30,7 +33,7 @@ export default async function Navbar() {
         </label>
       </div>
       <div className="flex-1">
-        <a className="btn btn-ghost text-xl">File Manager</a>
+        <a className="btn btn-ghost text-xl sm:text-2xl">File Manager</a>
       </div>
 
       <div className="flex-none">
@@ -58,7 +61,12 @@ export default async function Navbar() {
                 </a>
               </li>
               <li>
-                <Link className="hover:bg-error hover:text-neutral hover:font-bold" href='/logout'>Logout</Link>
+                <Link
+                  className="hover:bg-error hover:text-neutral hover:font-bold"
+                  href="/logout"
+                >
+                  Logout
+                </Link>
                 {/* <form action={logout}>
                   <input type="hidden" name="username" value={username} />
                   <button type="submit">Logout</button>

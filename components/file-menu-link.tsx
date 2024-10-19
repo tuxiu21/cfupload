@@ -37,7 +37,7 @@ export default function FileMenuLink({ tab }: { tab: Tab }) {
           drawerToggleLabel.current?.click();
         }}
       >
-        {tab.tabName}
+        <span className="truncate">{tab.tabName}</span>
       </Link>
     </div>
   );

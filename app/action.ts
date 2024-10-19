@@ -5,6 +5,7 @@ import { createTabSchema, editTabSchema, getEditTabSchema, } from "@/lib/definit
 import { createSession, decryptSession } from "@/lib/sessions"
 import { Tab } from "@/types"
 import { cookies } from "next/headers"
+import { redirect } from "next/navigation"
 import path from "path"
 
 const BASE_PATH = process.env.BASE_PATH!;
@@ -49,7 +50,7 @@ export async function puttabListFromForm(formData: FormData) {
     return { success: false, message: validatedFields.error.errors[0].message }
   }
   db.update((data)=>data.tabList.push(tab))
-  return { success: true, message: 'ok' }
+  return { success: true, message: 'Tab created successfully.' }
 }
 export async function edittabListFromForm(formData: FormData) {
   const tab: Tab = {
@@ -69,7 +70,7 @@ export async function edittabListFromForm(formData: FormData) {
     const index = data.tabList.findIndex(tab=>tab.urlName===originalUrlName)
     data.tabList[index] = tab
   })
-  return { success: true, message: 'ok' }
+  return { success: true, message: 'Tab edited successfully.' }
 }
 
 export async function getTabByUrlName(urlName: string) {
@@ -89,3 +90,6 @@ export async function getFullFilePathByTabUrlName(tabUrlName: string, urlPath: s
   return path.join(BASE_PATH,tab.pathName, urlPath)
 }
 
+export default async function redirectHard(uri: string) {
+  redirect(uri);
+}
