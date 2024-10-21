@@ -98,7 +98,8 @@ export default function FileMenu({ tabs }: { tabs: Tab[] }) {
     // 下一个事件循环中执行
     setTimeout(() => {
       setShowCreateTabModal(true);
-      modalFirstInputRef.current?.focus();
+      // 编辑不需要自动聚焦
+      // modalFirstInputRef.current?.focus();
     }, 0);
   };
   const handleDeleteTab = async () => {
