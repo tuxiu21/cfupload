@@ -57,9 +57,9 @@ You have two options to configure the project:
    npm run build
    ```
 
-4. Start the server:
+4. Start the server or change the port:
    ```bash
-   npm run start
+   npm run start -p 3000
    ```
 
 ## Usage
