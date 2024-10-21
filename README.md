@@ -59,7 +59,7 @@ You have two options to configure the project:
 
 4. Start the server or change the port:
    ```bash
-   npm run start -p 3000
+   PORT=3000 npm run start
    ```
 
 ## Usage
