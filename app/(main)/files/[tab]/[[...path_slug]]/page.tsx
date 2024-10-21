@@ -33,9 +33,6 @@ export default async function Files({
         <NotFoundIcon className="w-24 h-24 " />
         <h1 className="text-2xl font-bold">Tag Not Found</h1>
         <p className="text-center">
-          {/* {
-            "You do not have permission to access this directory, please login first."
-          } */}
           The tag you are looking for does not exist. 
         </p>
       </div>

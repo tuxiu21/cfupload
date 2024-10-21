@@ -26,7 +26,7 @@ import { getFoldersUlInfo } from "@/app/(main)/files/[tab]/[[...path_slug]]/acti
 import path from "path";
 import { formatUrlPath } from "@/utils";
 import { Tab } from "@/types";
-import { edittabListFromForm, puttabListFromForm } from "@/app/action";
+import { deleteTabByTabUrlName, edittabListFromForm, puttabListFromForm } from "@/app/action";
 import { useToast } from "./toast-provider";
 import { useTabPath } from "@/hooks";
 import Link from "next/link";
@@ -53,6 +53,8 @@ export default function FileMenu({ tabs }: { tabs: Tab[] }) {
   const drawerToggleLabel = useRef<HTMLLabelElement>(null);
 
   const [tabDialogForm, setTabDialogForm] = useState(tabInit);
+
+  const [showDeleteTabModal, setShowDeleteTabModal] = useState(false);
 
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
@@ -99,6 +101,19 @@ export default function FileMenu({ tabs }: { tabs: Tab[] }) {
       modalFirstInputRef.current?.focus();
     }, 0);
   };
+  const handleDeleteTab = async () => {
+    // 先关闭表单 然后打开确认dialog
+    setShowCreateTabModal(false);
+    setShowDeleteTabModal(true);
+  };
+  const toDeleteTab = async () => {
+    const res = await deleteTabByTabUrlName(tabDialogForm.urlName);
+    if (res.success) {
+      router.refresh();
+      setShowDeleteTabModal(false);
+    }
+    toast({ success: res.success, message: res.message });
+  }
 
   const submitTabAction = async (formData: FormData) => {
     let res;
@@ -113,7 +128,7 @@ export default function FileMenu({ tabs }: { tabs: Tab[] }) {
         router.push(path.join("/files", formData.get("urlName") as string));
       }
 
-      //要先跳转 然后在进行refresh（也就是服务端部分的重新选渲染） 
+      //要先跳转 然后在进行refresh（也就是服务端部分的重新选渲染）
       router.refresh();
       // setTimeout(() => {
       //   router.refresh();
@@ -157,8 +172,6 @@ export default function FileMenu({ tabs }: { tabs: Tab[] }) {
               <li key={tab.urlName} className="sm:min-w-60">
                 <div
                   className={
-                    // "relative block p-0 peer" +
-                    // (tabUrlName === key ? " active " : "")
                     !mounted
                       ? "relative block p-0 peer"
                       : "relative block p-0 peer" +
@@ -225,11 +238,9 @@ export default function FileMenu({ tabs }: { tabs: Tab[] }) {
       {dialogMounted && (
         <dialog
           className={" w-dvw modal " + (showCreateTabModal ? "modal-open" : "")}
-          // key={dialogKey}
           onTransitionEnd={() => {
             // 点击关闭modal 等动画结束后 重新挂载表单 清空表单
             if (!showCreateTabModal) {
-              // setFormKey((prev) => prev + 1);
               setDialogMounted(false);
             }
           }}
@@ -307,6 +318,7 @@ export default function FileMenu({ tabs }: { tabs: Tab[] }) {
                     // open
                     open={isCreateTab}
                     onToggle={async (e) => {
+                      setSelectedPath("/");
                       if ((e.target as any).open) {
                         setMountFirstUl(true);
                       } else {
@@ -315,7 +327,7 @@ export default function FileMenu({ tabs }: { tabs: Tab[] }) {
                     }}
                     className="max-w-full"
                   >
-                    <summary>
+                    <summary className={selectedPath==="/"?'active':''}>
                       <FolderIcon className="h-4 w-4" />
                       All Files
                     </summary>
@@ -354,7 +366,16 @@ export default function FileMenu({ tabs }: { tabs: Tab[] }) {
                 </label>
               </div>
               <div className="flex flex-row gap-2 justify-end">
-                <button className="btn btn-sm btn-primary" type="submit">
+                {!isCreateTab && (
+                  <button
+                    className="btn btn-sm hover:bg-error hover:text-black hover:font-bold"
+                    type="button"
+                    onClick={handleDeleteTab}
+                  >
+                    Delete
+                  </button>
+                )}
+                <button className="btn btn-sm btn-primary " type="submit">
                   {isCreateTab ? "Create" : "Edit"}
                 </button>
               </div>
@@ -362,6 +383,41 @@ export default function FileMenu({ tabs }: { tabs: Tab[] }) {
           </div>
         </dialog>
       )}
+      <dialog
+        className={" w-dvw modal " + (showDeleteTabModal ? "modal-open" : "")}
+      >
+        <div className="modal-box">
+          <form method="dialog">
+            <button
+              className="btn btn-sm btn-ghost  btn-square absolute right-2 top-2"
+              onClick={() => {
+                setShowDeleteTabModal(false);
+              }}
+            >
+              ✕
+            </button>
+          </form>
+          <h3 className="font-bold text-lg">Delete Tab</h3>
+          <form className="mt-2 flex flex-col gap-2">
+            <p>Are you sure you want to delete this tab?</p>
+            <div className="flex flex-row gap-2 justify-end">
+              <button
+                className="btn btn-sm btn-ghost"
+                onClick={() => {
+                  setShowDeleteTabModal(false);
+                }}
+                type="button"
+              >
+                Cancel
+              </button>
+              <button className="btn btn-sm btn-error"
+              onClick={toDeleteTab}
+              type="button"
+              >Delete</button>
+            </div>
+          </form>
+        </div>
+      </dialog>
     </>
   );
 }

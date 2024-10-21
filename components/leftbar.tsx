@@ -286,7 +286,7 @@ export default function LeftBar({
         </ul>
       </div>
 
-      <div className="max-sm:hidden relative right-4">
+      <div className="max-sm:hidden relative right-2">
         {isAuth ? <FileMenu tabs={tabs!} /> : fileMenuVisitor}
       </div>
 

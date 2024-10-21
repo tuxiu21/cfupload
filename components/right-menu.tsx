@@ -2,6 +2,7 @@
 import { SelectedFileType, Tab, viewFiles } from "@/types";
 import {
   CancelIcon,
+  CheckMarkIcon,
   CopyIcon,
   CreateFileIcon,
   CutIcon,
@@ -47,6 +48,8 @@ export default function RightMenu({
 
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const [showCopied, setShowCopied] = useState(false);
 
   const router = useRouter();
 
@@ -151,6 +154,16 @@ export default function RightMenu({
     }
   };
 
+  const handleCopyToUserClipboard = (text:string) => {
+    setShowCopied(true);
+    navigator.clipboard.writeText(text).then(() => {
+      // toast({ success: true, message: "Copied to clipboard" });
+      setTimeout(() => {
+        setShowCopied(false);
+      }, 2000);
+    });
+  }
+
   // 重新渲染时候会进行执行 所以不必将其设为state
   let singleInfo: undefined | viewFiles[number];
   if (selectedFiles.length === 1) {
@@ -160,6 +173,17 @@ export default function RightMenu({
         file.isFile === selectedFiles[0].isFile
       );
     });
+
+    // 提前计算好下载链接
+    if (singleInfo) {
+      singleInfo.downloadLink =
+        window.location.protocol +
+        "//" +
+        window.location.host +
+        window.location.pathname +
+        "/" +
+        singleInfo.name;
+    }
   }
 
   let multipleInfo:
@@ -184,8 +208,6 @@ export default function RightMenu({
       { fileCount: 0, folderCount: 0, size: 0 }
     );
   }
-
-  // console.log("right-menu渲染");
 
   let menuExtraClass = "";
   let menuClipboardExtraClass = "";
@@ -362,7 +384,12 @@ export default function RightMenu({
                       </div>
                       <div className="flex flex-col">
                         <small className="text-default-500">Path</small>
-                        <p>{singleInfo.urlParentPath}</p>
+                        <p>
+                          {singleInfo.urlParentPath
+                            ? singleInfo.urlParentPath
+                            : "-"}
+                        </p>
+                        {/* <p>{path.sep+singleInfo.urlParentPath}</p> */}
                       </div>
 
                       <div className="flex flex-col">
@@ -394,6 +421,42 @@ export default function RightMenu({
                             }
                           )}
                         </p>
+                      </div>
+                      <div className="flex flex-col col-span-2">
+                        <small className="text-default-500">
+                          Download Link
+                        </small>
+                        <div className="flex flex-row items-center">
+                          <div
+                            className="tooltip
+                          before:break-words before:max-w-80 basis-0 min-w-0 grow"
+                            data-tip={singleInfo.downloadLink}
+                          >
+                            <p className="break-words text-wrap text-left ">
+                              {singleInfo.downloadLink.length < 54
+                                ? singleInfo.downloadLink
+                                : singleInfo.downloadLink.substring(0, 50) +
+                                  "..."}
+
+                            </p>
+                          </div>
+                          <div
+                            className="tooltip tooltip-secondary"
+                            data-tip={showCopied ? "copied!" : "copy"}
+                          >
+                            <button
+                              className="btn btn-sm btn-square  cursor-copy"
+                              // aria-label="copy"
+                              aria-label={showCopied ? "copied!" : "copy"}
+                              onClick={()=>{
+                                handleCopyToUserClipboard(singleInfo.downloadLink)
+                              }}
+                            >
+                              {/* <CopyIcon className="h-5 w-5" /> */}
+                              {showCopied ? <CheckMarkIcon className="h-5 w-5" /> : <CopyIcon className="h-5 w-5" />}
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </>

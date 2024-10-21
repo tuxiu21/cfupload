@@ -143,21 +143,14 @@ export default function TableView({viewFiles,tabUrlName,urlParentPath,className}
                         <div className="flex flex-row items-center gap-2 w-28 sm:w-48 md:w-72 lg:w-80">
                           {view_file.isFile ? (
                             <>
-                              <FileIcon className="min-w-5  h-5" />{" "}
+                              <FileIcon className="min-w-5  h-5" />
                               <span className="truncate">{view_file.name}</span>
                             </>
                           ) : (
                             <>
                               <FolderIcon className="min-w-5 h-5" />
                               <Link
-                                // href={path.join(
-                                //   "/files/",
-                                //   tabUrlName,
-                                //   view_file.urlParentPath,
-                                //   view_file.name
-                                // )}
                                 href={view_file.href}
-                                // href={view_file.name+'000'}
                                 className="truncate"
                               >
                                 {view_file.name}

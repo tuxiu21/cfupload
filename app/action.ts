@@ -72,6 +72,20 @@ export async function edittabListFromForm(formData: FormData) {
   })
   return { success: true, message: 'Tab edited successfully.' }
 }
+export async function deleteTabByTabUrlName(urlName: string) {
+  db.read()
+  // 不能全部删除
+  if (db.data.tabList.length <= 1) {
+    return { success: false, message: 'Cannot delete the last tab.' }
+  }
+
+
+  db.update((data)=>{
+    data.tabList = data.tabList.filter(tab=>tab.urlName!==urlName)
+  })
+  return { success: true, message: 'Tab deleted successfully.' }
+  
+}
 
 export async function getTabByUrlName(urlName: string) {
   await db.read()
@@ -87,9 +101,8 @@ export async function getFullFilePathByTabUrlName(tabUrlName: string, urlPath: s
   if (!tab) {
     throw new Error("Tab not found");
   }
+  // 对urlPath进行处理 去除encodeURIComponent
+  urlPath = decodeURIComponent(urlPath)
   return path.join(BASE_PATH,tab.pathName, urlPath)
 }
 
-export default async function redirectHard(uri: string) {
-  redirect(uri);
-}

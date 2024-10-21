@@ -3,7 +3,6 @@
 import { useTabPath } from "@/hooks";
 import { Tab } from "@/types";
 import Link from "next/link";
-import path from "path";
 import { useEffect, useRef, useState } from "react";
 
 export default function FileMenuLink({ tab }: { tab: Tab }) {
@@ -32,12 +31,13 @@ export default function FileMenuLink({ tab }: { tab: Tab }) {
       ></label>
       <Link
         href={"/files/" + tab.urlName}
-        className="block w-full px-4 py-2"
+        className="block w-full px-4 py-2 whitespace-nowrap max-w-40 truncate"
         onClick={() => {
           drawerToggleLabel.current?.click();
         }}
       >
-        <span className="truncate">{tab.tabName}</span>
+        {/* <span className="truncate">{tab.tabName}</span> */}
+        {tab.tabName}
       </Link>
     </div>
   );

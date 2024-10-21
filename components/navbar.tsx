@@ -62,7 +62,7 @@ export default async function Navbar() {
               </li>
               <li>
                 <Link
-                  className="hover:bg-error hover:text-neutral hover:font-bold"
+                  className="hover:bg-error hover:text-black hover:font-bold"
                   href="/logout"
                 >
                   Logout
