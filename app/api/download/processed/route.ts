@@ -43,7 +43,7 @@ export async function GET(request: Request) {
       archive.directory(fullPath, selectedFile.name);
     }
   }
-  const zipname = (selectedFiles.length === 1 ? selectedFiles[0].name : ("download-" + new Date().getTime()))+".zip";
+  const zipname = (selectedFiles.length === 1 ? encodeURIComponent(selectedFiles[0].name) : ("download-" + new Date().getTime()))+".zip";
 
   archive.finalize()
   // 此时 这里的archive是一个可读流
@@ -52,6 +52,7 @@ export async function GET(request: Request) {
     headers: {
       "Content-Type": "application/octet-stream",
       "Content-Disposition": `attachment; filename=${zipname}`,
+      // "Content-Disposition": `attachment; filename=${2473}`,
     },
   })
 
