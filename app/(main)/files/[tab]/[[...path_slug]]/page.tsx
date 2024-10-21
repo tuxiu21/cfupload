@@ -96,6 +96,7 @@ export default async function Files({
         mtimeMs: stat.mtimeMs,
         birthtimeMs: stat.birthtimeMs,
         href: path.join("/files", params.tab, urlParentPath, file.name),
+        downloadLink:''
       };
     })
   );

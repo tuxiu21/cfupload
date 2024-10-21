@@ -1,4 +1,4 @@
-import redirectHard, { getVisitorTabs } from "@/app/action";
+import { getVisitorTabs } from "@/app/action";
 import { getTabList } from "@/app/action-cached";
 import { verifySessionAction } from "@/app/action-cached";
 import { LockedIcon, LoginIcon } from "@/components/icons";
