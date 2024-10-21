@@ -10,45 +10,57 @@
 
 ## Configuration
 
-To configure the project, follow these steps:
+You have two options to configure the project:
 
-1. **Create a `.env.local` file** in the root directory of the project with the following parameters:
+### Option 1: Interactive Setup
 
-    ```plaintext
-    # A root path that will be used to resolve the path of the files
-    BASE_PATH=C:/Users/Rin/Documents/work
-    
-    # Upload chunk size in megabytes
-    NEXT_PUBLIC_CHUNK_SIZE_MB=50
-    ```
+1. Run the following command:
+   ```bash
+   npm run env-init
+   ```
+2. Follow the interactive prompts to set up your configuration.
 
-    Adjust the `BASE_PATH` to the directory where you want to store uploaded and downloaded files. Set `NEXT_PUBLIC_CHUNK_SIZE_MB` to a value less than 100MB to account for possible additional form metadata.
+### Option 2: Manual Configuration
+
+1. Create a `.env.local` file in the root directory of the project with the following template:
+
+   ```plaintext
+   USER_NAME=root
+   USER_PASSWORD=123456
+   SECRET_KEY=471d7493bc8325b9e5a31251303396fb9cbfc253401fb75fafd93eba0c80981bad5d719839103ac2d8c0aeef7b5754a09ea254daa76c3e424c4753cb56da661651deb46a2957027b04c1c3365d5ba030593138905dd147079f6588233a1a434fe2ddca5edb76c89d4c9af1e49d0d483f34a5dd2bf4c1f2011432e8a93602298d
+   BASE_PATH=C:/Users/YourUsername/Documents/work
+   NEXT_PUBLIC_CHUNK_SIZE_MB=50
+   ```
+
+   Adjust the values according to your needs:
+   - `USER_NAME`: Your desired username
+   - `USER_PASSWORD`: Your desired password
+   - `SECRET_KEY`: A long, random string for security (you can generate this using a secure method)
+   - `BASE_PATH`: The absolute path where you want to store uploaded and downloaded files
+   - `NEXT_PUBLIC_CHUNK_SIZE_MB`: Set to a value less than 100MB to account for possible additional form metadata
 
 ## Installation and Running
 
-1. Install `pnpm` globally:
+1. Install project dependencies:
+   ```bash
+   npm install
+   ```
 
-    ```bash
-    npm install -g pnpm
-    ```
-
-2. Install project dependencies:
-
-    ```bash
-    pnpm install
-    ```
+2. Set up the configuration (if you haven't already):
+   ```bash
+   npm run env-init
+   ```
+   Or manually create the `.env.local` file as described above.
 
 3. Build the project:
-
-    ```bash
-    pnpm build
-    ```
+   ```bash
+   npm run build
+   ```
 
 4. Start the server:
-
-    ```bash
-    pnpm start
-    ```
+   ```bash
+   npm run start
+   ```
 
 ## Usage
 
