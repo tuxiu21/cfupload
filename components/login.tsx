@@ -10,25 +10,21 @@ import { redirect, useRouter } from "next/navigation";
 import { useAuthInfo } from "./auth-provider";
 
 export default function Login({ inDialog }: { inDialog?: boolean }) {
-
   const toast = useToast();
-  const {authInfo,setAuthInfo} = useAuthInfo();
-  const router=useRouter()
+  const { authInfo, setAuthInfo } = useAuthInfo();
+  const router = useRouter();
 
-
-  const handleLogin=async (formData:FormData)=>{
-    const {res,authInfo} = await login( formData);
+  const handleLogin = async (formData: FormData) => {
+    const { res, authInfo } = await login(formData);
     // 写入auth-provider
-    setAuthInfo(authInfo)
-
-
+    setAuthInfo(authInfo);
 
     toast({ success: res.success, message: res.message });
-    if(res.success){
+    if (res.success) {
       // redirect("/files");
-      router.push('/files')
+      router.push("/files");
     }
-  }
+  };
 
   return (
     <>
@@ -56,6 +52,11 @@ export default function Login({ inDialog }: { inDialog?: boolean }) {
             placeholder="Password"
             name="password"
           />
+        </label>
+
+        <label className="label cursor-pointer w-36">
+          <input type="checkbox" className="checkbox" name="rememberMe"/>
+          <span className="label-text">Remember me</span>
         </label>
 
         <div className="flex flex-row gap-2 justify-end mt-2">

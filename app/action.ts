@@ -5,7 +5,6 @@ import { createTabSchema, editTabSchema, getEditTabSchema, } from "@/lib/definit
 import { createSession, decryptSession } from "@/lib/sessions"
 import { Tab } from "@/types"
 import { cookies } from "next/headers"
-import { redirect } from "next/navigation"
 import path from "path"
 
 const BASE_PATH = process.env.BASE_PATH!;
@@ -21,13 +20,15 @@ export async function login(formData: FormData) {
 
   const username = formData.get('username')
   const password = formData.get('password')
+  
   if (!(username === process.env.USER_NAME && password === process.env.USER_PASSWORD)) {
     return {
       res: { success: false, message: 'Invalid username or password' },
       authInfo: { isAuth: false, username: '' }
     }
   }
-  await createSession(username)
+  const rememberMe = formData.get('rememberMe') === 'on'
+  await createSession(username,rememberMe)
 
   return {
     res: { success: true, message: "Login successful! " },

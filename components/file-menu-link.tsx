@@ -29,14 +29,28 @@ export default function FileMenuLink({ tab }: { tab: Tab }) {
         ref={drawerToggleLabel}
         className="hidden"
       ></label>
-      <Link
+      {/* <Link
         href={"/files/" + tab.urlName}
         className="block w-full px-4 py-2 whitespace-nowrap max-w-40 truncate"
         onClick={() => {
           drawerToggleLabel.current?.click();
         }}
       >
-        {/* <span className="truncate">{tab.tabName}</span> */}
+        {tab.tabName}
+      </Link> */}
+      <Link
+        href={"/files/" + tab.urlName}
+        className="block w-full px-4 py-2 sm:hidden whitespace-nowrap max-w-40 truncate"
+        onClick={() => {
+          drawerToggleLabel.current?.click();
+        }}
+      >
+        {tab.tabName}
+      </Link>
+      <Link
+        href={"/files/" + tab.urlName}
+        className="block w-full px-4 py-2 max-sm:hidden whitespace-nowrap max-w-40 truncate"
+      >
         {tab.tabName}
       </Link>
     </div>

@@ -424,7 +424,8 @@ export default function RightMenu({
                       </div>
                       <div className="flex flex-col col-span-2">
                         <small className="text-default-500">
-                          Download Link
+                          {/* Download Link */}
+                          {singleInfo.isFile ? "Download Link" : "Link"}
                         </small>
                         <div className="flex flex-row items-center">
                           <div
@@ -441,7 +442,7 @@ export default function RightMenu({
                             </p>
                           </div>
                           <div
-                            className="tooltip tooltip-secondary"
+                            className="tooltip tooltip-secondary ml-2"
                             data-tip={showCopied ? "copied!" : "copy"}
                           >
                             <button

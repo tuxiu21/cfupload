@@ -67,20 +67,6 @@ export default async function Navbar() {
                 >
                   Logout
                 </Link>
-                {/* <form action={logout}>
-                  <input type="hidden" name="username" value={username} />
-                  <button type="submit">Logout</button>
-                </form> */}
-                {/* <button
-                  formAction={async (formData: FormData) => {
-                    "use server";
-                    console.log("try to logout");
-
-                    // await cookies().delete("session");
-                  }}
-                >
-                  Logout
-                </button> */}
               </li>
             </ul>
           </div>
@@ -90,43 +76,6 @@ export default async function Navbar() {
           </Link>
         )}
       </div>
-      {/* <dialog className={" modal " + (showLoginModal ? "modal-open" : "")}>
-          <div className="modal-box">
-            <form method="dialog">
-              <button
-                className="btn btn-sm btn-ghost  btn-square absolute right-2 top-2"
-                onClick={() => setShowLoginModal(false)}
-              >
-                ✕
-              </button>
-            </form>
-            <h3 className="font-bold text-lg">Log in</h3>
-            <form className="my-4 flex flex-col gap-2"
-            action={login}
-            >
-              <label className="input input-bordered flex items-center gap-2">
-                <UserFilledIcon className="h-5 w-5 opacity-70"/>
-                <input type="text" className="grow" placeholder="Username" />
-              </label>
-              <label className="input input-bordered flex items-center gap-2">
-                <KeyIcon className="h-5 w-5 opacity-70"/>
-                
-                <input type="password" className="grow" placeholder="Password" />
-              </label>
-            </form>
-            <div className="flex flex-row gap-2 justify-end">
-              <button
-                className="btn btn-sm btn-ghost"
-                onClick={() => setShowLoginModal(false)}
-              >
-                Close
-              </button>
-              <button className="btn btn-sm btn-primary" onClick={() => {}}>
-                Sign in
-              </button>
-            </div>
-          </div>
-        </dialog> */}
     </div>
   );
 }
