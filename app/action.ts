@@ -11,7 +11,7 @@ const BASE_PATH = process.env.BASE_PATH!;
 
 
 export const logout = async () => {
-  cookies().delete('session')
+  (await cookies()).delete('session')
 }
 
 

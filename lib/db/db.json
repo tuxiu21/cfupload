@@ -1,0 +1,10 @@
+{
+  "tabList": [
+    {
+      "tabName": "All File",
+      "urlName": "all",
+      "pathName": "/",
+      "permissions": []
+    }
+  ]
+}

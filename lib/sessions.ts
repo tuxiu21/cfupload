@@ -6,6 +6,7 @@ const secret=process.env.SECRET_KEY
 const encodedSecret=new TextEncoder().encode(secret)
 
 export async function createSession(username:string,rememberMe:boolean=false){
+  const cookieStore = await cookies()
   if(rememberMe){
     const expires=new Date(Date.now()+1000*60*60*24*7)
     const signedJWT= await new SignJWT({username,expires})
@@ -15,7 +16,7 @@ export async function createSession(username:string,rememberMe:boolean=false){
     .sign(encodedSecret)
     console.log('signedJWT',signedJWT);
   
-    cookies().set('session',signedJWT,{
+    cookieStore.set('session',signedJWT,{
       httpOnly: true,
       secure: true,
       expires: expires,
@@ -32,7 +33,7 @@ export async function createSession(username:string,rememberMe:boolean=false){
     .sign(encodedSecret)
     console.log('signedJWT',signedJWT);
   
-    cookies().set('session',signedJWT,{
+    cookieStore.set('session',signedJWT,{
       httpOnly: true,
       secure: true,
       // expires: expires,

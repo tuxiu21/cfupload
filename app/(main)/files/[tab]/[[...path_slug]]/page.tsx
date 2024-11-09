@@ -17,15 +17,19 @@ const BASE_PATH = process.env.BASE_PATH!;
 export default async function Files({
   params,
 }: {
-  params: {
-    tab: string;
-    path_slug?: string[];
-  };
+  // params: {
+  //   tab: string;
+  //   path_slug?: string[];
+  // };
+  // params: Promise<{ slug: string }>
+  params:Promise<{tab:string,path_slug:string[]}>
 }) {
   // 验证用户身份
   const { isAuth, username } = await verifySessionAction();
 
-  const tab = await getTabByUrlName(params.tab);
+  const paramsValue = await params;
+
+  const tab = await getTabByUrlName(paramsValue.tab);
   if (!tab) {
     // throw new Error("Tab not found");
     return (
@@ -63,8 +67,8 @@ export default async function Files({
   const tag_basepath = path.join(BASE_PATH, tab.pathName);
 
   let urlParentPath = "";
-  if (params.path_slug) {
-    urlParentPath = path.join(...params.path_slug);
+  if (paramsValue.path_slug) {
+    urlParentPath = path.join(...paramsValue.path_slug);
     urlParentPath = decodeURIComponent(urlParentPath);
   }
 
@@ -95,7 +99,7 @@ export default async function Files({
         size: stat.size,
         mtimeMs: stat.mtimeMs,
         birthtimeMs: stat.birthtimeMs,
-        href: path.join("/files", params.tab, urlParentPath, file.name),
+        href: path.join("/files", paramsValue.tab, urlParentPath, file.name),
         downloadLink:''
       };
     })
@@ -113,13 +117,13 @@ export default async function Files({
       >
         <ul>
           <li>
-            <Link href={path.join("/files", params.tab)}>{tab.tabName}</Link>
+            <Link href={path.join("/files", paramsValue.tab)}>{tab.tabName}</Link>
           </li>
           {urlParentPath.split(path.sep).map((name, index, arr) => {
             // array（可选）：调用 map 方法的原数组。
             const href = path.join(
               "/files",
-              params.tab,
+              paramsValue.tab,
               ...arr.slice(0, index + 1)
             );
 
@@ -133,7 +137,7 @@ export default async function Files({
       </div>
       <TableView
         viewFiles={viewFiles}
-        tabUrlName={params.tab}
+        tabUrlName={paramsValue.tab}
         urlParentPath={urlParentPath}
         className={visibleOnly ? " px-4 " : ""}
       />
