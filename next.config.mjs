@@ -1,8 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // experimental: {
-  //   instrumentationHook: true,
-  // },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '1tb',
+    },
+  },
 };
 
 export default nextConfig;
