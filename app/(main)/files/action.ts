@@ -8,8 +8,8 @@ import { verifyTab } from "@/app/action-cached";
 import { redirect } from "next/navigation";
 import { getFullFilePathByTabUrlName } from "@/app/action";
 
-
-const tmp_path = os.tmpdir();
+// 不用tmp_path 因为不能跨卷移动文件 并且tmp分区可能比较小
+// const tmp_path = os.tmpdir();
 
 
 
@@ -132,10 +132,18 @@ export async function chunkUpload(chunkFormData: FormData) {
   const chunks = Number(chunkFormData.get("chunks"));
   const pathname = chunkFormData.get("pathname") as string;
 
-  const filePath = path.join(tmp_path, uuid);
+  const destPath = await getFullFilePathByTabUrlName(tabUrlName, path.join(pathname, filename));
+
+  // const filePath = path.join(tmp_path, uuid);
 
   // 写入文件
-  const writeStream = fs.createWriteStream(filePath, { flags: 'a' });
+  // 如果是第一个chunk 需要删除原文件 并且创建文件夹
+  if (index === 0) {
+    await fs.promises.rm(destPath, { force: true });
+    await fs.promises.mkdir(path.dirname(destPath), { recursive: true });
+  }
+
+  const writeStream = fs.createWriteStream(destPath, { flags: 'a' });
   const readStream = file.stream()
   const reader = readStream.getReader();
   while (true) {
@@ -156,15 +164,15 @@ export async function chunkUpload(chunkFormData: FormData) {
   );
 
   // 这里还要考虑文件size为0的情况 也就是chunks为0的情况
-  if (index + 1 === chunks || chunks === 0) {
-    // const destPath = path.join(BASE_PATH, pathname, filename);
-    const destPath = await getFullFilePathByTabUrlName(tabUrlName, path.join(pathname, filename));
+  // if (index + 1 === chunks || chunks === 0) {
+  //   // const destPath = path.join(BASE_PATH, pathname, filename);
+  //   const destPath = await getFullFilePathByTabUrlName(tabUrlName, path.join(pathname, filename));
 
-    // 如果文件已经存在 删除
-    await fs.promises.rm(destPath, { force: true });
+  //   // 如果文件已经存在 删除
+  //   await fs.promises.rm(destPath, { force: true });
 
 
-    await fs.promises.mkdir(path.dirname(destPath), { recursive: true });
-    await fs.promises.rename(filePath, destPath);
-  }
+  //   await fs.promises.mkdir(path.dirname(destPath), { recursive: true });
+  //   await fs.promises.rename(filePath, destPath);
+  // }
 }
